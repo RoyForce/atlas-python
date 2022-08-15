@@ -106,8 +106,5 @@ compose/remote/env/
 # PyCharm
 .idea/
 
-# alembic
-alembic.ini
-
 # vscode editor
 .vscode/
