@@ -8,6 +8,8 @@ class UserBase(BaseModel):
     is_superuser: bool = False
     first_name: str = None
     last_name: str = None
+    role_id: int = None
+    is_designer: bool = False
 
 
 class UserOut(UserBase):

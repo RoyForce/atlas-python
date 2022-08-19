@@ -10,6 +10,7 @@ def test_get_users(client, test_superuser, superuser_token_headers):
             "email": test_superuser.email,
             "is_active": test_superuser.is_active,
             "is_superuser": test_superuser.is_superuser,
+            "is_designer": test_superuser.is_designer,
         }
     ]
 
@@ -37,6 +38,7 @@ def test_edit_user(client, test_superuser, superuser_token_headers):
         "first_name": "Joe",
         "last_name": "Smith",
         "password": "new_password",
+        "is_designer": False,
     }
 
     response = client.put(
@@ -72,11 +74,13 @@ def test_get_user(
         f"/api/v1/users/{test_user.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
+    print(response.json())
     assert response.json() == {
         "id": test_user.id,
         "email": test_user.email,
         "is_active": bool(test_user.is_active),
         "is_superuser": test_user.is_superuser,
+        "is_designer": test_user.is_designer,
     }
 
 
