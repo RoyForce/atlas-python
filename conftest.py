@@ -8,6 +8,7 @@ import typing as t
 from app.core import config, security
 from app.db.session import Base, get_db
 from app.db.users.models import User
+from app.db.roles.models import Role
 from app.main import app
 
 
@@ -167,3 +168,15 @@ def superuser_token_headers(
     a_token = tokens["access_token"]
     headers = {"Authorization": f"Bearer {a_token}"}
     return headers
+
+
+@pytest.fixture
+def test_role(test_db) -> Role:
+    """
+    Make a test role in the database
+    """
+
+    role = Role(name="Developer")
+    test_db.add(role)
+    test_db.commit()
+    return role
