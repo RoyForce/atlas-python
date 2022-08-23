@@ -1,6 +1,6 @@
 import os
 
-PROJECT_NAME = "atlas-beacon-app"
+PROJECT_NAME = "Atlas Beacon - App"
 
 SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
 
