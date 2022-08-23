@@ -1,0 +1,73 @@
+version: '3.7'
+services:
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    command: redis-server --bind redis
+    networks:
+      - backend-network
+
+  postgres:
+    image: postgres:12
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data:cached
+    networks:
+      - backend-network
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery --app app.tasks worker --loglevel=INFO -Q main-queue -c 1
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - backend-network
+
+  flower:
+    image: mher/flower
+    command: celery flower --loglevel=INFO --port=5555
+    ports:
+      - 5555:5555
+    environment:
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+    depends_on:
+      - backend
+      - worker
+      - redis
+    networks:
+      - backend-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python app/main.py
+    tty: true
+    volumes:
+      - .:/app/:cached
+      - ./.docker/.ipython:/root/.ipython:cached
+    ports:
+      - 8888:8888
+    environment:
+      PYTHONPATH: .
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
+    depends_on:
+      - postgres
+    networks:
+      - backend-network
+
+volumes:
+  db-data:
+
+networks:
+  backend-network:
+    name: backend_network
