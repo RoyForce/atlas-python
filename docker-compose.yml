@@ -63,11 +63,11 @@ services:
     depends_on:
       - postgres
     networks:
-      - ab-network
+      - backend-network
 
 volumes:
   db-data:
 
 networks:
-  ab-network:
-    name: ab_network
+  backend-network:
+    name: backend_network
