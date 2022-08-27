@@ -56,7 +56,7 @@ services:
       - .:/app/:cached
       - ./.docker/.ipython:/root/.ipython:cached
     ports:
-      - 8888:8888
+      - 8000:8000
     environment:
       PYTHONPATH: .
       DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:5432/${DB_NAME}
