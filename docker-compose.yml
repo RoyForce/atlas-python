@@ -6,7 +6,7 @@ services:
       - 6379:6379
     command: redis-server --bind redis
     networks:
-      - ab-network
+      - backend-network
 
   postgres:
     image: postgres:12
@@ -19,7 +19,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data:cached
     networks:
-      - ab-network
+      - backend-network
 
   worker:
     build:
@@ -30,7 +30,7 @@ services:
       - backend
       - redis
     networks:
-      - ab-network
+      - backend-network
 
   flower:
     image: mher/flower
@@ -44,7 +44,7 @@ services:
       - worker
       - redis
     networks:
-      - ab-network
+      - backend-network
 
   backend:
     build:
