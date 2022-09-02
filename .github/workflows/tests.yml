@@ -1,0 +1,24 @@
+name: Run tests
+on: [pull_request]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      REPOSITORY: Atlas-Beacon/AtlasBeacon-Backend
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: cp .env.sample .env
+
+      - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u $REPOSITORY --password-stdin
+
+      - run: docker-compose --verbose pull
+
+      - name: Run the containers
+        run: docker-compose -f docker-compose.yml up -d postgres backend
+
+      - name: Run alembic upgrade
+        run: docker-compose -f docker-compose.yml run --rm backend alembic upgrade head
+
+      - name: Run tests
+        run: docker-compose -f docker-compose.yml run backend pytest

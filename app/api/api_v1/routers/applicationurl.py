@@ -9,7 +9,12 @@ from app.db.applicationurls.crud import (
     delete_applicationurl,
     edit_applicationurl,
 )
-from app.db.applicationurls.schemas import ApplicationUrlCreate, ApplicationUrlEdit, ApplicationUrl, ApplicationUrlOut
+from app.db.applicationurls.schemas import (
+    ApplicationUrlCreate,
+    ApplicationUrlEdit,
+    ApplicationUrl,
+    ApplicationUrlOut,
+)
 from app.core.auth import get_current_active_superuser
 
 applicationurls_router = r = APIRouter()
@@ -51,7 +56,11 @@ async def application_urls_details(
     return applicationurl
 
 
-@r.post("/application-urls", response_model=ApplicationUrl, response_model_exclude_none=True)
+@r.post(
+    "/application-urls",
+    response_model=ApplicationUrl,
+    response_model_exclude_none=True,
+)
 async def applicationurls_create(
     request: Request,
     applicationurl: ApplicationUrlCreate,
@@ -65,7 +74,9 @@ async def applicationurls_create(
 
 
 @r.put(
-    "/application-urls/{applicationurl_id}", response_model=ApplicationUrl, response_model_exclude_none=True
+    "/application-urls/{applicationurl_id}",
+    response_model=ApplicationUrl,
+    response_model_exclude_none=True,
 )
 async def applicationurls_edit(
     request: Request,
@@ -81,7 +92,9 @@ async def applicationurls_edit(
 
 
 @r.delete(
-    "/application-urls/{applicationurl_id}", response_model=ApplicationUrl, response_model_exclude_none=True
+    "/application-urls/{applicationurl_id}",
+    response_model=ApplicationUrl,
+    response_model_exclude_none=True,
 )
 async def applicationurls_delete(
     request: Request,

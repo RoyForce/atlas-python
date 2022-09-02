@@ -1,4 +1,4 @@
-name: Autoupdate all pull requests to master when master updates
+name: Autoupdate all pull requests to main when main updates
 on:
   push:
     branches:
