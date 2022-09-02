@@ -5,6 +5,7 @@ import uvicorn
 
 from app.api.api_v1.routers.users import users_router
 from app.api.api_v1.routers.roles import roles_router
+from app.api.api_v1.routers.applicationurl import applicationurls_router
 from app.api.api_v1.routers.auth import auth_router
 from app.core import config
 from app.db.session import SessionLocal
@@ -63,6 +64,12 @@ app.include_router(
     roles_router,
     prefix="/api/v1",
     tags=["roles"],
+    dependencies=[Depends(get_current_active_user)],
+)
+app.include_router(
+    applicationurls_router,
+    prefix="/api/v1",
+    tags=["application-urls"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(auth_router, prefix="/api", tags=["auth"])

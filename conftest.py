@@ -9,6 +9,7 @@ from app.core import config, security
 from app.db.session import Base, get_db
 from app.db.users.models import User
 from app.db.roles.models import Role
+from app.db.applicationurls.models import ApplicationUrl
 from app.main import app
 
 
@@ -180,3 +181,15 @@ def test_role(test_db) -> Role:
     test_db.add(role)
     test_db.commit()
     return role
+
+
+@pytest.fixture
+def test_applicationurl(test_db) -> ApplicationUrl:
+    """
+    Make a test application url in the database
+    """
+
+    applicationurl = ApplicationUrl(name="Atlas", url="atlas.com")
+    test_db.add(applicationurl)
+    test_db.commit()
+    return applicationurl
