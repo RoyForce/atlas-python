@@ -10,7 +10,7 @@ from app.core import config, security
 from app.db.session import Base, get_db
 from app.db.users.models import User
 from app.db.roles.models import Role
-from app.db.jobs.models import Jobs
+from app.db.jobs.models import Job
 from app.db.applicationurls.models import ApplicationUrl
 
 from app.main import app
@@ -199,15 +199,13 @@ def test_applicationurl(test_db) -> ApplicationUrl:
 
 
 @pytest.fixture
-def test_job(test_db) -> Jobs:
+def test_job(test_db) -> Job:
     """
     Make a test Job in the database
     """
 
-    jobs = Jobs(
-        name="testName",
-        description="testDesc",
-        application_url_id=1,
+    jobs = Job(
+        name="testName", description="testDesc", application_url_id=1, roles=[]
     )
     test_db.add(jobs)
     test_db.commit()

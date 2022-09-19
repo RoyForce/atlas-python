@@ -1,6 +1,8 @@
 from ctypes import Union
 from pydantic import BaseModel, Field
 import typing as t
+from app.db.roles.schemas import Role
+from typing import List
 
 
 class JobBase(BaseModel):
@@ -8,6 +10,7 @@ class JobBase(BaseModel):
     description: str = None
     is_locked: bool = None
     application_url_id: int = None
+    roles: List[Role] = None
     # steps: JSON = None
 
 
@@ -27,7 +30,7 @@ class JobEdit(JobBase):
         orm_mode = True
 
 
-class Jobs(JobBase):
+class Job(JobBase):
     id: int
 
     class Config:

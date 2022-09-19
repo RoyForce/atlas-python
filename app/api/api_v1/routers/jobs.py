@@ -10,7 +10,12 @@ from app.db.jobs.crud import (
     delete_job,
     edit_job,
 )
-from app.db.jobs.schemas import JobCreate, JobEdit, Jobs, JobOut
+from app.db.jobs.schemas import (
+    JobCreate,
+    JobEdit,
+    Job,
+    JobOut,
+)
 from app.core.auth import get_current_active_superuser
 
 jobs_router = r = APIRouter()
@@ -18,7 +23,7 @@ jobs_router = r = APIRouter()
 
 @r.get(
     "/jobs",
-    response_model=t.List[Jobs],
+    response_model=t.List[Job],
     response_model_exclude_none=True,
 )
 async def jobs_list(
@@ -36,7 +41,7 @@ async def jobs_list(
 
 @r.get(
     "/jobs/{job_id}",
-    response_model=Jobs,
+    response_model=Job,
     response_model_exclude_none=True,
 )
 async def job_details(
@@ -52,7 +57,7 @@ async def job_details(
     return jobs
 
 
-@r.post("/jobs", response_model=Jobs, response_model_exclude_none=True)
+@r.post("/jobs", response_model=Job, response_model_exclude_none=True)
 async def job_create(
     request: Request,
     job: JobCreate,
@@ -65,7 +70,7 @@ async def job_create(
     return create_job(db, job)
 
 
-@r.put("/jobs/{job_id}", response_model=Jobs, response_model_exclude_none=True)
+@r.put("/jobs/{job_id}", response_model=Job, response_model_exclude_none=True)
 async def jobs_edit(
     request: Request,
     job_id: int,
@@ -74,13 +79,13 @@ async def jobs_edit(
     current_job=Depends(get_current_active_superuser),
 ):
     """
-    Update existing Jobs
+    Update existing Job
     """
     return edit_job(db, job_id, jobs)
 
 
 @r.delete(
-    "/jobs/{job_id}", response_model=Jobs, response_model_exclude_none=True
+    "/jobs/{job_id}", response_model=Job, response_model_exclude_none=True
 )
 async def job_delete(
     request: Request,
