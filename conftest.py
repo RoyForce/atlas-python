@@ -12,6 +12,7 @@ from app.db.users.models import User
 from app.db.roles.models import Role
 from app.db.jobs.models import Job
 from app.db.applicationurls.models import ApplicationUrl
+from app.db.playbooks.models import Playbook
 
 from app.main import app
 
@@ -210,3 +211,20 @@ def test_job(test_db) -> Job:
     test_db.add(jobs)
     test_db.commit()
     return jobs
+
+
+@pytest.fixture
+def test_playbook(test_db) -> Playbook:
+    """
+    Make a test Job in the database
+    """
+
+    playbooks = Playbook(
+        name="testName",
+        description="testDesc",
+        page_content="testpagecont",
+        roles=[],
+    )
+    test_db.add(playbooks)
+    test_db.commit()
+    return playbooks

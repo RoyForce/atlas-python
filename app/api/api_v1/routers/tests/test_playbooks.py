@@ -1,0 +1,74 @@
+from app.db.playbooks.models import Playbook
+
+
+def test_get_playbooks(client, test_playbook, superuser_token_headers):
+    response = client.get("/api/v1/playbooks", headers=superuser_token_headers)
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "id": test_playbook.id,
+            "name": test_playbook.name,
+            "description": test_playbook.description,
+            "page_content": test_playbook.page_content,
+            "roles": test_playbook.roles,
+        }
+    ]
+
+
+def test_delete_playbook(
+    client, test_playbook, test_db, superuser_token_headers
+):
+    response = client.delete(
+        f"/api/v1/playbooks/{test_playbook.id}",
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 200
+    assert test_db.query(Playbook).all() == []
+
+
+def test_edit_playbook(
+    client, test_playbook, test_role, superuser_token_headers
+):
+    new_playbook = {
+        "name": "New playbooks",
+        "description": "New desc",
+        "page_content": "test page content",
+    }
+
+    response = client.put(
+        f"/api/v1/playbooks/{test_playbook.id}",
+        json=new_playbook,
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 200
+    new_playbook["id"] = test_playbook.id
+    new_playbook["roles"] = []
+    assert response.json() == new_playbook
+
+    # Edit playbook with roles
+    role = test_role.as_json()
+    response = client.put(
+        f"/api/v1/playbooks/{test_playbook.id}",
+        json={"roles": [role]},
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 200
+    assert response.json()["roles"][0] == role
+
+
+# ------------------test playbook role mapping-----------------------
+
+
+def test_create_playbook_with_role(client, test_role, superuser_token_headers):
+    role = test_role.as_json()
+    playbook = {
+        "name": "New playbook",
+        "description": "New desc",
+        "page_content": "New Page content",
+        "roles": [role],
+    }
+    response = client.post(
+        "/api/v1/playbooks", json=playbook, headers=superuser_token_headers
+    )
+    assert response.status_code == 200
+    assert response.json()["roles"][0] == role

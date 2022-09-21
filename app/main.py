@@ -8,6 +8,7 @@ from app.api.api_v1.routers.roles import roles_router
 from app.api.api_v1.routers.auth import auth_router
 from app.api.api_v1.routers.applicationurl import applicationurls_router
 from app.api.api_v1.routers.jobs import jobs_router
+from app.api.api_v1.routers.playbooks import playbook_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
@@ -77,6 +78,11 @@ app.include_router(
     jobs_router,
     prefix="/api/v1",
     tags=["jobs"],
+)
+app.include_router(
+    playbook_router,
+    prefix="/api/v1",
+    tags=["playbook"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(auth_router, prefix="/api", tags=["auth"])
