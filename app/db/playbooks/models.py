@@ -3,7 +3,8 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Column, Integer, String, Boolean, Table, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.session import Base
-
+from app.db.core import CoreBase
+from typing import List
 from app import db
 
 
@@ -16,7 +17,7 @@ class PlaybookRole(Base):
     role_id = Column("role_id", ForeignKey("roles.id"), primary_key=True)
 
 
-class Playbook(Base):
+class Playbook(Base, CoreBase):
     __tablename__ = "playbooks"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -26,3 +27,7 @@ class Playbook(Base):
     roles = relationship(
         "Role", secondary="playbook_role_mappings", back_populates="playbooks"
     )
+
+    @property
+    def role_ids(self) -> List[int]:
+        return [role.id for role in self.roles]

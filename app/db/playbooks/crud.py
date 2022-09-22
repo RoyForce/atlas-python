@@ -36,12 +36,13 @@ def create_playbook(db: Session, playbook: schemas.PlaybookCreate):
     db.add(db_playbook)
     db.commit()
 
-    db_playbook_roles = [
-        models.PlaybookRole(playbook_id=db_playbook.id, role_id=role.id)
-        for role in playbook.roles
-    ]
-    db.add_all(db_playbook_roles)
-    db.commit()
+    if playbook.role_ids is not None and len(playbook.role_ids) > 0:
+        db_playbook_roles = [
+            models.PlaybookRole(playbook_id=db_playbook.id, role_id=role_id)
+            for role_id in playbook.role_ids
+        ]
+        db.add_all(db_playbook_roles)
+        db.commit()
 
     db.refresh(db_playbook)
     return db_playbook
@@ -69,12 +70,12 @@ def edit_playbook(
     update_data = playbook.dict(exclude_unset=True)
 
     for key, value in update_data.items():
-        if key == "roles":
+        if key == "role_ids":
             db_playbook_roles = [
                 models.PlaybookRole(
-                    playbook_id=db_playbook.id, role_id=role.id
+                    playbook_id=db_playbook.id, role_id=role_id
                 )
-                for role in playbook.roles
+                for role_id in value
             ]
             db.add_all(db_playbook_roles)
             db.commit()

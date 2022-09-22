@@ -2,17 +2,10 @@ from app.db.playbooks.models import Playbook
 
 
 def test_get_playbooks(client, test_playbook, superuser_token_headers):
+    playbook = test_playbook.as_json()
     response = client.get("/api/v1/playbooks", headers=superuser_token_headers)
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": test_playbook.id,
-            "name": test_playbook.name,
-            "description": test_playbook.description,
-            "page_content": test_playbook.page_content,
-            "roles": test_playbook.roles,
-        }
-    ]
+    assert all(response.json()[0][arg] == playbook[arg] for arg in playbook)
 
 
 def test_delete_playbook(
@@ -41,15 +34,15 @@ def test_edit_playbook(
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    new_playbook["id"] = test_playbook.id
-    new_playbook["roles"] = []
-    assert response.json() == new_playbook
+    assert all(
+        response.json()[arg] == new_playbook[arg] for arg in new_playbook
+    )
 
     # Edit playbook with roles
     role = test_role.as_json()
     response = client.put(
         f"/api/v1/playbooks/{test_playbook.id}",
-        json={"roles": [role]},
+        json={"role_ids": [role["id"]]},
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
@@ -65,7 +58,7 @@ def test_create_playbook_with_role(client, test_role, superuser_token_headers):
         "name": "New playbook",
         "description": "New desc",
         "page_content": "New Page content",
-        "roles": [role],
+        "role_ids": [role["id"]],
     }
     response = client.post(
         "/api/v1/playbooks", json=playbook, headers=superuser_token_headers

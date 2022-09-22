@@ -223,7 +223,6 @@ def test_playbook(test_db) -> Playbook:
         name="testName",
         description="testDesc",
         page_content="testpagecont",
-        roles=[],
     )
     test_db.add(playbooks)
     test_db.commit()

@@ -9,27 +9,30 @@ class PlaybookBase(BaseModel):
     name: str = None
     description: str = None
     page_content: str = None
-    roles: List[Role] = None
 
 
 class PlaybookOut(PlaybookBase):
-    pass
+    roles: List[Role] = None
 
 
 class PlaybookCreate(PlaybookBase):
     name: str
+    role_ids: List[int] = []
 
     class Config:
         orm_mode = True
 
 
 class PlaybookEdit(PlaybookBase):
+    role_ids: List[int] = []
+
     class Config:
         orm_mode = True
 
 
 class Playbook(PlaybookBase):
     id: int
+    roles: List[Role] = None
 
     class Config:
         orm_mode = True
