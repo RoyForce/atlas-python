@@ -5,6 +5,7 @@ import typing as t
 from app.db.roles.schemas import Role
 from app.db.applicationurls.schemas import ApplicationUrl
 from typing import List, Any, Dict, AnyStr
+from enum import Enum
 
 
 class JobBase(BaseModel):
@@ -44,3 +45,15 @@ class Job(JobBase):
 
     class Config:
         orm_mode = True
+
+
+class ExtensionMode(str, Enum):
+    """The possible modes for extension"""
+
+    DESIGNER = "D"
+    EXECUTOR = "E"
+
+
+class VaildateJobUser(BaseModel):
+    user_id: int
+    mode: ExtensionMode

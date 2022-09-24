@@ -1,8 +1,10 @@
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Request
 from sqlalchemy.orm import Session
 import typing as t
 from fastapi.encoders import jsonable_encoder
 from . import models, schemas
+from app.db.users.crud import get_user
+from app.core import security
 
 
 def get_job(db: Session, job_id: int):
@@ -75,3 +77,29 @@ def edit_job(db: Session, job_id: int, job: schemas.JobEdit) -> schemas.Job:
 
     db.refresh(db_job)
     return db_job
+
+
+def validate_extension_token(request: Request):
+    if f"Bearer {security.EXTENSION_TOKEN}" != request.headers.get(
+        "Authorization"
+    ):
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN, detail="Invalid extension token."
+        )
+
+
+def validate_user_and_job(db: Session, job_id, args: schemas.VaildateJobUser):
+
+    user = get_user(db, args.user_id)
+    if args.mode == schemas.ExtensionMode.DESIGNER and not user.is_designer:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN, detail="User has no designer access."
+        )
+
+    job = get_job(db, job_id)
+    if job.is_locked:
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN, detail="Job is locked by another user."
+        )
+
+    return job

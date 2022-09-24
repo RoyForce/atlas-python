@@ -1,12 +1,9 @@
-from ctypes import Union
-from email.mime import application
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy import Column, Integer, String, Boolean, Table, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 from app.db.core import CoreBase
 
-from app import db
 from typing import List
 
 

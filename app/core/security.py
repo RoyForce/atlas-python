@@ -10,6 +10,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SECRET_KEY = "89023f0j2039jf90jkakmciumcses9mcs99mcs93c48ym72tmarf737mc7h47wna4c8791289h8f1h3f8h376fh8bf4"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+EXTENSION_TOKEN = "xTurDgE9QtNxhhePxFKfNinoTmew6HIX"
 
 
 def get_password_hash(password: str) -> str:

@@ -159,6 +159,12 @@ def user_token_headers(
 
 
 @pytest.fixture
+def extension_token_headers() -> t.Dict[str, str]:
+    headers = {"Authorization": f"Bearer {security.EXTENSION_TOKEN}"}
+    return headers
+
+
+@pytest.fixture
 def superuser_token_headers(
     client: TestClient, test_superuser, test_password, monkeypatch
 ) -> t.Dict[str, str]:

@@ -9,16 +9,19 @@ from app.db.jobs.crud import (
     create_job,
     delete_job,
     edit_job,
+    validate_extension_token,
+    validate_user_and_job,
 )
 from app.db.jobs.schemas import (
     JobCreate,
     JobEdit,
     Job,
-    JobOut,
+    VaildateJobUser,
 )
 from app.core.auth import get_current_active_superuser
 
 jobs_router = r = APIRouter()
+extension_router = er = APIRouter()
 
 
 @r.get(
@@ -97,3 +100,35 @@ async def job_delete(
     Delete existing jobs
     """
     return delete_job(db, job_id)
+
+
+@er.get("/jobs/steps/{job_id}", response_model=Job)
+async def validate_user_job(
+    request: Request,
+    job_id: int,
+    args: VaildateJobUser,
+    db=Depends(get_db),
+):
+    """
+    Validate user, job and mode and send job steps
+    """
+    validate_extension_token(request)
+    return validate_user_and_job(db, job_id, args)
+
+
+@er.post(
+    "/jobs/steps/{job_id}",
+    response_model=Job,
+    response_model_exclude_none=True,
+)
+async def save_job_steps(
+    request: Request,
+    job_id: int,
+    jobs: JobEdit,
+    db=Depends(get_db),
+):
+    """
+    Save job steps
+    """
+    validate_extension_token(request)
+    return edit_job(db, job_id, jobs)
