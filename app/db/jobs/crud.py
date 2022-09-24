@@ -32,11 +32,13 @@ def create_job(db: Session, job: schemas.JobCreate):
     db.add(db_job)
     db.commit()
 
-    db_job_roles = [
-        models.JobRole(job_id=db_job.id, role_id=role.id) for role in job.roles
-    ]
-    db.add_all(db_job_roles)
-    db.commit()
+    if job.role_ids is not None and len(job.role_ids) > 0:
+        db_job_roles = [
+            models.JobRole(job_id=db_job.id, role_id=role_id)
+            for role_id in job.role_ids
+        ]
+        db.add_all(db_job_roles)
+        db.commit()
 
     db.refresh(db_job)
     return db_job
@@ -58,10 +60,10 @@ def edit_job(db: Session, job_id: int, job: schemas.JobEdit) -> schemas.Job:
     update_data = job.dict(exclude_unset=True)
 
     for key, value in update_data.items():
-        if key == "roles":
+        if key == "role_ids":
             db_job_roles = [
-                models.JobRole(job_id=db_job.id, role_id=role.id)
-                for role in job.roles
+                models.JobRole(job_id=db_job.id, role_id=role_id)
+                for role_id in value
             ]
             db.add_all(db_job_roles)
             db.commit()

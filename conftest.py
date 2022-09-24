@@ -200,13 +200,15 @@ def test_applicationurl(test_db) -> ApplicationUrl:
 
 
 @pytest.fixture
-def test_job(test_db) -> Job:
+def test_job(test_db, test_applicationurl) -> Job:
     """
     Make a test Job in the database
     """
 
     jobs = Job(
-        name="testName", description="testDesc", application_url_id=1, roles=[]
+        name="testName",
+        description="testDesc",
+        application_url_id=test_applicationurl.id,
     )
     test_db.add(jobs)
     test_db.commit()

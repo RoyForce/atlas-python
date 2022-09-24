@@ -108,3 +108,4 @@ compose/remote/env/
 
 # vscode editor
 .vscode/
+.DS_Store
