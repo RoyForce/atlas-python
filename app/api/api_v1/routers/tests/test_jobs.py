@@ -92,12 +92,12 @@ def test_if_user_can_access_job(
         "user_id": test_user.id,
         "mode": ExtensionMode.EXECUTOR,
     }
-    response = client.get(end_point, json=payload)
+    response = client.get(end_point, params=payload)
     assert response.status_code == 403
 
     response = client.get(
         end_point,
-        json=payload,
+        params=payload,
         headers=extension_token_headers,
     )
     assert response.status_code == 200
@@ -105,7 +105,7 @@ def test_if_user_can_access_job(
     payload["mode"] = ExtensionMode.DESIGNER
     response = client.get(
         end_point,
-        json=payload,
+        params=payload,
         headers=extension_token_headers,
     )
     assert response.status_code == 403
@@ -114,7 +114,7 @@ def test_if_user_can_access_job(
     test_db.commit()
     response = client.get(
         end_point,
-        json=payload,
+        params=payload,
         headers=extension_token_headers,
     )
     assert response.status_code == 200
@@ -123,7 +123,7 @@ def test_if_user_can_access_job(
     test_db.commit()
     response = client.get(
         end_point,
-        json=payload,
+        params=payload,
         headers=extension_token_headers,
     )
     assert response.status_code == 403

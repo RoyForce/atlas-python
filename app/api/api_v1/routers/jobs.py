@@ -16,7 +16,6 @@ from app.db.jobs.schemas import (
     JobCreate,
     JobEdit,
     Job,
-    VaildateJobUser,
 )
 from app.core.auth import get_current_active_superuser
 
@@ -106,14 +105,15 @@ async def job_delete(
 async def validate_user_job(
     request: Request,
     job_id: int,
-    args: VaildateJobUser,
+    user_id: int,
+    mode: str,
     db=Depends(get_db),
 ):
     """
     Validate user, job and mode and send job steps
     """
     validate_extension_token(request)
-    return validate_user_and_job(db, job_id, args)
+    return validate_user_and_job(db, job_id, user_id, mode)
 
 
 @er.post(

@@ -52,8 +52,3 @@ class ExtensionMode(str, Enum):
 
     DESIGNER = "D"
     EXECUTOR = "E"
-
-
-class VaildateJobUser(BaseModel):
-    user_id: int
-    mode: ExtensionMode

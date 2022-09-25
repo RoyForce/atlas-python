@@ -88,10 +88,10 @@ def validate_extension_token(request: Request):
         )
 
 
-def validate_user_and_job(db: Session, job_id, args: schemas.VaildateJobUser):
+def validate_user_and_job(db: Session, job_id, user_id, mode):
 
-    user = get_user(db, args.user_id)
-    if args.mode == schemas.ExtensionMode.DESIGNER and not user.is_designer:
+    user = get_user(db, user_id)
+    if mode == schemas.ExtensionMode.DESIGNER and not user.is_designer:
         raise HTTPException(
             status.HTTP_403_FORBIDDEN, detail="User has no designer access."
         )
