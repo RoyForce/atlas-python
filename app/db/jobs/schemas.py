@@ -42,6 +42,8 @@ class Job(JobBase):
     id: int
     application_url: ApplicationUrl = None
     roles: List[Role] = None
+    role_ids: List[int] = []
+    application_url_id: int = None
 
     class Config:
         orm_mode = True

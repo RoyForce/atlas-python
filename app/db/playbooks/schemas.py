@@ -33,6 +33,7 @@ class PlaybookEdit(PlaybookBase):
 class Playbook(PlaybookBase):
     id: int
     roles: List[Role] = None
+    role_ids: List[int] = []
 
     class Config:
         orm_mode = True
