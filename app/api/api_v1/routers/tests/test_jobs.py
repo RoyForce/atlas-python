@@ -5,17 +5,10 @@ from app.db.jobs.schemas import ExtensionMode
 
 
 def test_get_jobs(client, test_job, superuser_token_headers):
+    job = test_job.as_json()
     response = client.get("/api/v1/jobs", headers=superuser_token_headers)
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": test_job.id,
-            "name": test_job.name,
-            "description": test_job.description,
-            "application_url": test_job.application_url.as_json(),
-            "roles": test_job.roles,
-        }
-    ]
+    assert all(response.json()[0][arg] == job[arg] for arg in job)
 
 
 def test_delete_job(client, test_job, test_db, superuser_token_headers):
@@ -27,12 +20,12 @@ def test_delete_job(client, test_job, test_db, superuser_token_headers):
 
 
 def test_edit_job(
-    client, test_job, test_role, test_applicationurl, superuser_token_headers
+    client, test_job, test_role, test_application_url, superuser_token_headers
 ):
     new_job = {
         "name": "New jobs",
         "description": "New desc",
-        "application_url_id": test_applicationurl.id,
+        "application_url_id": test_application_url.id,
     }
 
     response = client.put(
@@ -57,13 +50,13 @@ def test_edit_job(
 
 
 def test_create_job_with_role(
-    client, test_role, test_applicationurl, superuser_token_headers
+    client, test_role, test_application_url, superuser_token_headers
 ):
     role = test_role.as_json()
     job = {
         "name": "New jobs",
         "description": "New desc",
-        "application_url_id": test_applicationurl.id,
+        "application_url_id": test_application_url.id,
         "role_ids": [role["id"]],
     }
     response = client.post(

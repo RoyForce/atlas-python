@@ -1,3 +1,4 @@
+from email.policy import default
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
@@ -23,8 +24,8 @@ class Job(Base, CoreBase):
     application_url_id = Column(
         Integer, ForeignKey("application_urls.id"), nullable=True
     )
-    steps = Column(JSONB, nullable=True)
-    is_locked = Column(Boolean)
+    steps = Column(JSONB, nullable=True, default={})
+    is_locked = Column(Boolean, default=False)
     roles = relationship(
         "Role", secondary="job_role_mappings", back_populates="jobs"
     )

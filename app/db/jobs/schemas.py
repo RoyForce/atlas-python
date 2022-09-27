@@ -3,7 +3,7 @@ from email.mime import application
 from pydantic import BaseModel, Field
 import typing as t
 from app.db.roles.schemas import Role
-from app.db.applicationurls.schemas import ApplicationUrl
+from app.db.application_urls.schemas import ApplicationUrl
 from typing import List, Any, Dict, AnyStr
 from enum import Enum
 

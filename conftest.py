@@ -11,9 +11,9 @@ from app.db.session import Base, get_db
 from app.db.users.models import User
 from app.db.roles.models import Role
 from app.db.jobs.models import Job
-from app.db.applicationurls.models import ApplicationUrl
+from app.db.application_urls.models import ApplicationUrl
 from app.db.playbooks.models import Playbook
-
+from app.db.table_configs.models import TableConfig
 from app.main import app
 
 
@@ -194,19 +194,19 @@ def test_role(test_db) -> Role:
 
 
 @pytest.fixture
-def test_applicationurl(test_db) -> ApplicationUrl:
+def test_application_url(test_db) -> ApplicationUrl:
     """
     Make a test application url in the database
     """
 
-    applicationurl = ApplicationUrl(name="Atlas", url="atlas.com")
-    test_db.add(applicationurl)
+    application_url = ApplicationUrl(name="Atlas", url="atlas.com")
+    test_db.add(application_url)
     test_db.commit()
-    return applicationurl
+    return application_url
 
 
 @pytest.fixture
-def test_job(test_db, test_applicationurl) -> Job:
+def test_job(test_db, test_application_url) -> Job:
     """
     Make a test Job in the database
     """
@@ -214,7 +214,7 @@ def test_job(test_db, test_applicationurl) -> Job:
     jobs = Job(
         name="testName",
         description="testDesc",
-        application_url_id=test_applicationurl.id,
+        application_url_id=test_application_url.id,
     )
     test_db.add(jobs)
     test_db.commit()
@@ -224,7 +224,7 @@ def test_job(test_db, test_applicationurl) -> Job:
 @pytest.fixture
 def test_playbook(test_db) -> Playbook:
     """
-    Make a test Job in the database
+    Make a test playbook in the database
     """
 
     playbooks = Playbook(
@@ -235,3 +235,19 @@ def test_playbook(test_db) -> Playbook:
     test_db.add(playbooks)
     test_db.commit()
     return playbooks
+
+
+@pytest.fixture
+def test_table_config(test_db) -> TableConfig:
+    """
+    Make a test table config in the database
+    """
+
+    table_config = TableConfig(
+        user_id=1,
+        table="JOB_ROLE_MATRIX",
+        config={"test": "test"},
+    )
+    test_db.add(table_config)
+    test_db.commit()
+    return table_config
