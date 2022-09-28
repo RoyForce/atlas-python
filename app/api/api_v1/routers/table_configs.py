@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from fastapi import APIRouter, Depends, Response
 import typing as t
-from fastapi.encoders import jsonable_encoder
 
 from app.db.session import get_db
 from app.db.table_configs.crud import (
@@ -29,7 +28,6 @@ table_config_router = r = APIRouter()
 async def table_configs_list(
     response: Response,
     db=Depends(get_db),
-    current_table_configs=Depends(get_current_active_superuser),
 ):
     """
     Get all TableConfigs
@@ -45,10 +43,8 @@ async def table_configs_list(
     response_model_exclude_none=True,
 )
 async def table_config_details(
-    request: Request,
     id: int,
     db=Depends(get_db),
-    current_table_configs=Depends(get_current_active_superuser),
 ):
     """
     Get any table config details
@@ -63,10 +59,8 @@ async def table_config_details(
     response_model_exclude_none=True,
 )
 async def table_config_create(
-    request: Request,
     table_config: TableConfigCreate,
     db=Depends(get_db),
-    current_table_configs=Depends(get_current_active_superuser),
 ):
     """
     Create a new table_config
@@ -80,11 +74,9 @@ async def table_config_create(
     response_model_exclude_none=True,
 )
 async def table_configs_edit(
-    request: Request,
     id: int,
     table_configs: TableConfigEdit,
     db=Depends(get_db),
-    current_table_config=Depends(get_current_active_superuser),
 ):
     """
     Update existing TableConfig
@@ -98,10 +90,8 @@ async def table_configs_edit(
     response_model_exclude_none=True,
 )
 async def table_config_delete(
-    request: Request,
     id: int,
     db=Depends(get_db),
-    current_table_config=Depends(get_current_active_superuser),
 ):
     """
     Delete existing table_configs
