@@ -14,6 +14,7 @@ from app.db.jobs.models import Job
 from app.db.application_urls.models import ApplicationUrl
 from app.db.playbooks.models import Playbook
 from app.db.table_configs.models import TableConfig
+from app.db.lessons.models import Lesson
 from app.main import app
 
 
@@ -251,3 +252,20 @@ def test_table_config(test_db) -> TableConfig:
     test_db.add(table_config)
     test_db.commit()
     return table_config
+
+
+@pytest.fixture
+def test_lesson(test_db) -> Lesson:
+    """
+    Make a test lessons in the database
+    """
+
+    lesson = Lesson(
+        name="test name",
+        description="test desc",
+        duration=1,
+        page_content="testpagecont",
+    )
+    test_db.add(lesson)
+    test_db.commit()
+    return lesson
