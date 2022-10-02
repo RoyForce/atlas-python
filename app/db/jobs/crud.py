@@ -63,6 +63,7 @@ def edit_job(db: Session, job_id: int, job: schemas.JobEdit) -> schemas.Job:
 
     for key, value in update_data.items():
         if key == "role_ids":
+            delete_job_role(db, db_job.id)
             db_job_roles = [
                 models.JobRole(job_id=db_job.id, role_id=role_id)
                 for role_id in value
@@ -103,3 +104,20 @@ def validate_user_and_job(db: Session, job_id, user_id, mode):
         )
 
     return job
+
+
+def delete_job_role(db: Session, job_id: int):
+    job_roles = get_job_roles(db, job_id)
+    if job_roles:
+        for value in job_roles:
+            db.delete(value)
+    db.commit()
+    return job_roles
+
+
+def get_job_roles(db: Session, job_id: int):
+    job_roles = (
+        db.query(models.JobRole).filter(models.JobRole.job_id == job_id).all()
+    )
+    if job_roles:
+        return job_roles

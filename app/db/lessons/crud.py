@@ -21,6 +21,11 @@ def get_lessons(
 
 
 def create_lesson(db: Session, lesson: schemas.LessonCreate):
+    print("-----------ssss----------------")
+    print(type(lesson))
+    print(lesson)
+    print("--------xxxxx--------------")
+    print(lesson.name)
     db_lesson = models.Lesson(
         name=lesson.name,
         description=lesson.description,
@@ -61,3 +66,16 @@ def edit_lesson(
     db.commit()
     db.refresh(db_lesson)
     return db_lesson
+
+
+def get_lesson_by_name(db: Session, name: str):
+    lesson = db.query(models.Lesson).filter(models.Lesson.name == name).first()
+    if not lesson:
+        db_lesson = models.Lesson(
+            name=name,
+        )
+        db.add(db_lesson)
+        db.commit()
+        db.refresh(db_lesson)
+        return db_lesson
+    return lesson

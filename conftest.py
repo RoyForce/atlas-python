@@ -15,6 +15,7 @@ from app.db.application_urls.models import ApplicationUrl
 from app.db.playbooks.models import Playbook
 from app.db.table_configs.models import TableConfig
 from app.db.lessons.models import Lesson
+from app.db.courses.models import Course
 from app.main import app
 
 
@@ -269,3 +270,21 @@ def test_lesson(test_db) -> Lesson:
     test_db.add(lesson)
     test_db.commit()
     return lesson
+
+
+@pytest.fixture
+def test_course(test_db) -> Course:
+    """
+    Make a test course in the database
+    """
+
+    course = Course(
+        name="test name",
+        description="test desc",
+        duration=1,
+        enroll_required=True,
+        passing_percentage=1,
+    )
+    test_db.add(course)
+    test_db.commit()
+    return course

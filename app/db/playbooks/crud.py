@@ -71,6 +71,7 @@ def edit_playbook(
 
     for key, value in update_data.items():
         if key == "role_ids":
+            delete_playbook_role(db, db_playbook.id)
             db_playbook_roles = [
                 models.PlaybookRole(
                     playbook_id=db_playbook.id, role_id=role_id
@@ -87,3 +88,22 @@ def edit_playbook(
 
     db.refresh(db_playbook)
     return db_playbook
+
+
+def delete_playbook_role(db: Session, playbook_id: int):
+    playbook_roles = get_playbook_roles(db, playbook_id)
+    if playbook_roles:
+        for value in playbook_roles:
+            db.delete(value)
+    db.commit()
+    return playbook_roles
+
+
+def get_playbook_roles(db: Session, playbook_id: int):
+    playbook_roles = (
+        db.query(models.PlaybookRole)
+        .filter(models.PlaybookRole.playbook_id == playbook_id)
+        .all()
+    )
+    if playbook_roles:
+        return playbook_roles
