@@ -2,7 +2,7 @@ from app.db.playbooks.models import Playbook
 
 
 def test_get_playbooks(client, test_playbook, superuser_token_headers):
-    playbook = test_playbook.as_json()
+    playbook = test_playbook.dict()
     response = client.get("/api/v1/playbooks", headers=superuser_token_headers)
     assert response.status_code == 200
     assert all(response.json()[0][arg] == playbook[arg] for arg in playbook)
@@ -39,7 +39,7 @@ def test_edit_playbook(
     )
 
     # Edit playbook with roles
-    role = test_role.as_json()
+    role = test_role.dict()
     response = client.put(
         f"/api/v1/playbooks/{test_playbook.id}",
         json={"role_ids": [role["id"]]},
@@ -53,7 +53,7 @@ def test_edit_playbook(
 
 
 def test_create_playbook_with_role(client, test_role, superuser_token_headers):
-    role = test_role.as_json()
+    role = test_role.dict()
     playbook = {
         "name": "New playbook",
         "description": "New desc",

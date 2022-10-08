@@ -5,7 +5,7 @@ from app.db.jobs.schemas import ExtensionMode
 
 
 def test_get_jobs(client, test_job, superuser_token_headers):
-    job = test_job.as_json()
+    job = test_job.dict()
     response = client.get("/api/v1/jobs", headers=superuser_token_headers)
     assert response.status_code == 200
     assert all(response.json()[0][arg] == job[arg] for arg in job)
@@ -38,7 +38,7 @@ def test_edit_job(
     assert response.json()["description"] == new_job["description"]
 
     # Edit job with roles
-    role = test_role.as_json()
+    role = test_role.dict()
     response = client.put(
         f"/api/v1/jobs/{test_job.id}",
         json={"role_ids": [role["id"]]},
@@ -52,7 +52,7 @@ def test_edit_job(
 def test_create_job_with_role(
     client, test_role, test_application_url, superuser_token_headers
 ):
-    role = test_role.as_json()
+    role = test_role.dict()
     job = {
         "name": "New jobs",
         "description": "New desc",

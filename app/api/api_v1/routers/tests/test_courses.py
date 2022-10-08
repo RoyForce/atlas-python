@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 
 
 def test_get_courses(client, test_course, superuser_token_headers):
-    course = test_course.as_json()
+    course = test_course.dict()
     response = client.get("/api/v1/courses", headers=superuser_token_headers)
     assert response.status_code == 200
     assert all(response.json()[0][arg] == course[arg] for arg in course)
@@ -37,7 +37,7 @@ def test_delete_course(client, test_course, test_db, superuser_token_headers):
 #         "passing_percentage": test_course.passing_percentage,
 #         }
 # -----------
-# course = test_course.as_json()
+# course = test_course.dict()
 # response = client.get(
 #     f"/api/v1/courses/{test_course.id}", headers=superuser_token_headers
 # )
@@ -45,9 +45,7 @@ def test_delete_course(client, test_course, test_db, superuser_token_headers):
 # assert all(response.json()[0][arg] == course[arg] for arg in course)
 
 
-def test_create_course_with_items(
-    client, test_course, superuser_token_headers
-):
+def test_create_course_with_items(client, test_course, superuser_token_headers):
 
     items = {
         "course_id": 1,
