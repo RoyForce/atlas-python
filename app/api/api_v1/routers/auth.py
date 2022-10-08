@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from datetime import timedelta
 
 from app.db.session import get_db
+from app.db.users.schemas import User
 from app.core import security
 from app.core.auth import authenticate_user, sign_up_new_user
 
@@ -26,6 +27,8 @@ async def login(
     )
     if user.is_superuser:
         permissions = "admin"
+    elif user.is_designer:
+        permissions = "designer"
     else:
         permissions = "user"
     access_token = security.create_access_token(
@@ -33,7 +36,11 @@ async def login(
         expires_delta=access_token_expires,
     )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": User.from_orm(user),
+    }
 
 
 @r.post("/signup")
