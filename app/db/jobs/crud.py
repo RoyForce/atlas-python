@@ -29,6 +29,7 @@ def create_job(db: Session, job: schemas.JobCreate):
         name=job.name,
         description=job.description,
         application_url_id=job.application_url_id,
+        is_template=job.is_template,
     )
 
     db.add(db_job)

@@ -13,6 +13,7 @@ class JobBase(BaseModel):
     description: str = None
     is_locked: bool = None
     steps: Dict[AnyStr, Any] = None
+    is_template: bool = None
 
 
 class JobOut(JobBase):

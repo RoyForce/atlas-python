@@ -45,7 +45,9 @@ def test_delete_course(client, test_course, test_db, superuser_token_headers):
 # assert all(response.json()[0][arg] == course[arg] for arg in course)
 
 
-def test_create_course_with_items(client, test_course, superuser_token_headers):
+def test_create_course_with_items(
+    client, test_course, superuser_token_headers
+):
 
     items = {
         "course_id": 1,

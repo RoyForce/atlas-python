@@ -26,6 +26,7 @@ def test_edit_job(
         "name": "New jobs",
         "description": "New desc",
         "application_url_id": test_application_url.id,
+        "is_template": False,
     }
 
     response = client.put(
@@ -58,6 +59,7 @@ def test_create_job_with_role(
         "description": "New desc",
         "application_url_id": test_application_url.id,
         "role_ids": [role["id"]],
+        "is_template": False,
     }
     response = client.post(
         "/api/v1/jobs", json=job, headers=superuser_token_headers

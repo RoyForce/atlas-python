@@ -217,6 +217,7 @@ def test_job(test_db, test_application_url) -> Job:
         name="testName",
         description="testDesc",
         application_url_id=test_application_url.id,
+        is_template=False,
     )
     test_db.add(jobs)
     test_db.commit()

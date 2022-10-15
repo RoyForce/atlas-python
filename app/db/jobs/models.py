@@ -30,6 +30,7 @@ class Job(Base, CoreBase):
         "Role", secondary="job_role_mappings", back_populates="jobs"
     )
     application_url = relationship("ApplicationUrl", backref="jobs")
+    is_template = Column(Boolean, default=False)
 
     @property
     def role_ids(self) -> List[int]:

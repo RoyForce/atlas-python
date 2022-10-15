@@ -35,7 +35,9 @@ async def login(
         data={
             "sub": user.email,
             "permissions": permissions,
-            "user": user.dict(exclude=["hashed_password", "role_id", "is_active"]),
+            "user": user.dict(
+                exclude=["hashed_password", "role_id", "is_active"]
+            ),
         },
         expires_delta=access_token_expires,
     )
