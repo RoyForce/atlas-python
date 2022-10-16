@@ -11,6 +11,7 @@ def test_get_lessons(client, test_lesson, superuser_token_headers):
             "description": test_lesson.description,
             "duration": test_lesson.duration,
             "page_content": test_lesson.page_content,
+            "is_template": False,
         }
     ]
 
@@ -38,6 +39,7 @@ def test_get_lesson(
         "description": test_lesson.description,
         "duration": test_lesson.duration,
         "page_content": test_lesson.page_content,
+        "is_template": False,
     }
 
 

@@ -7,6 +7,7 @@ class LessonBase(BaseModel):
     description: str = None
     duration: int = None
     page_content: str = None
+    is_template: bool = None
 
 
 class LessonOut(LessonBase):

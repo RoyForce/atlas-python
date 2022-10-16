@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 
 from app.db.session import Base
 from app.db.core import CoreBase
@@ -13,3 +13,4 @@ class Lesson(Base, CoreBase):
     description = Column(String, nullable=True)
     duration = Column(Integer, nullable=True)
     page_content = Column(String, nullable=True)
+    is_template = Column(Boolean, default=False)

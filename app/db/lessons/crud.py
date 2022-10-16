@@ -21,16 +21,12 @@ def get_lessons(
 
 
 def create_lesson(db: Session, lesson: schemas.LessonCreate):
-    print("-----------ssss----------------")
-    print(type(lesson))
-    print(lesson)
-    print("--------xxxxx--------------")
-    print(lesson.name)
     db_lesson = models.Lesson(
         name=lesson.name,
         description=lesson.description,
         duration=lesson.duration,
         page_content=lesson.page_content,
+        is_template=lesson.is_template,
     )
     db.add(db_lesson)
     db.commit()
