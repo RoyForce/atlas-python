@@ -11,6 +11,7 @@ class ItemsEnum(str, Enum):
 
 
 class CourseItemBase(BaseModel):
+    id: int = None
     item_type: ItemsEnum = None
     item_title: str = None
     item_id: int = None

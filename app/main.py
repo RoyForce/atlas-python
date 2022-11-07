@@ -9,9 +9,9 @@ from app.api.api_v1.routers.auth import auth_router
 from app.api.api_v1.routers.application_urls import application_urls_router
 from app.api.api_v1.routers.jobs import jobs_router, extension_router
 from app.api.api_v1.routers.playbooks import playbook_router
-from app.api.api_v1.routers.table_configs import table_config_router
 from app.api.api_v1.routers.lessons import lesson_router
 from app.api.api_v1.routers.courses import courses_router
+from app.api.api_v1.routers.use_cases import use_case_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
@@ -95,12 +95,6 @@ app.include_router(
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(
-    table_config_router,
-    prefix="/api/v1",
-    tags=["table_config"],
-    dependencies=[Depends(get_current_active_user)],
-)
-app.include_router(
     lesson_router,
     prefix="/api/v1",
     tags=["lesson"],
@@ -110,6 +104,12 @@ app.include_router(
     courses_router,
     prefix="/api/v1",
     tags=["courses"],
+    dependencies=[Depends(get_current_active_user)],
+)
+app.include_router(
+    use_case_router,
+    prefix="/api/v1",
+    tags=["use-cases"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(auth_router, prefix="/api", tags=["auth"])

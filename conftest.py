@@ -13,9 +13,9 @@ from app.db.roles.models import Role
 from app.db.jobs.models import Job
 from app.db.application_urls.models import ApplicationUrl
 from app.db.playbooks.models import Playbook
-from app.db.table_configs.models import TableConfig
 from app.db.lessons.models import Lesson
 from app.db.courses.models import Course
+from app.db.use_cases.models import UseCase
 from app.main import app
 
 
@@ -241,22 +241,6 @@ def test_playbook(test_db) -> Playbook:
 
 
 @pytest.fixture
-def test_table_config(test_db) -> TableConfig:
-    """
-    Make a test table config in the database
-    """
-
-    table_config = TableConfig(
-        user_id=1,
-        table="JOB_ROLE_MATRIX",
-        config={"test": "test"},
-    )
-    test_db.add(table_config)
-    test_db.commit()
-    return table_config
-
-
-@pytest.fixture
 def test_lesson(test_db) -> Lesson:
     """
     Make a test lessons in the database
@@ -290,3 +274,19 @@ def test_course(test_db) -> Course:
     test_db.add(course)
     test_db.commit()
     return course
+
+
+@pytest.fixture
+def test_use_case(test_db) -> UseCase:
+    """
+    Make a test UseCase in the database
+    """
+
+    use_cases = UseCase(
+        name="testname",
+        description="testdesc",
+        table_config="testconf",
+    )
+    test_db.add(use_cases)
+    test_db.commit()
+    return use_cases

@@ -1,42 +1,41 @@
-from email.policy import default
+from ctypes import Union
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 from app.db.core import CoreBase
-
 from typing import List
+from app import db
 
 
-class JobRole(Base):
-    __tablename__ = "job_role_mappings"
+class UseCaseMapping(Base):
+    __tablename__ = "use_cases_mappings"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    use_case_id = Column(
+        "use_case_id", ForeignKey("use_cases.id"), primary_key=True
+    )
     job_id = Column("job_id", ForeignKey("jobs.id"), primary_key=True)
     role_id = Column("role_id", ForeignKey("roles.id"), primary_key=True)
 
 
-class Job(Base, CoreBase):
-    __tablename__ = "jobs"
+class UseCase(Base, CoreBase):
+    __tablename__ = "use_cases"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    application_url_id = Column(
-        Integer, ForeignKey("application_urls.id"), nullable=True
-    )
-    steps = Column(JSONB, nullable=True, default={})
-    is_locked = Column(Boolean, default=False)
+    table_config = Column(String)
     roles = relationship(
-        "Role", secondary="job_role_mappings", back_populates="jobs"
+        "Role", secondary="use_cases_mappings", back_populates="use_cases"
     )
-    application_url = relationship(
-        "ApplicationUrl", lazy="subquery", backref="jobs"
-    )
-    is_template = Column(Boolean, default=False)
-    use_cases = relationship(
-        "UseCase", secondary="use_cases_mappings", back_populates="jobs"
+    jobs = relationship(
+        "Job", secondary="use_cases_mappings", back_populates="use_cases"
     )
 
     @property
     def role_ids(self) -> List[int]:
         return [role.id for role in self.roles]
+
+    @property
+    def job_ids(self) -> List[int]:
+        return [job.id for job in self.jobs]

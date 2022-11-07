@@ -4,6 +4,7 @@ import typing as t
 from fastapi.encoders import jsonable_encoder
 from . import models, schemas
 from app.db.users.crud import get_user
+from app.db.use_cases.crud import get_use_case_mappings
 from app.core import security
 
 
@@ -51,6 +52,7 @@ def delete_job(db: Session, job_id: int):
     job = get_job(db, job_id)
     if not job:
         raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Job not found")
+    delete_job_mapping(db, job_id)
     db.delete(job)
     db.commit()
     return job
@@ -108,7 +110,8 @@ def validate_user_and_job(db: Session, job_id, user_id, mode):
 
 
 def delete_job_role(db: Session, job_id: int):
-    job_roles = get_job_roles(db, job_id)
+    type = "jobs"
+    job_roles = get_job_roles(db, type, job_id)
     if job_roles:
         for value in job_roles:
             db.delete(value)
@@ -116,9 +119,25 @@ def delete_job_role(db: Session, job_id: int):
     return job_roles
 
 
-def get_job_roles(db: Session, job_id: int):
-    job_roles = (
-        db.query(models.JobRole).filter(models.JobRole.job_id == job_id).all()
-    )
+def get_job_roles(db: Session, type: str, id: int):
+    job_roles = False
+    if type == "jobs":
+        job_roles = (
+            db.query(models.JobRole).filter(models.JobRole.job_id == id).all()
+        )
+    elif type == "roles":
+        job_roles = (
+            db.query(models.JobRole).filter(models.JobRole.role_id == id).all()
+        )
     if job_roles:
         return job_roles
+
+
+def delete_job_mapping(db: Session, job_id: int):
+    delete_job_role(db, job_id)
+    use_case_resp = get_use_case_mappings(db, "job", job_id)
+    if use_case_resp:
+        for value in use_case_resp:
+            db.delete(value)
+            db.commit()
+    return True

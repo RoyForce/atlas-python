@@ -107,3 +107,13 @@ def get_playbook_roles(db: Session, playbook_id: int):
     )
     if playbook_roles:
         return playbook_roles
+
+
+def get_playbook_by_role(db: Session, role_id: int):
+    playbook_roles = (
+        db.query(models.PlaybookRole)
+        .filter(models.PlaybookRole.role_id == role_id)
+        .all()
+    )
+    if playbook_roles:
+        return playbook_roles
