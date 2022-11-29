@@ -39,3 +39,7 @@ class UseCase(Base, CoreBase):
     @property
     def job_ids(self) -> List[int]:
         return [job.id for job in self.jobs]
+
+    @property
+    def use_case_mapping(self) -> List[UseCaseMapping]:
+        return UseCaseMapping.query.filter_by(use_case_id=self.id).all()

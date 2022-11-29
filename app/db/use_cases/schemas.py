@@ -34,12 +34,20 @@ class UseCaseEdit(UseCaseBase):
         orm_mode = True
 
 
+class UseCaseMapping(BaseModel):
+    id: int
+    use_case_id: int = None
+    job_id: int = None
+    role_id: int = None
+
+
 class UseCase(UseCaseBase):
     id: int
     roles: List[Role] = None
     role_ids: List[int] = []
     jobs: List[Job] = None
     job_ids: List[int] = []
+    use_case_mapping: List[UseCaseMapping] = []
 
     class Config:
         orm_mode = True
