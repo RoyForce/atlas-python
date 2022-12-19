@@ -76,6 +76,7 @@ def test_create_course_with_items(
 
 
 def test_edit_course(client, test_course, superuser_token_headers):
+
     update_course = {
         "name": "test name",
         "description": "test desc",
@@ -94,21 +95,55 @@ def test_edit_course(client, test_course, superuser_token_headers):
         response.json()[arg] == update_course[arg] for arg in update_course
     )
 
-    items = {
-        "course_id": 1,
-        "item_id": 1,
-        "item_order": 0,
-        "item_type": "LESSON",
-        "item_title": "LE one",
-    }
-
-    # items_json = json.dumps(items, indent = 4)
-    items_json = jsonable_encoder(items)
+    items = [
+        {
+            "item_order": 1,
+            "item_type": "LESSON",
+            "item_title": "L1",
+        },
+        {
+            "item_order": 2,
+            "item_type": "SECTION",
+            "item_title": "S1",
+        },
+    ]
     response = client.put(
         f"/api/v1/courses/{test_course.id}",
-        # json={"items": items_json},
-        json={"items": [items_json]},
+        json={"items": items},
+        headers=superuser_token_headers,
+    )
+
+    assert response.status_code == 200
+    assert all(
+        response.json()["items"][i]["item_title"] == items[i]["item_title"]
+        for i in range(len(items))
+    )
+    items = [
+        *response.json()["items"],
+        {
+            "item_order": 3,
+            "item_type": "LESSON",
+            "item_title": "L2",
+        },
+    ]
+    response = client.put(
+        f"/api/v1/courses/{test_course.id}",
+        json={"items": items},
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    # assert response.json()["items"][0] == items_json
+    assert all(
+        response.json()["items"][i]["item_title"] == items[i]["item_title"]
+        for i in range(len(items))
+    )
+
+    items = [*response.json()["items"]]
+    items.pop(0)
+
+    response = client.put(
+        f"/api/v1/courses/{test_course.id}",
+        json={"items": items},
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 200
+    assert len(response.json()["items"]) == 2

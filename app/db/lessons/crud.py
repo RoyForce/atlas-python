@@ -67,9 +67,7 @@ def edit_lesson(
 def get_lesson_by_name(db: Session, name: str):
     lesson = db.query(models.Lesson).filter(models.Lesson.name == name).first()
     if not lesson:
-        db_lesson = models.Lesson(
-            name=name,
-        )
+        db_lesson = models.Lesson(name=name, is_template=False)
         db.add(db_lesson)
         db.commit()
         db.refresh(db_lesson)
