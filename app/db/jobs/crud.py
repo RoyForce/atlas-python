@@ -1,7 +1,6 @@
 from fastapi import HTTPException, status, Request
 from sqlalchemy.orm import Session
 import typing as t
-from fastapi.encoders import jsonable_encoder
 from . import models, schemas
 from app.db.users.crud import get_user
 from app.db.use_cases.crud import get_use_case_mappings
@@ -22,9 +21,6 @@ def get_jobs(
 
 
 def create_job(db: Session, job: schemas.JobCreate):
-
-    # job_data = jsonable_encoder(job)
-    # db_job = models.Job(**job_data)
 
     db_job = models.Job(
         name=job.name,
@@ -73,6 +69,8 @@ def edit_job(db: Session, job_id: int, job: schemas.JobEdit) -> schemas.Job:
             ]
             db.add_all(db_job_roles)
             db.commit()
+        elif key == "steps":
+            setattr(db_job, key, {k.decode(): v for k, v in value.items()})
         else:
             setattr(db_job, key, value)
 

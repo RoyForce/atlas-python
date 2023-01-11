@@ -122,3 +122,27 @@ def test_if_user_can_access_job(
         headers=extension_token_headers,
     )
     assert response.status_code == 403
+
+
+def test_edit_job_can_accept_json_steps_value(
+    client, test_job, superuser_token_headers
+):
+    payload = {
+        "steps": {
+            "steps": [],
+            "defaultAdvancedSetting": {
+                "waitForObject": 1.5,
+                "intervalBetweenAttempts": 1.5,
+                "numberOfAttempts": 1,
+                "overlayIntensity": 10,
+            },
+        },
+    }
+
+    response = client.put(
+        f"/api/v1/jobs/{test_job.id}",
+        json=payload,
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 200
+    assert response.json()["steps"] == payload["steps"]
