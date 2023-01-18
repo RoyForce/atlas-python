@@ -10,6 +10,7 @@ class Role(Base, CoreBase):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
+    description = Column(String, nullable=True)
     jobs = relationship(
         "Job", secondary="job_role_mappings", back_populates="roles"
     )

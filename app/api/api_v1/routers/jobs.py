@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from app.core.auth import get_current_active_user
+from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
-
+from app.db.jobs import models
 from app.db.session import get_db
 from app.db.jobs.crud import (
-    get_jobs,
-    get_job,
     create_job,
     delete_job,
     edit_job,
@@ -17,7 +16,7 @@ from app.db.jobs.schemas import (
     JobEdit,
     Job,
 )
-from app.core.auth import get_current_active_superuser
+from app.db.core import get_lists, get_item
 
 jobs_router = r = APIRouter()
 extension_router = er = APIRouter()
@@ -29,14 +28,15 @@ extension_router = er = APIRouter()
     response_model_exclude_none=True,
 )
 async def jobs_list(
+    request: Request,
     response: Response,
     db=Depends(get_db),
-    current_jobs=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all Jobs
     """
-    jobs = get_jobs(db)
+    jobs = get_lists(db, models.Job, request.query_params)
     response.headers["Content-Range"] = f"0-9/{len(jobs)}"
     return jobs
 
@@ -47,24 +47,20 @@ async def jobs_list(
     response_model_exclude_none=True,
 )
 async def job_details(
-    request: Request,
     job_id: int,
     db=Depends(get_db),
-    current_jobs=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any job details
     """
-    jobs = get_job(db, job_id)
-    return jobs
+    return get_item(db, models.Job, job_id)
 
 
 @r.post("/jobs", response_model=Job, response_model_exclude_none=True)
 async def job_create(
-    request: Request,
     job: JobCreate,
     db=Depends(get_db),
-    current_jobs=Depends(get_current_active_superuser),
 ):
     """
     Create a new job
@@ -74,11 +70,10 @@ async def job_create(
 
 @r.put("/jobs/{job_id}", response_model=Job, response_model_exclude_none=True)
 async def jobs_edit(
-    request: Request,
     job_id: int,
     jobs: JobEdit,
     db=Depends(get_db),
-    current_job=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing Job
@@ -90,10 +85,9 @@ async def jobs_edit(
     "/jobs/{job_id}", response_model=Job, response_model_exclude_none=True
 )
 async def job_delete(
-    request: Request,
     job_id: int,
     db=Depends(get_db),
-    current_job=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing jobs

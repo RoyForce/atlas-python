@@ -12,10 +12,6 @@ class UserBase(BaseModel):
     is_designer: bool = False
 
 
-class UserOut(UserBase):
-    pass
-
-
 class UserCreate(UserBase):
     password: str
 

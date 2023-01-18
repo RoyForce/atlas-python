@@ -8,6 +8,7 @@ def test_get_roles(client, test_role, superuser_token_headers):
         {
             "id": test_role.id,
             "name": test_role.name,
+            "description": test_role.description,
         }
     ]
 
@@ -29,15 +30,14 @@ def test_delete_user_not_found(client, superuser_token_headers):
 
 def test_edit_user(client, test_role, superuser_token_headers):
     new_role = {"name": "Manager"}
-
     response = client.put(
         f"/api/v1/roles/{test_role.id}",
         json=new_role,
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    new_role["id"] = test_role.id
-    assert response.json() == new_role
+    assert response.json()["id"] == test_role.id
+    assert response.json()["name"] == new_role["name"]
 
 
 def test_edit_role_not_found(client, test_db, superuser_token_headers):
@@ -57,7 +57,11 @@ def test_get_role(
         f"/api/v1/roles/{test_role.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert response.json() == {"id": test_role.id, "name": test_role.name}
+    assert response.json() == {
+        "id": test_role.id,
+        "name": test_role.name,
+        "description": test_role.description,
+    }
 
 
 def test_role_not_found(client, superuser_token_headers):

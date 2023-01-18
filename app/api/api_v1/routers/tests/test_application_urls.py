@@ -13,6 +13,7 @@ def test_get_application_urls(
             "id": test_application_url.id,
             "name": test_application_url.name,
             "url": test_application_url.url,
+            "description": test_application_url.description,
         }
     ]
 
@@ -39,8 +40,9 @@ def test_edit_application_url(
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    new_application_url["id"] = test_application_url.id
-    assert response.json() == new_application_url
+    assert response.json()["id"] == test_application_url.id
+    assert response.json()["name"] == new_application_url["name"]
+    assert response.json()["url"] == new_application_url["url"]
 
 
 def test_get_application_url(
@@ -57,4 +59,5 @@ def test_get_application_url(
         "id": test_application_url.id,
         "name": test_application_url.name,
         "url": test_application_url.url,
+        "description": test_application_url.description,
     }

@@ -4,14 +4,12 @@ import typing as t
 
 class RoleBase(BaseModel):
     name: str
-
-
-class RoleOut(RoleBase):
-    pass
+    description: str = None
 
 
 class RoleCreate(RoleBase):
     name: str
+    description: str = None
 
     class Config:
         orm_mode = True

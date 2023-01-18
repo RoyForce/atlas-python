@@ -1,29 +1,10 @@
-from tabnanny import check
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 
 from . import models, schemas
-from app.db.lessons.crud import create_lesson, get_lesson_by_name
-from fastapi.encoders import jsonable_encoder
-import json
-from pprint import pprint
-from app.db.lessons.crud import delete_lesson
-
-
-def get_course(db: Session, course_id: int):
-    course = (
-        db.query(models.Course).filter(models.Course.id == course_id).first()
-    )
-    if not course:
-        raise HTTPException(status_code=404, detail="Course not found")
-    return course
-
-
-def get_courses(
-    db: Session, skip: int = 0, limit: int = 100
-) -> t.List[schemas.CourseOut]:
-    return db.query(models.Course).offset(skip).limit(limit).all()
+from app.db.lessons.models import Lesson
+from app.db.core import delete_item
 
 
 def create_course(db: Session, course: schemas.CourseCreate):
@@ -56,22 +37,13 @@ def create_course(db: Session, course: schemas.CourseCreate):
     return db_course
 
 
-def delete_course(db: Session, course_id: int):
-    course = get_course(db, course_id)
-    if not course:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="Course not found"
-        )
-    db.delete(course)
-    db.commit()
-    return course
-
-
 def edit_course(
     db: Session, course_id: int, course: schemas.CourseEdit
 ) -> schemas.Course:
     course_item = get_course_item(db, course_id)
-    db_course = get_course(db, course_id)
+    db_course = (
+        db.query(models.Course).filter(models.Course.id == course_id).first()
+    )
     if not db_course:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="Course not found"
@@ -99,7 +71,9 @@ def edit_course(
                 else:
                     item_id = 0
                     if item["item_type"] == "LESSON":
-                        resp = get_lesson_by_name(db, item["item_title"])
+                        resp = get_lesson_by_name_create_if_none(
+                            db, item["item_title"]
+                        )
                         item_id = resp.id
                     db_course_items = models.CourseItems(
                         course_id=db_course.id,
@@ -154,6 +128,17 @@ def delete_extra_course_items(db: Session, item_to_delete: any):
     for item_row in course_item:
         db.delete(item_row)
         if item_row.item_type == "LESSON":
-            delete_lesson(db, item_row.item_id)
+            delete_item(db, Lesson, item_row.item_id)
     db.commit()
     return True
+
+
+def get_lesson_by_name_create_if_none(db: Session, name: str):
+    lesson = db.query(Lesson).filter(Lesson.name == name).first()
+    if not lesson:
+        db_lesson = Lesson(name=name, is_template=False)
+        db.add(db_lesson)
+        db.commit()
+        db.refresh(db_lesson)
+        return db_lesson
+    return lesson

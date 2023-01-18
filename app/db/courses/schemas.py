@@ -30,11 +30,6 @@ class CourseBase(BaseModel):
     items: Any = None
 
 
-class CourseOut(CourseItemBase):
-    # items: List[CourseItemBase] = None
-    pass
-
-
 class CourseCreate(CourseBase):
     name: str
     items: List[CourseItemBase] = None

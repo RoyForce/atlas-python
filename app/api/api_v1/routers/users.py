@@ -1,16 +1,15 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
 from app.db.session import get_db
+from app.db.users import models
+from app.db.core import get_lists, get_item, delete_item
 from app.db.users.crud import (
-    get_users,
-    get_user,
     create_user,
-    delete_user,
     edit_user,
 )
-from app.db.users.schemas import UserCreate, UserEdit, User, UserOut
-from app.core.auth import get_current_active_user, get_current_active_superuser
+from app.db.users.schemas import UserCreate, UserEdit, User
+from app.core.auth import get_current_active_superuser, get_current_active_user
 
 users_router = r = APIRouter()
 
@@ -21,6 +20,7 @@ users_router = r = APIRouter()
     response_model_exclude_none=True,
 )
 async def users_list(
+    request: Request,
     response: Response,
     db=Depends(get_db),
     current_user=Depends(get_current_active_superuser),
@@ -28,8 +28,7 @@ async def users_list(
     """
     Get all users
     """
-    users = get_users(db)
-    # This is necessary for react-admin to work
+    users = get_lists(db, models.User, request.query_params)
     response.headers["Content-Range"] = f"0-9/{len(users)}"
     return users
 
@@ -48,7 +47,6 @@ async def user_me(current_user=Depends(get_current_active_user)):
     response_model_exclude_none=True,
 )
 async def user_details(
-    request: Request,
     user_id: int,
     db=Depends(get_db),
     current_user=Depends(get_current_active_superuser),
@@ -56,16 +54,11 @@ async def user_details(
     """
     Get any user details
     """
-    user = get_user(db, user_id)
-    return user
-    # return encoders.jsonable_encoder(
-    #     user, skip_defaults=True, exclude_none=True,
-    # )
+    return get_item(db, models.User, user_id)
 
 
 @r.post("/users", response_model=User, response_model_exclude_none=True)
 async def user_create(
-    request: Request,
     user: UserCreate,
     db=Depends(get_db),
     current_user=Depends(get_current_active_superuser),
@@ -80,7 +73,6 @@ async def user_create(
     "/users/{user_id}", response_model=User, response_model_exclude_none=True
 )
 async def user_edit(
-    request: Request,
     user_id: int,
     user: UserEdit,
     db=Depends(get_db),
@@ -96,7 +88,6 @@ async def user_edit(
     "/users/{user_id}", response_model=User, response_model_exclude_none=True
 )
 async def user_delete(
-    request: Request,
     user_id: int,
     db=Depends(get_db),
     current_user=Depends(get_current_active_superuser),
@@ -104,4 +95,4 @@ async def user_delete(
     """
     Delete existing user
     """
-    return delete_user(db, user_id)
+    return delete_item(db, models.User, user_id)

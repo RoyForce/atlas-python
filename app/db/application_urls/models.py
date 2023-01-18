@@ -9,4 +9,5 @@ class ApplicationUrl(Base, CoreBase):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
+    description = Column(String, nullable=True)
     url = Column(String)

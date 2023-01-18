@@ -1,31 +1,18 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
-from fastapi.encoders import jsonable_encoder
 from . import models, schemas
 
 
 def get_use_case(db: Session, use_case_id: int):
-    use_case = (
+    return (
         db.query(models.UseCase)
         .filter(models.UseCase.id == use_case_id)
         .first()
     )
-    if not use_case:
-        raise HTTPException(status_code=404, detail="UseCase not found")
-    return use_case
-
-
-def get_use_cases(
-    db: Session, skip: int = 0, limit: int = 100
-) -> t.List[schemas.UseCaseOut]:
-    return db.query(models.UseCase).offset(skip).limit(limit).all()
 
 
 def create_use_case(db: Session, use_case: schemas.UseCaseCreate):
-
-    # use_case_data = jsonable_encoder(use_case)
-    # db_use_case = models.UseCase(**use_case_data)
     db_use_case = models.UseCase(
         name=use_case.name,
         description=use_case.description,
@@ -53,18 +40,6 @@ def create_use_case(db: Session, use_case: schemas.UseCaseCreate):
 
     db.refresh(db_use_case)
     return db_use_case
-
-
-def delete_use_case(db: Session, use_case_id: int):
-    use_case = get_use_case(db, use_case_id)
-    if not use_case:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="UseCase not found"
-        )
-    delete_use_case_role_job(db, use_case_id)
-    db.delete(use_case)
-    db.commit()
-    return use_case
 
 
 def edit_use_case(

@@ -1,16 +1,15 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from app.core.auth import get_current_active_user
+from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
 from app.db.session import get_db
+from app.db.courses import models
+from app.db.core import get_lists, get_item, delete_item
 from app.db.courses.crud import (
-    get_courses,
-    get_course,
     create_course,
-    delete_course,
     edit_course,
 )
-from app.db.courses.schemas import CourseCreate, CourseEdit, Course, CourseOut
-from app.core.auth import get_current_active_superuser
+from app.db.courses.schemas import CourseCreate, CourseEdit, Course
 
 courses_router = r = APIRouter()
 
@@ -21,13 +20,15 @@ courses_router = r = APIRouter()
     response_model_exclude_none=True,
 )
 async def courses_list(
+    request: Request,
     response: Response,
     db=Depends(get_db),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all courses
     """
-    courses = get_courses(db)
+    courses = get_lists(db, models.Course, request.query_params)
     response.headers["Content-Range"] = f"0-9/{len(courses)}"
     return courses
 
@@ -40,18 +41,19 @@ async def courses_list(
 async def course_details(
     course_id: int,
     db=Depends(get_db),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any course details
     """
-    course = get_course(db, course_id)
-    return course
+    return get_item(db, models.Course, course_id)
 
 
 @r.post("/courses", response_model=Course, response_model_exclude_none=True)
 async def course_create(
     course: CourseCreate,
     db=Depends(get_db),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new course
@@ -68,6 +70,7 @@ async def course_edit(
     course_id: int,
     course: CourseEdit,
     db=Depends(get_db),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing course
@@ -83,8 +86,9 @@ async def course_edit(
 async def course_delete(
     course_id: int,
     db=Depends(get_db),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing course
     """
-    return delete_course(db, course_id)
+    return delete_item(db, models.Course, course_id)

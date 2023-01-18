@@ -11,10 +11,6 @@ class PlaybookBase(BaseModel):
     page_content: str = None
 
 
-class PlaybookOut(PlaybookBase):
-    roles: List[Role] = None
-
-
 class PlaybookCreate(PlaybookBase):
     name: str
     role_ids: List[int] = []

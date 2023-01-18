@@ -1,16 +1,18 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from app.core.auth import get_current_active_user
+from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
 from app.db.session import get_db
-from app.db.roles.crud import (
-    get_roles,
-    get_role,
-    create_role,
-    delete_role,
-    edit_role,
+from app.db.roles import models
+from app.db.core import (
+    get_lists,
+    get_item,
+    create_item,
+    delete_item,
+    edit_item,
 )
-from app.db.roles.schemas import RoleCreate, RoleEdit, Role, RoleOut
-from app.core.auth import get_current_active_superuser
+from app.db.roles.crud import delete_role_mapping
+from app.db.roles.schemas import RoleCreate, RoleEdit, Role
 
 roles_router = r = APIRouter()
 
@@ -21,14 +23,15 @@ roles_router = r = APIRouter()
     response_model_exclude_none=True,
 )
 async def roles_list(
+    request: Request,
     response: Response,
     db=Depends(get_db),
-    current_role=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all roles
     """
-    roles = get_roles(db)
+    roles = get_lists(db, models.Role, request.query_params)
     response.headers["Content-Range"] = f"0-9/{len(roles)}"
     return roles
 
@@ -39,57 +42,53 @@ async def roles_list(
     response_model_exclude_none=True,
 )
 async def role_details(
-    request: Request,
     role_id: int,
     db=Depends(get_db),
-    current_role=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any role details
     """
-    role = get_role(db, role_id)
-    return role
+    return get_item(db, models.Role, role_id)
 
 
 @r.post("/roles", response_model=Role, response_model_exclude_none=True)
 async def role_create(
-    request: Request,
     role: RoleCreate,
     db=Depends(get_db),
-    current_role=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new role
     """
-    return create_role(db, role)
+    return create_item(db, models.Role, role)
 
 
 @r.put(
     "/roles/{role_id}", response_model=Role, response_model_exclude_none=True
 )
 async def role_edit(
-    request: Request,
     role_id: int,
     role: RoleEdit,
     db=Depends(get_db),
-    current_role=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing role
     """
-    return edit_role(db, role_id, role)
+    return edit_item(db, models.Role, role_id, role)
 
 
 @r.delete(
     "/roles/{role_id}", response_model=Role, response_model_exclude_none=True
 )
 async def role_delete(
-    request: Request,
     role_id: int,
     db=Depends(get_db),
-    current_role=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing role
     """
-    return delete_role(db, role_id)
+    delete_role_mapping(db, role_id)
+    return delete_item(db, models.Role, role_id)

@@ -16,12 +16,6 @@ class JobBase(BaseModel):
     is_template: bool = None
 
 
-class JobOut(JobBase):
-    application_url: ApplicationUrl = None
-    roles: List[Role] = None
-    pass
-
-
 class JobCreate(JobBase):
     name: str
     application_url_id: int = None

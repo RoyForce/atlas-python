@@ -8,27 +8,16 @@ from app.core import security
 
 
 def get_job(db: Session, job_id: int):
-    job = db.query(models.Job).filter(models.Job.id == job_id).first()
-    if not job:
-        raise HTTPException(status_code=404, detail="job not found")
-    return job
-
-
-def get_jobs(
-    db: Session, skip: int = 0, limit: int = 100
-) -> t.List[schemas.JobOut]:
-    return db.query(models.Job).offset(skip).limit(limit).all()
+    return db.query(models.Job).filter(models.Job.id == job_id).first()
 
 
 def create_job(db: Session, job: schemas.JobCreate):
-
     db_job = models.Job(
         name=job.name,
         description=job.description,
         application_url_id=job.application_url_id,
         is_template=job.is_template,
     )
-
     db.add(db_job)
     db.commit()
 

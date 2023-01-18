@@ -10,10 +10,6 @@ class LessonBase(BaseModel):
     is_template: bool = None
 
 
-class LessonOut(LessonBase):
-    pass
-
-
 class LessonCreate(LessonBase):
     name: str
 

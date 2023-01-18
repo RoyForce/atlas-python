@@ -12,11 +12,6 @@ class UseCaseBase(BaseModel):
     table_config: str = None
 
 
-class UseCaseOut(UseCaseBase):
-    roles: List[Role] = None
-    jobs: List[Job] = None
-
-
 class UseCaseCreate(UseCaseBase):
     name: str
     role_ids: List[int] = []

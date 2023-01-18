@@ -189,7 +189,7 @@ def test_role(test_db) -> Role:
     Make a test role in the database
     """
 
-    role = Role(name="Developer")
+    role = Role(name="Developer", description="Develops things")
     test_db.add(role)
     test_db.commit()
     return role
@@ -201,7 +201,9 @@ def test_application_url(test_db) -> ApplicationUrl:
     Make a test application url in the database
     """
 
-    application_url = ApplicationUrl(name="Atlas", url="atlas.com")
+    application_url = ApplicationUrl(
+        name="Atlas", url="atlas.com", description="test"
+    )
     test_db.add(application_url)
     test_db.commit()
     return application_url

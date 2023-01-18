@@ -1,22 +1,21 @@
-from fastapi import APIRouter, Request, Depends, Response, encoders
+from app.core.auth import get_current_active_user
+from fastapi import APIRouter, Depends, Response, Request
 import typing as t
 
 
 from app.db.session import get_db
+from app.db.playbooks import models
+from app.db.core import get_lists, get_item, delete_item
+
 from app.db.playbooks.crud import (
-    get_playbooks,
-    get_playbook,
     create_playbook,
-    delete_playbook,
     edit_playbook,
 )
 from app.db.playbooks.schemas import (
     PlaybookCreate,
     PlaybookEdit,
     Playbook,
-    PlaybookOut,
 )
-from app.core.auth import get_current_active_superuser
 
 playbook_router = r = APIRouter()
 
@@ -27,14 +26,15 @@ playbook_router = r = APIRouter()
     response_model_exclude_none=True,
 )
 async def playbooks_list(
+    request: Request,
     response: Response,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all Playbooks
     """
-    playbooks = get_playbooks(db)
+    playbooks = get_lists(db, models.Playbook, request.query_params)
     response.headers["Content-Range"] = f"0-9/{len(playbooks)}"
     return playbooks
 
@@ -45,26 +45,23 @@ async def playbooks_list(
     response_model_exclude_none=True,
 )
 async def playbook_details(
-    request: Request,
     playbook_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any playbook details
     """
-    playbooks = get_playbook(db, playbook_id)
-    return playbooks
+    return get_item(db, models.Playbook, playbook_id)
 
 
 @r.post(
     "/playbooks", response_model=Playbook, response_model_exclude_none=True
 )
 async def playbook_create(
-    request: Request,
     playbook: PlaybookCreate,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new playbook
@@ -78,11 +75,10 @@ async def playbook_create(
     response_model_exclude_none=True,
 )
 async def playbooks_edit(
-    request: Request,
     playbook_id: int,
     playbooks: PlaybookEdit,
     db=Depends(get_db),
-    current_playbook=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing Playbook
@@ -96,12 +92,11 @@ async def playbooks_edit(
     response_model_exclude_none=True,
 )
 async def playbook_delete(
-    request: Request,
     playbook_id: int,
     db=Depends(get_db),
-    current_playbook=Depends(get_current_active_superuser),
+    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing playbooks
     """
-    return delete_playbook(db, playbook_id)
+    return delete_item(db, models.Playbook, playbook_id)
