@@ -32,7 +32,7 @@ def get_item(db: Session, model, id: int):
 
 
 def create_item(db: Session, model, item: dict):
-    db_item = model(**item)
+    db_item = model(**item.dict(exclude_unset=True))
     db.add(db_item)
     db.commit()
     db.refresh(db_item)
