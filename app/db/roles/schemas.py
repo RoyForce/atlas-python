@@ -1,13 +1,12 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Union
 
 
 class RoleBase(BaseModel):
     name: str
     description: str = None
-    created_at: Union[datetime, None] = None
-    updated_at: Union[datetime, None] = None
+    created_at: datetime = None
+    updated_at: datetime = None
 
 
 class RoleCreate(RoleBase):

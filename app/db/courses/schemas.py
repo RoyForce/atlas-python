@@ -3,7 +3,6 @@ import typing as t
 from typing import List, Any, Dict, AnyStr
 from enum import Enum
 from datetime import datetime
-from typing import Union
 
 
 class ItemsEnum(str, Enum):
@@ -30,8 +29,8 @@ class CourseBase(BaseModel):
     enroll_required: bool = None
     passing_percentage: int = None
     items: Any = None
-    created_at: Union[datetime, None] = None
-    updated_at: Union[datetime, None] = None
+    created_at: datetime = None
+    updated_at: datetime = None
 
 
 class CourseCreate(CourseBase):

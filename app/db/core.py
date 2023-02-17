@@ -1,16 +1,20 @@
 # from sqlalchemy.ext.declarative import declared_attr
 
 from datetime import datetime
-from sqlalchemy import Column, DateTime, func, desc
+from sqlalchemy import Column, DateTime, desc, TIMESTAMP, text
 from sqlalchemy.orm import Session
 from typing import List, Union
 from fastapi import HTTPException
 
 
 class TrackTimeMixin:
-    created_at = Column(DateTime, server_default=func.now())
+    created_at = Column(
+        TIMESTAMP(timezone=True),
+        server_default=text("TIMEZONE('utc', CURRENT_TIMESTAMP)"),
+    )
     updated_at = Column(
-        DateTime, server_default=func.now(), onupdate=datetime.now
+        TIMESTAMP(timezone=True),
+        server_default=text("TIMEZONE('utc', CURRENT_TIMESTAMP)"),
     )
 
 

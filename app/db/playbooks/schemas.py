@@ -1,9 +1,7 @@
-from ctypes import Union
 from pydantic import BaseModel
 from app.db.roles.schemas import Role
 from typing import List
 from datetime import datetime
-from typing import Union
 
 
 class PlaybookBase(BaseModel):
@@ -31,8 +29,8 @@ class Playbook(PlaybookBase):
     id: int
     roles: List[Role] = None
     role_ids: List[int] = []
-    created_at: Union[datetime, None] = None
-    updated_at: Union[datetime, None] = None
+    created_at: datetime = None
+    updated_at: datetime = None
 
     class Config:
         orm_mode = True

@@ -1,14 +1,13 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Union
 
 
 class ApplicationUrlBase(BaseModel):
     name: str
     description: str = None
     url: str = None
-    created_at: Union[datetime, None] = None
-    updated_at: Union[datetime, None] = None
+    created_at: datetime = None
+    updated_at: datetime = None
 
 
 class ApplicationUrlCreate(ApplicationUrlBase):
