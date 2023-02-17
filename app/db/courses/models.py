@@ -3,6 +3,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from app.db.session import Base
 from app.db.core import CoreBase
 from sqlalchemy.orm import relationship
+from app.db.core import CoreBase, TrackTimeMixin
 
 
 class CourseItems(Base):
@@ -16,7 +17,7 @@ class CourseItems(Base):
     courses = relationship("Course", back_populates="items")
 
 
-class Course(Base, CoreBase):
+class Course(Base, CoreBase, TrackTimeMixin):
     __tablename__ = "courses"
 
     id = Column(Integer, primary_key=True, index=True)

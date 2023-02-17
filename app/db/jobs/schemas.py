@@ -6,6 +6,8 @@ from app.db.roles.schemas import Role
 from app.db.application_urls.schemas import ApplicationUrl
 from typing import List, Any, Dict, AnyStr
 from enum import Enum
+from datetime import datetime
+from typing import Union
 
 
 class JobBase(BaseModel):
@@ -39,6 +41,8 @@ class Job(JobBase):
     roles: List[Role] = None
     role_ids: List[int] = []
     application_url_id: int = None
+    created_at: Union[datetime, None] = None
+    updated_at: Union[datetime, None] = None
 
     class Config:
         orm_mode = True

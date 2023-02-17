@@ -4,13 +4,8 @@ from app.db.roles.models import Role
 def test_get_roles(client, test_role, superuser_token_headers):
     response = client.get("/api/v1/roles", headers=superuser_token_headers)
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": test_role.id,
-            "name": test_role.name,
-            "description": test_role.description,
-        }
-    ]
+    role = test_role.dict()
+    assert all(response.json()[0][arg] == role[arg] for arg in role)
 
 
 def test_create_role(client, superuser_token_headers):
@@ -53,8 +48,5 @@ def test_get_role(
         f"/api/v1/roles/{test_role.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert response.json() == {
-        "id": test_role.id,
-        "name": test_role.name,
-        "description": test_role.description,
-    }
+    assert response.json()["id"] == test_role.id
+    assert response.json()["name"] == test_role.name

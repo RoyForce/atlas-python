@@ -1,10 +1,10 @@
 from sqlalchemy import Boolean, Column, Integer, String
 
 from app.db.session import Base
-from app.db.core import CoreBase
+from app.db.core import CoreBase, TrackTimeMixin
 
 
-class User(Base, CoreBase):
+class User(Base, CoreBase, TrackTimeMixin):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)

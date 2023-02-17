@@ -1,17 +1,17 @@
 from pydantic import BaseModel
-import typing as t
+from datetime import datetime
+from typing import Union
 
 
 class ApplicationUrlBase(BaseModel):
     name: str
     description: str = None
     url: str = None
+    created_at: Union[datetime, None] = None
+    updated_at: Union[datetime, None] = None
 
 
 class ApplicationUrlCreate(ApplicationUrlBase):
-    name: str
-    description: str = None
-
     class Config:
         orm_mode = True
 

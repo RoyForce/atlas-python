@@ -48,7 +48,6 @@ def test_delete_course(client, test_course, test_db, superuser_token_headers):
 def test_create_course_with_items(
     client, test_course, superuser_token_headers
 ):
-
     items = {
         "course_id": 1,
         "item_type": "SECTION",
@@ -76,7 +75,6 @@ def test_create_course_with_items(
 
 
 def test_edit_course(client, test_course, superuser_token_headers):
-
     update_course = {
         "name": "test name",
         "description": "test desc",

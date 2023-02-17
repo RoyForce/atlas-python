@@ -1,9 +1,9 @@
-from ctypes import Union
-from pydantic import BaseModel, Field
-import typing as t
+from pydantic import BaseModel
 from app.db.roles.schemas import Role
 from app.db.jobs.schemas import Job
 from typing import List
+from datetime import datetime
+from typing import Union
 
 
 class UseCaseBase(BaseModel):
@@ -43,6 +43,8 @@ class UseCase(UseCaseBase):
     jobs: List[Job] = None
     job_ids: List[int] = []
     use_case_mapping: List[UseCaseMapping] = []
+    created_at: Union[datetime, None] = None
+    updated_at: Union[datetime, None] = None
 
     class Config:
         orm_mode = True

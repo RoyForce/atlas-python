@@ -66,7 +66,6 @@ def test_edit_job(
         json={"role_ids": [role["id"]]},
         headers=superuser_token_headers,
     )
-    print(response.json())
     assert response.status_code == 200
     assert response.json()["roles"][0] == role
 
@@ -92,7 +91,6 @@ def test_create_job_with_role(
 def test_if_user_can_access_job(
     client, test_job, test_user, test_db, extension_token_headers
 ):
-
     """_summary_ : Test if user can access job
     1. Disallow user without extension token
     2. Allow user with extension token

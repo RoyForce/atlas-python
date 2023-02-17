@@ -17,7 +17,6 @@ depends_on = None
 
 
 def upgrade():
-
     op.execute(
         f"""CREATE TYPE "extension_modes" AS ENUM (
             'DESIGNER',

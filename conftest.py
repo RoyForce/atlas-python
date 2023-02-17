@@ -114,6 +114,7 @@ def test_user(test_db) -> User:
     """
 
     user = User(
+        first_name="Test User",
         email="fake@email.com",
         hashed_password=get_password_hash(),
         is_active=True,

@@ -1,17 +1,30 @@
 # from sqlalchemy.ext.declarative import declared_attr
 
+from datetime import datetime
+from sqlalchemy import Column, DateTime, func, desc
 from sqlalchemy.orm import Session
 from typing import List, Union
 from fastapi import HTTPException
 
 
+class TrackTimeMixin:
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(
+        DateTime, server_default=func.now(), onupdate=datetime.now
+    )
+
+
 class CoreBase(object):
     def dict(self, exclude: Union[List[str], None] = []):
-        return {
+        json_object = {
             c.name: getattr(self, c.name)
             for c in self.__table__.columns
             if c.name not in exclude
         }
+        for arg in json_object:
+            if isinstance(json_object[arg], datetime):
+                json_object[arg] = json_object[arg].isoformat()
+        return json_object
 
 
 def get_lists(db: Session, model, query_params):
@@ -19,7 +32,13 @@ def get_lists(db: Session, model, query_params):
     if all(key in query_params for key in ("_start", "_end")):
         skip = int(query_params["_start"])
         limit = int(query_params["_end"]) - skip
-        return db.query(model).offset(skip).limit(limit).all()
+        return (
+            db.query(model)
+            .order_by(desc(model.created_at))
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )
     else:
         return db.query(model).all()
 

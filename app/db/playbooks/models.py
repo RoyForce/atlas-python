@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Column, Integer, String, Boolean, Table, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.session import Base
-from app.db.core import CoreBase
+from app.db.core import CoreBase, TrackTimeMixin
 from typing import List
 from app import db
 
@@ -17,7 +17,7 @@ class PlaybookRole(Base):
     role_id = Column("role_id", ForeignKey("roles.id"), primary_key=True)
 
 
-class Playbook(Base, CoreBase):
+class Playbook(Base, CoreBase, TrackTimeMixin):
     __tablename__ = "playbooks"
 
     id = Column(Integer, primary_key=True, index=True)

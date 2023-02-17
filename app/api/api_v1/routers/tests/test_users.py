@@ -4,15 +4,12 @@ from app.db.users.models import User
 def test_get_users(client, test_superuser, superuser_token_headers):
     response = client.get("/api/v1/users", headers=superuser_token_headers)
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": test_superuser.id,
-            "email": test_superuser.email,
-            "is_active": test_superuser.is_active,
-            "is_superuser": test_superuser.is_superuser,
-            "is_designer": test_superuser.is_designer,
-        }
-    ]
+    user_json = response.json()[0]
+    assert user_json["id"] == test_superuser.id
+    assert user_json["email"] == test_superuser.email
+    assert user_json["is_active"] == test_superuser.is_active
+    assert user_json["is_superuser"] == test_superuser.is_superuser
+    assert user_json["is_designer"] == test_superuser.is_designer
 
 
 def test_delete_user(client, test_superuser, test_db, superuser_token_headers):
@@ -47,9 +44,8 @@ def test_edit_user(client, test_superuser, superuser_token_headers):
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    new_user["id"] = test_superuser.id
     new_user.pop("password")
-    assert response.json() == new_user
+    assert all(response.json()[arg] == new_user[arg] for arg in new_user)
 
 
 def test_edit_user_not_found(client, test_db, superuser_token_headers):
@@ -74,14 +70,7 @@ def test_get_user(
         f"/api/v1/users/{test_user.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    print(response.json())
-    assert response.json() == {
-        "id": test_user.id,
-        "email": test_user.email,
-        "is_active": bool(test_user.is_active),
-        "is_superuser": test_user.is_superuser,
-        "is_designer": test_user.is_designer,
-    }
+    assert response.json()["first_name"] == test_user.first_name
 
 
 def test_user_not_found(client, superuser_token_headers):

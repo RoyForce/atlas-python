@@ -8,14 +8,11 @@ def test_get_application_urls(
         "/api/v1/application-urls", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": test_application_url.id,
-            "name": test_application_url.name,
-            "url": test_application_url.url,
-            "description": test_application_url.description,
-        }
-    ]
+    app_url = response.json()[0]
+    assert app_url["id"] == test_application_url.id
+    assert app_url["name"] == test_application_url.name
+    assert app_url["url"] == test_application_url.url
+    assert app_url["description"] == test_application_url.description
 
 
 def test_delete_application_url(
@@ -55,9 +52,7 @@ def test_get_application_url(
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    assert response.json() == {
-        "id": test_application_url.id,
-        "name": test_application_url.name,
-        "url": test_application_url.url,
-        "description": test_application_url.description,
-    }
+    assert response.json()["id"] == test_application_url.id
+    assert response.json()["name"] == test_application_url.name
+    assert response.json()["url"] == test_application_url.url
+    assert response.json()["description"] == test_application_url.description

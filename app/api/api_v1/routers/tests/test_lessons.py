@@ -2,18 +2,10 @@ from app.db.lessons.models import Lesson
 
 
 def test_get_lessons(client, test_lesson, superuser_token_headers):
+    lesson = test_lesson.dict()
     response = client.get("/api/v1/lessons", headers=superuser_token_headers)
     assert response.status_code == 200
-    assert response.json() == [
-        {
-            "id": test_lesson.id,
-            "name": test_lesson.name,
-            "description": test_lesson.description,
-            "duration": test_lesson.duration,
-            "page_content": test_lesson.page_content,
-            "is_template": False,
-        }
-    ]
+    assert all(response.json()[0][arg] == lesson[arg] for arg in lesson)
 
 
 def test_delete_lesson(client, test_lesson, test_db, superuser_token_headers):
@@ -33,14 +25,8 @@ def test_get_lesson(
         f"/api/v1/lessons/{test_lesson.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert response.json() == {
-        "id": test_lesson.id,
-        "name": test_lesson.name,
-        "description": test_lesson.description,
-        "duration": test_lesson.duration,
-        "page_content": test_lesson.page_content,
-        "is_template": False,
-    }
+    lesson = test_lesson.dict()
+    assert all(response.json()[arg] == lesson[arg] for arg in lesson)
 
 
 def test_edit_lesson(client, test_lesson, superuser_token_headers):

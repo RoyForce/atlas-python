@@ -19,7 +19,6 @@ def create_course(db: Session, course: schemas.CourseCreate):
     db.commit()
 
     if course.items is not None and len(course.items) > 0:
-
         db_course_item = [
             models.CourseItems(
                 course_id=db_course.id,
