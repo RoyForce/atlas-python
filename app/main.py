@@ -12,6 +12,7 @@ from app.api.api_v1.routers.playbooks import playbook_router
 from app.api.api_v1.routers.lessons import lesson_router
 from app.api.api_v1.routers.courses import courses_router
 from app.api.api_v1.routers.use_cases import use_case_router
+from app.api.api_v1.routers.screens import screens_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
@@ -112,6 +113,14 @@ app.include_router(
     tags=["use-cases"],
     dependencies=[Depends(get_current_active_user)],
 )
+
+app.include_router(
+    screens_router,
+    prefix="/api/v1",
+    tags=["screens"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
 app.include_router(auth_router, prefix="/api", tags=["auth"])
 
 if __name__ == "__main__":
