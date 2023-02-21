@@ -65,3 +65,46 @@ def test_create_playbook_with_role(client, test_role, superuser_token_headers):
     )
     assert response.status_code == 200
     assert response.json()["roles"][0] == role
+
+
+def test_playbooks_list_route_work_with_sort_param(
+    client, test_db, superuser_token_headers
+):
+    # Delete all playbooks
+    test_db.query(Playbook).delete()
+    test_db.commit()
+
+    # Create 4 playbooks
+    for i in range(1, 5):
+        response = client.post(
+            "/api/v1/playbooks",
+            json={"name": "New playbook" + str(i), "description": "test"},
+            headers=superuser_token_headers,
+        )
+        assert response.status_code == 200
+
+    # Sort by name desc
+    response = client.get(
+        "/api/v1/playbooks?_order=desc&_sort=name",
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 200
+
+    # Check if the playbooks are sorted by name desc
+    assert all(
+        response.json()[i]["name"] > response.json()[i + 1]["name"]
+        for i in range(3)
+    )
+
+    # Sort by name asc
+    response = client.get(
+        "/api/v1/playbooks?_order=asc&_sort=name",
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 200
+
+    # Check if the playbooks are sorted by name asc
+    assert all(
+        response.json()[i]["name"] < response.json()[i + 1]["name"]
+        for i in range(3)
+    )

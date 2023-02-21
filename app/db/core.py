@@ -33,18 +33,19 @@ class CoreBase(object):
 
 def get_lists(db: Session, model, query_params):
     query_params = dict(query_params)
+    sort = query_params["_sort"] if "_sort" in query_params else "updated_at"
+    order = query_params["_order"] if "_order" in query_params else "desc"
+    order_by = (
+        desc(getattr(model, sort)) if order == "desc" else getattr(model, sort)
+    )
     if all(key in query_params for key in ("_start", "_end")):
         skip = int(query_params["_start"])
         limit = int(query_params["_end"]) - skip
         return (
-            db.query(model)
-            .order_by(desc(model.created_at))
-            .offset(skip)
-            .limit(limit)
-            .all()
+            db.query(model).order_by(order_by).offset(skip).limit(limit).all()
         )
     else:
-        return db.query(model).all()
+        return db.query(model).order_by(order_by).all()
 
 
 def get_item(db: Session, model, id: int):
