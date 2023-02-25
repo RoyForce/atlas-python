@@ -3,7 +3,6 @@ from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
 
 
-
 class Screen(Base, CoreBase, TrackTimeMixin):
     __tablename__ = "screens"
 
