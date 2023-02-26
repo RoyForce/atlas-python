@@ -16,6 +16,7 @@ from app.db.playbooks.models import Playbook
 from app.db.lessons.models import Lesson
 from app.db.courses.models import Course
 from app.db.use_cases.models import UseCase
+from app.db.screens.models import Screen
 from app.main import app
 
 
@@ -293,3 +294,18 @@ def test_use_case(test_db) -> UseCase:
     test_db.add(use_cases)
     test_db.commit()
     return use_cases
+
+
+@pytest.fixture
+def test_screen(test_db) -> Screen:
+    """
+    Make a test playbook in the database
+    """
+
+    screens = Screen(
+        name="testNameScreen",
+        description="testDescScreen"
+    )
+    test_db.add(screens)
+    test_db.commit()
+    return screens
