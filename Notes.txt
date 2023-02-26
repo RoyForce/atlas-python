@@ -1,0 +1,7 @@
+docker-compose exec backend bash
+
+alembic revision -m "crate screens table"
+
+alembic upgrade head
+
+docker system prune -a --volumes
