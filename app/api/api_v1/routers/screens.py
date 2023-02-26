@@ -35,9 +35,7 @@ async def screens_list(
     """
     Get all screens
     """
-    screens = get_lists(
-        db, models.Screen, request.query_params
-    )
+    screens = get_lists(db, models.Screen, request.query_params)
     response.headers["Content-Range"] = f"0-9/{len(screens)}"
     return screens
 
@@ -88,9 +86,7 @@ async def screens_edit(
     """
     Update existing screen
     """
-    return edit_item(
-        db, models.Screen, screen_id, screen
-    )
+    return edit_item(db, models.Screen, screen_id, screen)
 
 
 @r.delete(

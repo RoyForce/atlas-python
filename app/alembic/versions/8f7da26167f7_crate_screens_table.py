@@ -10,10 +10,9 @@ import sqlalchemy as sa
 from app.alembic.utils import create_refresh_updated_at_func, create_trigger
 
 
-
 # revision identifiers, used by Alembic.
-revision = '8f7da26167f7'
-down_revision = '94b430f35ae8'
+revision = "8f7da26167f7"
+down_revision = "94b430f35ae8"
 branch_labels = None
 depends_on = None
 
@@ -34,6 +33,4 @@ def upgrade():
 
 
 def downgrade():
-    op.execute(
-        'DROP TABLE "screens"'
-    )
+    op.execute('DROP TABLE "screens"')
