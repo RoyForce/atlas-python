@@ -302,10 +302,7 @@ def test_screen(test_db) -> Screen:
     Make a test playbook in the database
     """
 
-    screens = Screen(
-        name="testNameScreen",
-        description="testDescScreen"
-    )
+    screens = Screen(name="testNameScreen", description="testDescScreen")
     test_db.add(screens)
     test_db.commit()
     return screens
