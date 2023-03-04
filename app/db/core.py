@@ -1,10 +1,11 @@
 # from sqlalchemy.ext.declarative import declared_attr
 
 from datetime import datetime
-from sqlalchemy import Column, DateTime, desc, TIMESTAMP, text
+from sqlalchemy import Column, desc, TIMESTAMP, text
 from sqlalchemy.orm import Session
 from typing import List, Union
 from fastapi import HTTPException
+from sqlalchemy.inspection import inspect
 
 
 class TrackTimeMixin:
@@ -35,17 +36,51 @@ def get_lists(db: Session, model, query_params):
     query_params = dict(query_params)
     sort = query_params["_sort"] if "_sort" in query_params else "updated_at"
     order = query_params["_order"] if "_order" in query_params else "desc"
-    order_by = (
-        desc(getattr(model, sort)) if order == "desc" else getattr(model, sort)
-    )
+
+    query = db.query(model)
+    attr = getattr(model, sort, None)
+
+    if attr:
+        if type(attr.property).__name__ == "RelationshipProperty":
+            """If sort is a relationship"""
+            foreign_modal = attr.property.mapper.class_
+            foreign_attr = getattr(foreign_modal, "name", None)
+            if foreign_attr:
+                order_by = (
+                    desc(foreign_attr) if order == "desc" else foreign_attr
+                )
+                query = query.join(attr).order_by(order_by)
+        else:
+            """If sort is an attribute"""
+            order_by = desc(attr) if order == "desc" else attr
+            query = query.order_by(order_by)
+    else:
+        if "." in sort:
+            """If sort is a relationship with a dot notation"""
+            sort = sort.split(".")
+            relations = inspect(model).relationships.items()
+            attr = None
+            foreign_modal = None
+            for relation in relations:
+                if relation[0] == sort[0]:
+                    attr = getattr(model, relation[1].key)
+                    foreign_modal = attr.mapper.class_
+                    break
+
+            if attr and foreign_modal:
+                foreign_attr = getattr(foreign_modal, sort[1], None)
+                if foreign_attr:
+                    order_by = (
+                        desc(foreign_attr) if order == "desc" else foreign_attr
+                    )
+                    query = query.join(attr).order_by(order_by)
+
     if all(key in query_params for key in ("_start", "_end")):
         skip = int(query_params["_start"])
         limit = int(query_params["_end"]) - skip
-        return (
-            db.query(model).order_by(order_by).offset(skip).limit(limit).all()
-        )
+        return query.offset(skip).limit(limit).all()
     else:
-        return db.query(model).order_by(order_by).all()
+        return query.all()
 
 
 def get_item(db: Session, model, id: int):
