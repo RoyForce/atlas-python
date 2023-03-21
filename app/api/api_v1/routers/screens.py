@@ -1,4 +1,3 @@
-from app.core.auth import get_current_active_user
 from fastapi import APIRouter, Depends, Response, Request
 import typing as t
 
@@ -30,7 +29,6 @@ async def screens_list(
     request: Request,
     response: Response,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all screens
@@ -48,7 +46,6 @@ async def screens_list(
 async def screens_details(
     screen_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any screen details
@@ -64,7 +61,6 @@ async def screens_details(
 async def screens_create(
     screen: ScreenCreate,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new screen
@@ -81,7 +77,6 @@ async def screens_edit(
     screen_id: int,
     screen: ScreenEdit,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing screen
@@ -97,7 +92,6 @@ async def screens_edit(
 async def screens_delete(
     screen_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing screen

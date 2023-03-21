@@ -1,4 +1,3 @@
-from app.core.auth import get_current_active_user
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
@@ -26,7 +25,6 @@ async def roles_list(
     request: Request,
     response: Response,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all roles
@@ -44,7 +42,6 @@ async def roles_list(
 async def role_details(
     role_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any role details
@@ -56,7 +53,6 @@ async def role_details(
 async def role_create(
     role: RoleCreate,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new role
@@ -71,7 +67,6 @@ async def role_edit(
     role_id: int,
     role: RoleEdit,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing role
@@ -85,7 +80,6 @@ async def role_edit(
 async def role_delete(
     role_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing role

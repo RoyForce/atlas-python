@@ -1,4 +1,3 @@
-from app.core.auth import get_current_active_user
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
@@ -28,7 +27,6 @@ async def use_cases_list(
     request: Request,
     response: Response,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all UseCases
@@ -46,7 +44,6 @@ async def use_cases_list(
 async def use_case_details(
     use_case_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any use_case details
@@ -58,7 +55,6 @@ async def use_case_details(
 async def use_case_create(
     use_case: UseCaseCreate,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new use_case
@@ -75,7 +71,6 @@ async def use_cases_edit(
     use_case_id: int,
     use_cases: UseCaseEdit,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing UseCase
@@ -91,7 +86,6 @@ async def use_cases_edit(
 async def use_case_delete(
     use_case_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing use_cases

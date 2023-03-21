@@ -1,4 +1,3 @@
-from app.core.auth import get_current_active_user
 from fastapi import APIRouter, Depends, Response, Request
 import typing as t
 
@@ -30,7 +29,6 @@ async def application_urls_list(
     request: Request,
     response: Response,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all application_urls
@@ -50,7 +48,6 @@ async def application_urls_list(
 async def application_urls_details(
     application_url_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any application-url details
@@ -66,7 +63,6 @@ async def application_urls_details(
 async def application_urls_create(
     application_url: ApplicationUrlCreate,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new application-url
@@ -83,7 +79,6 @@ async def application_urls_edit(
     application_url_id: int,
     application_url: ApplicationUrlEdit,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing application-url
@@ -101,7 +96,6 @@ async def application_urls_edit(
 async def application_urls_delete(
     application_url_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing application_url

@@ -1,4 +1,3 @@
-from app.core.auth import get_current_active_user
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
@@ -31,7 +30,6 @@ async def jobs_list(
     request: Request,
     response: Response,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all Jobs
@@ -49,7 +47,6 @@ async def jobs_list(
 async def job_details(
     job_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any job details
@@ -73,7 +70,6 @@ async def jobs_edit(
     job_id: int,
     jobs: JobEdit,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing Job
@@ -87,7 +83,6 @@ async def jobs_edit(
 async def job_delete(
     job_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing jobs

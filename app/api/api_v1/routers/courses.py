@@ -1,4 +1,3 @@
-from app.core.auth import get_current_active_user
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
@@ -23,7 +22,6 @@ async def courses_list(
     request: Request,
     response: Response,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all courses
@@ -41,7 +39,6 @@ async def courses_list(
 async def course_details(
     course_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any course details
@@ -53,7 +50,6 @@ async def course_details(
 async def course_create(
     course: CourseCreate,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new course
@@ -70,7 +66,6 @@ async def course_edit(
     course_id: int,
     course: CourseEdit,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing course
@@ -86,7 +81,6 @@ async def course_edit(
 async def course_delete(
     course_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing course

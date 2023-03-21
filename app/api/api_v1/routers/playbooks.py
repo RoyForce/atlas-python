@@ -1,4 +1,3 @@
-from app.core.auth import get_current_active_user
 from fastapi import APIRouter, Depends, Response, Request
 import typing as t
 
@@ -29,7 +28,6 @@ async def playbooks_list(
     request: Request,
     response: Response,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all Playbooks
@@ -47,7 +45,6 @@ async def playbooks_list(
 async def playbook_details(
     playbook_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any playbook details
@@ -61,7 +58,6 @@ async def playbook_details(
 async def playbook_create(
     playbook: PlaybookCreate,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new playbook
@@ -78,7 +74,6 @@ async def playbooks_edit(
     playbook_id: int,
     playbooks: PlaybookEdit,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing Playbook
@@ -94,7 +89,6 @@ async def playbooks_edit(
 async def playbook_delete(
     playbook_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing playbooks

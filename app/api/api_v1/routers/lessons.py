@@ -1,4 +1,3 @@
-from app.core.auth import get_current_active_user
 from fastapi import APIRouter, Request, Depends, Response
 import typing as t
 
@@ -25,7 +24,6 @@ async def lessons_list(
     request: Request,
     response: Response,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get all lessons
@@ -43,7 +41,6 @@ async def lessons_list(
 async def lesson_details(
     lesson_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Get any lesson details
@@ -55,7 +52,6 @@ async def lesson_details(
 async def lesson_create(
     lesson: LessonCreate,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Create a new lesson
@@ -72,7 +68,6 @@ async def lesson_edit(
     lesson_id: int,
     lesson: LessonEdit,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Update existing lesson
@@ -88,7 +83,6 @@ async def lesson_edit(
 async def lesson_delete(
     lesson_id: int,
     db=Depends(get_db),
-    current_playbooks=Depends(get_current_active_user),
 ):
     """
     Delete existing lesson
