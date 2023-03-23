@@ -73,11 +73,15 @@ def test_create_use_case_with_role_job_and_delete_mapping(
     response = client.delete(
         f"/api/v1/jobs/{test_job.id}", headers=superuser_token_headers
     )
-    response = client.get(f"/api/v1/use-cases", headers=superuser_token_headers)
+    response = client.get(
+        f"/api/v1/use-cases", headers=superuser_token_headers
+    )
     assert response.json()[0]["job_ids"] == []
 
     response = client.delete(
         f"/api/v1/roles/{test_role.id}", headers=superuser_token_headers
     )
-    response = client.get(f"/api/v1/use-cases", headers=superuser_token_headers)
+    response = client.get(
+        f"/api/v1/use-cases", headers=superuser_token_headers
+    )
     assert response.json()[0]["role_ids"] == []

@@ -27,7 +27,9 @@ def test_get_jobs_with_query_string(
     )
     assert response.status_code == 200
     assert len(response.json()) == 5
-    assert all(response.json()[i]["name"] == f"testName{i+5}" for i in range(5))
+    assert all(
+        response.json()[i]["name"] == f"testName{i+5}" for i in range(5)
+    )
 
 
 def test_delete_job(client, test_job, test_db, superuser_token_headers):

@@ -6,7 +6,6 @@ from app.db.jobs.models import Job
 
 
 def delete_role_mapping(db: Session, role_id: int):
-
     # Remove role reference from other models
     affected_models = [Job, UseCase, Playbook]
 
