@@ -33,9 +33,6 @@ class Job(Base, CoreBase, TrackTimeMixin):
         "ApplicationUrl", lazy="subquery", backref="jobs"
     )
     is_template = Column(Boolean, default=False)
-    use_cases = relationship(
-        "UseCase", secondary="use_cases_mappings", back_populates="jobs"
-    )
 
     @property
     def role_ids(self) -> List[int]:

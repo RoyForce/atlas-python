@@ -17,6 +17,3 @@ class Role(Base, CoreBase, TrackTimeMixin):
     playbooks = relationship(
         "Playbook", secondary="playbook_role_mappings", back_populates="roles"
     )
-    use_cases = relationship(
-        "UseCase", secondary="use_cases_mappings", back_populates="roles"
-    )

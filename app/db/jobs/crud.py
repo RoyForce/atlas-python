@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session
 import typing as t
 from . import models, schemas
 from app.db.users.crud import get_user
-from app.db.use_cases.crud import get_use_case_mappings
 from app.core import security
+from app.db.use_cases.models import UseCase
+from sqlalchemy.orm.attributes import flag_modified
 
 
 def get_job(db: Session, job_id: int):
@@ -121,9 +122,14 @@ def get_job_roles(db: Session, type: str, id: int):
 
 def delete_job_mapping(db: Session, job_id: int):
     delete_job_role(db, job_id)
-    use_case_resp = get_use_case_mappings(db, "job", job_id)
-    if use_case_resp:
-        for value in use_case_resp:
-            db.delete(value)
-            db.commit()
-    return True
+
+    # delete job mapping in use case
+    affected_use_cases = (
+        db.query(UseCase).filter(UseCase.job_ids.any(job_id)).all()
+    )
+    for use_case in affected_use_cases:
+        use_case.job_ids.remove(job_id)
+        flag_modified(use_case, "job_ids")
+        db.merge(use_case)
+        db.flush()
+        db.commit()

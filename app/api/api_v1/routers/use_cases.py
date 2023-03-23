@@ -3,16 +3,17 @@ import typing as t
 
 from app.db.session import get_db
 from app.db.use_cases import models
-from app.db.core import get_lists, get_item, delete_item
-from app.db.use_cases.crud import (
-    create_use_case,
-    edit_use_case,
-    delete_use_case_role_job,
+from app.db.core import (
+    get_lists,
+    get_item,
+    delete_item,
+    create_item,
+    edit_item,
 )
 from app.db.use_cases.schemas import (
     UseCaseCreate,
     UseCaseEdit,
-    UseCase,
+    UseCaseOut,
 )
 
 use_case_router = r = APIRouter()
@@ -20,8 +21,7 @@ use_case_router = r = APIRouter()
 
 @r.get(
     "/use-cases",
-    response_model=t.List[UseCase],
-    response_model_exclude_none=True,
+    response_model=t.List[UseCaseOut],
 )
 async def use_cases_list(
     request: Request,
@@ -38,8 +38,7 @@ async def use_cases_list(
 
 @r.get(
     "/use-cases/{use_case_id}",
-    response_model=UseCase,
-    response_model_exclude_none=True,
+    response_model=UseCaseOut,
 )
 async def use_case_details(
     use_case_id: int,
@@ -51,7 +50,7 @@ async def use_case_details(
     return get_item(db, models.UseCase, use_case_id)
 
 
-@r.post("/use-cases", response_model=UseCase, response_model_exclude_none=True)
+@r.post("/use-cases", response_model=UseCaseOut)
 async def use_case_create(
     use_case: UseCaseCreate,
     db=Depends(get_db),
@@ -59,13 +58,12 @@ async def use_case_create(
     """
     Create a new use_case
     """
-    return create_use_case(db, use_case)
+    return create_item(db, models.UseCase, use_case)
 
 
 @r.put(
     "/use-cases/{use_case_id}",
-    response_model=UseCase,
-    response_model_exclude_none=True,
+    response_model=UseCaseOut,
 )
 async def use_cases_edit(
     use_case_id: int,
@@ -75,13 +73,12 @@ async def use_cases_edit(
     """
     Update existing UseCase
     """
-    return edit_use_case(db, use_case_id, use_cases)
+    return edit_item(db, models.UseCase, use_case_id, use_cases)
 
 
 @r.delete(
     "/use-cases/{use_case_id}",
-    response_model=UseCase,
-    response_model_exclude_none=True,
+    response_model=UseCaseOut,
 )
 async def use_case_delete(
     use_case_id: int,
@@ -90,5 +87,4 @@ async def use_case_delete(
     """
     Delete existing use_cases
     """
-    delete_use_case_role_job(db, use_case_id)
     return delete_item(db, models.UseCase, use_case_id)

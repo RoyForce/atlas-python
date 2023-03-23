@@ -1,5 +1,4 @@
 from app.db.use_cases.models import UseCase
-from conftest import test_job
 
 
 def test_get_use_cases(client, test_use_case, superuser_token_headers):
@@ -48,11 +47,8 @@ def test_edit_use_case(
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    assert response.json()["roles"][0] == role
-    # assert response.json()["jobs"][0] == job
-
-
-# # ------------------test use_case job role mapping-----------------------
+    assert response.json()["role_ids"] == [role["id"]]
+    assert response.json()["job_ids"] == [job["id"]]
 
 
 def test_create_use_case_with_role_job_and_delete_mapping(
@@ -71,12 +67,13 @@ def test_create_use_case_with_role_job_and_delete_mapping(
         "/api/v1/use-cases", json=use_case, headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert response.json()["roles"][0] == role
+    assert response.json()["role_ids"][0] == role["id"]
+    assert response.json()["job_ids"][0] == job["id"]
+
     response = client.delete(
         f"/api/v1/jobs/{test_job.id}", headers=superuser_token_headers
     )
-    id = response.json()["id"]
     response = client.get(
         f"/api/v1/use-cases", headers=superuser_token_headers
     )
-    assert [sub["jobs"] for sub in response.json()]
+    assert response.json()[0]["job_ids"] == []
