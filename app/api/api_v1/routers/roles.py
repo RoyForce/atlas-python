@@ -10,7 +10,7 @@ from app.db.core import (
     delete_item,
     edit_item,
 )
-from app.db.roles.crud import delete_role_mapping
+from app.db.roles.crud import delete_all_role_mappings, update_role_mappings
 from app.db.roles.schemas import RoleCreate, RoleEdit, Role
 
 roles_router = r = APIRouter()
@@ -19,7 +19,6 @@ roles_router = r = APIRouter()
 @r.get(
     "/roles",
     response_model=t.List[Role],
-    response_model_exclude_none=True,
 )
 async def roles_list(
     request: Request,
@@ -37,7 +36,6 @@ async def roles_list(
 @r.get(
     "/roles/{role_id}",
     response_model=Role,
-    response_model_exclude_none=True,
 )
 async def role_details(
     role_id: int,
@@ -49,7 +47,7 @@ async def role_details(
     return get_item(db, models.Role, role_id)
 
 
-@r.post("/roles", response_model=Role, response_model_exclude_none=True)
+@r.post("/roles", response_model=Role)
 async def role_create(
     role: RoleCreate,
     db=Depends(get_db),
@@ -57,12 +55,12 @@ async def role_create(
     """
     Create a new role
     """
-    return create_item(db, models.Role, role)
+    new_role = create_item(db, models.Role, role)
+    update_role_mappings(db, new_role.id, role)
+    return new_role
 
 
-@r.put(
-    "/roles/{role_id}", response_model=Role, response_model_exclude_none=True
-)
+@r.put("/roles/{role_id}", response_model=Role)
 async def role_edit(
     role_id: int,
     role: RoleEdit,
@@ -71,12 +69,11 @@ async def role_edit(
     """
     Update existing role
     """
+    update_role_mappings(db, role_id, role)
     return edit_item(db, models.Role, role_id, role)
 
 
-@r.delete(
-    "/roles/{role_id}", response_model=Role, response_model_exclude_none=True
-)
+@r.delete("/roles/{role_id}", response_model=Role)
 async def role_delete(
     role_id: int,
     db=Depends(get_db),
@@ -84,5 +81,5 @@ async def role_delete(
     """
     Delete existing role
     """
-    delete_role_mapping(db, role_id)
+    delete_all_role_mappings(db, role_id)
     return delete_item(db, models.Role, role_id)

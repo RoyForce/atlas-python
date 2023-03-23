@@ -11,9 +11,39 @@ class Role(Base, CoreBase, TrackTimeMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     description = Column(String, nullable=True)
-    # jobs = relationship(
-    #     "Job", secondary="job_role_mappings", back_populates="roles"
-    # )
-    # playbooks = relationship(
-    #     "Playbook", secondary="playbook_role_mappings", back_populates="roles"
-    # )
+    jobs = relationship(
+        "Job",
+        primaryjoin="Role.id == any_(foreign(Job.role_ids))",
+    )
+    playbooks = relationship(
+        "Playbook",
+        primaryjoin="Role.id == any_(foreign(Playbook.role_ids))",
+    )
+    use_cases = relationship(
+        "UseCase",
+        primaryjoin="Role.id == any_(foreign(UseCase.role_ids))",
+    )
+
+    @property
+    def job_ids(self):
+        return [job.id for job in self.jobs]
+
+    @property
+    def playbook_ids(self):
+        return [playbook.id for playbook in self.playbooks]
+
+    @property
+    def use_case_ids(self):
+        return [use_case.id for use_case in self.use_cases]
+
+    @job_ids.setter
+    def job_ids(self, job_ids):
+        pass
+
+    @playbook_ids.setter
+    def playbook_ids(self, playbook_ids):
+        pass
+
+    @use_case_ids.setter
+    def use_case_ids(self, use_case_ids):
+        pass

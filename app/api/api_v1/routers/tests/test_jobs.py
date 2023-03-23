@@ -67,7 +67,7 @@ def test_edit_job(
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    assert response.json()["roles"][0] == role
+    assert response.json()["roles"][0]["id"] == role["id"]
 
 
 def test_create_job_with_role(
@@ -85,7 +85,7 @@ def test_create_job_with_role(
         "/api/v1/jobs", json=job, headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert response.json()["roles"][0] == role
+    assert response.json()["roles"][0]["id"] == role["id"]
 
 
 def test_if_user_can_access_job(

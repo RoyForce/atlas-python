@@ -1,10 +1,14 @@
+from typing import Any, List, Optional
 from pydantic import BaseModel
 from datetime import datetime
 
 
 class RoleBase(BaseModel):
-    name: str
+    name: str = None
     description: str = None
+    job_ids: Optional[List[int]] = []
+    playbook_ids: Optional[List[int]] = []
+    use_case_ids: Optional[List[int]] = []
     created_at: datetime = None
     updated_at: datetime = None
 

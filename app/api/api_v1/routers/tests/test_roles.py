@@ -50,3 +50,29 @@ def test_get_role(
     assert response.status_code == 200
     assert response.json()["id"] == test_role.id
     assert response.json()["name"] == test_role.name
+
+
+def test_update_job_ids_playbook_ids_and_use_case_ids_from_role(
+    client,
+    test_role,
+    test_job,
+    test_playbook,
+    test_use_case,
+    superuser_token_headers,
+):
+    new_role = {
+        "job_ids": [test_job.id],
+        "playbook_ids": [test_playbook.id],
+        "use_case_ids": [test_use_case.id],
+    }
+    response = client.put(
+        f"/api/v1/roles/{test_role.id}",
+        json=new_role,
+        headers=superuser_token_headers,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["id"] == test_role.id
+    assert response.json()["job_ids"] == new_role["job_ids"]
+    assert response.json()["playbook_ids"] == new_role["playbook_ids"]
+    assert response.json()["use_case_ids"] == new_role["use_case_ids"]

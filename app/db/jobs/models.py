@@ -20,7 +20,7 @@ class Job(Base, CoreBase, TrackTimeMixin):
     )
     steps = Column(JSONB, nullable=True, default={})
     is_locked = Column(Boolean, default=False)
-    role_ids = Column(ARRAY(Integer))
+    role_ids = Column(ARRAY(Integer), default=[])
     roles = relationship(
         "Role",
         primaryjoin="Role.id == any_(foreign(Job.role_ids))",

@@ -13,8 +13,8 @@ class UseCase(Base, CoreBase, TrackTimeMixin):
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     table_config = Column(String)
-    job_ids = Column(ARRAY(Integer))
-    role_ids = Column(ARRAY(Integer))
+    job_ids = Column(ARRAY(Integer), default=[])
+    role_ids = Column(ARRAY(Integer), default=[])
     jobs = relationship(
         "Job",
         primaryjoin="Job.id == any_(foreign(UseCase.job_ids))",

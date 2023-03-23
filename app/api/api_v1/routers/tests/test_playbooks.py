@@ -46,7 +46,7 @@ def test_edit_playbook(
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    assert response.json()["roles"][0] == role
+    assert response.json()["roles"][0]["id"] == role["id"]
 
 
 # ------------------test playbook role mapping-----------------------
@@ -64,7 +64,7 @@ def test_create_playbook_with_role(client, test_role, superuser_token_headers):
         "/api/v1/playbooks", json=playbook, headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert response.json()["roles"][0] == role
+    assert response.json()["roles"][0]["id"] == role["id"]
 
 
 def test_playbooks_list_route_work_with_sort_param(

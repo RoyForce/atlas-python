@@ -13,7 +13,7 @@ class Playbook(Base, CoreBase, TrackTimeMixin):
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     page_content = Column(String)
-    role_ids = Column(ARRAY(Integer))
+    role_ids = Column(ARRAY(Integer), default=[])
     roles = relationship(
         "Role",
         primaryjoin="Role.id == any_(foreign(Playbook.role_ids))",
