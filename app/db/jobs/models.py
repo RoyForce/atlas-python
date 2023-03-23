@@ -4,15 +4,9 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
+from sqlalchemy.dialects.postgresql import ARRAY
 
 from typing import List
-
-
-class JobRole(Base):
-    __tablename__ = "job_role_mappings"
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    job_id = Column("job_id", ForeignKey("jobs.id"), primary_key=True)
-    role_id = Column("role_id", ForeignKey("roles.id"), primary_key=True)
 
 
 class Job(Base, CoreBase, TrackTimeMixin):
@@ -26,14 +20,13 @@ class Job(Base, CoreBase, TrackTimeMixin):
     )
     steps = Column(JSONB, nullable=True, default={})
     is_locked = Column(Boolean, default=False)
+    role_ids = Column(ARRAY(Integer))
     roles = relationship(
-        "Role", secondary="job_role_mappings", back_populates="jobs"
+        "Role",
+        primaryjoin="Role.id == any_(foreign(Job.role_ids))",
+        uselist=True,
     )
     application_url = relationship(
         "ApplicationUrl", lazy="subquery", backref="jobs"
     )
     is_template = Column(Boolean, default=False)
-
-    @property
-    def role_ids(self) -> List[int]:
-        return [role.id for role in self.roles]

@@ -4,18 +4,22 @@ import typing as t
 from app.db.jobs import models
 from app.db.session import get_db
 from app.db.jobs.crud import (
-    create_job,
-    delete_job,
-    edit_job,
+    format_job_steps,
+    delete_job_mapping,
     validate_extension_token,
     validate_user_and_job,
 )
 from app.db.jobs.schemas import (
-    JobCreate,
     JobEdit,
-    Job,
+    JobOut,
 )
-from app.db.core import get_lists, get_item
+from app.db.core import (
+    get_lists,
+    get_item,
+    delete_item,
+    create_item,
+    edit_item,
+)
 
 jobs_router = r = APIRouter()
 extension_router = er = APIRouter()
@@ -23,8 +27,7 @@ extension_router = er = APIRouter()
 
 @r.get(
     "/jobs",
-    response_model=t.List[Job],
-    response_model_exclude_none=True,
+    response_model=t.List[JobOut],
 )
 async def jobs_list(
     request: Request,
@@ -41,8 +44,7 @@ async def jobs_list(
 
 @r.get(
     "/jobs/{job_id}",
-    response_model=Job,
-    response_model_exclude_none=True,
+    response_model=JobOut,
 )
 async def job_details(
     job_id: int,
@@ -54,32 +56,32 @@ async def job_details(
     return get_item(db, models.Job, job_id)
 
 
-@r.post("/jobs", response_model=Job, response_model_exclude_none=True)
+@r.post("/jobs", response_model=JobOut)
 async def job_create(
-    job: JobCreate,
+    job: JobEdit,
     db=Depends(get_db),
 ):
     """
     Create a new job
     """
-    return create_job(db, job)
+    return create_item(db, models.Job, job)
 
 
-@r.put("/jobs/{job_id}", response_model=Job, response_model_exclude_none=True)
+@r.put("/jobs/{job_id}", response_model=JobOut)
 async def jobs_edit(
     job_id: int,
-    jobs: JobEdit,
+    job: JobEdit,
     db=Depends(get_db),
 ):
     """
     Update existing Job
     """
-    return edit_job(db, job_id, jobs)
+
+    job = format_job_steps(job)
+    return edit_item(db, models.Job, job_id, job)
 
 
-@r.delete(
-    "/jobs/{job_id}", response_model=Job, response_model_exclude_none=True
-)
+@r.delete("/jobs/{job_id}", response_model=JobOut)
 async def job_delete(
     job_id: int,
     db=Depends(get_db),
@@ -87,10 +89,11 @@ async def job_delete(
     """
     Delete existing jobs
     """
-    return delete_job(db, job_id)
+    delete_job_mapping(db, job_id)
+    return delete_item(db, models.Job, job_id)
 
 
-@er.get("/jobs/steps/{job_id}", response_model=Job)
+@er.get("/jobs/steps/{job_id}", response_model=JobOut)
 async def validate_user_job(
     request: Request,
     job_id: int,
@@ -107,17 +110,18 @@ async def validate_user_job(
 
 @er.post(
     "/jobs/steps/{job_id}",
-    response_model=Job,
+    response_model=JobOut,
     response_model_exclude_none=True,
 )
 async def save_job_steps(
     request: Request,
     job_id: int,
-    jobs: JobEdit,
+    job: JobEdit,
     db=Depends(get_db),
 ):
     """
     Save job steps
     """
     validate_extension_token(request)
-    return edit_job(db, job_id, jobs)
+    job = format_job_steps(job)
+    return edit_item(db, models.Job, job_id, job)

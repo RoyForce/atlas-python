@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from app.db.roles.schemas import Role
 from app.db.application_urls.schemas import ApplicationUrl
-from typing import List, Any, Dict, AnyStr
+from typing import List, Any, Dict, AnyStr, Optional
 from enum import Enum
 from datetime import datetime
 
@@ -14,28 +14,19 @@ class JobBase(BaseModel):
     is_template: bool = None
 
 
-class JobCreate(JobBase):
-    name: str
-    application_url_id: int = None
-    role_ids: List[int] = []
-
-    class Config:
-        orm_mode = True
-
-
 class JobEdit(JobBase):
     application_url_id: int = None
-    role_ids: List[int] = []
+    role_ids: Optional[List[int]] = []
 
     class Config:
         orm_mode = True
 
 
-class Job(JobBase):
+class JobOut(JobBase):
     id: int
     application_url: ApplicationUrl = None
     roles: List[Role] = None
-    role_ids: List[int] = []
+    role_ids: Optional[List[int]] = []
     application_url_id: int = None
     created_at: datetime = None
     updated_at: datetime = None

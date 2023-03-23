@@ -1,19 +1,18 @@
 from fastapi import APIRouter, Depends, Response, Request
 import typing as t
 
-
 from app.db.session import get_db
 from app.db.playbooks import models
-from app.db.core import get_lists, get_item, delete_item
-
-from app.db.playbooks.crud import (
-    create_playbook,
-    edit_playbook,
+from app.db.core import (
+    get_lists,
+    get_item,
+    delete_item,
+    create_item,
+    edit_item,
 )
 from app.db.playbooks.schemas import (
-    PlaybookCreate,
     PlaybookEdit,
-    Playbook,
+    PlaybookOut,
 )
 
 playbook_router = r = APIRouter()
@@ -21,8 +20,7 @@ playbook_router = r = APIRouter()
 
 @r.get(
     "/playbooks",
-    response_model=t.List[Playbook],
-    response_model_exclude_none=True,
+    response_model=t.List[PlaybookOut],
 )
 async def playbooks_list(
     request: Request,
@@ -39,8 +37,7 @@ async def playbooks_list(
 
 @r.get(
     "/playbooks/{playbook_id}",
-    response_model=Playbook,
-    response_model_exclude_none=True,
+    response_model=PlaybookOut,
 )
 async def playbook_details(
     playbook_id: int,
@@ -52,39 +49,36 @@ async def playbook_details(
     return get_item(db, models.Playbook, playbook_id)
 
 
-@r.post(
-    "/playbooks", response_model=Playbook, response_model_exclude_none=True
-)
+@r.post("/playbooks", response_model=PlaybookOut)
 async def playbook_create(
-    playbook: PlaybookCreate,
+    playbook: PlaybookEdit,
     db=Depends(get_db),
 ):
     """
     Create a new playbook
     """
-    return create_playbook(db, playbook)
+    return create_item(db, models.Playbook, playbook)
 
 
 @r.put(
     "/playbooks/{playbook_id}",
-    response_model=Playbook,
+    response_model=PlaybookOut,
     response_model_exclude_none=True,
 )
 async def playbooks_edit(
     playbook_id: int,
-    playbooks: PlaybookEdit,
+    playbook: PlaybookEdit,
     db=Depends(get_db),
 ):
     """
     Update existing Playbook
     """
-    return edit_playbook(db, playbook_id, playbooks)
+    return edit_item(db, models.Playbook, playbook_id, playbook)
 
 
 @r.delete(
     "/playbooks/{playbook_id}",
-    response_model=Playbook,
-    response_model_exclude_none=True,
+    response_model=PlaybookOut,
 )
 async def playbook_delete(
     playbook_id: int,

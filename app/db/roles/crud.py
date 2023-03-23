@@ -1,21 +1,19 @@
 from sqlalchemy.orm import Session
-from app.db.jobs.crud import get_job_roles
-from app.db.playbooks.crud import get_playbook_by_role
+from sqlalchemy.orm.attributes import flag_modified
+from app.db.use_cases.models import UseCase
+from app.db.playbooks.models import Playbook
+from app.db.jobs.models import Job
 
 
 def delete_role_mapping(db: Session, role_id: int):
-    type = "roles"
-    job_roles = get_job_roles(db, type, role_id)
-    if job_roles:
-        for value in job_roles:
-            db.delete(value)
-            db.commit()
+    # Remove role reference from other models
+    affected_models = [Job, UseCase, Playbook]
 
-    # To Do: Delete use case mapping
-
-    playbook_resp = get_playbook_by_role(db, role_id)
-    if playbook_resp:
-        for value in playbook_resp:
-            db.delete(value)
+    for model in affected_models:
+        items = db.query(model).filter(model.role_ids.any(role_id)).all()
+        for item in items:
+            item.role_ids.remove(role_id)
+            flag_modified(item, "role_ids")
+            db.merge(item)
+            db.flush()
             db.commit()
-    return True
