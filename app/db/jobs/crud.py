@@ -12,65 +12,6 @@ def get_job(db: Session, job_id: int):
     return db.query(models.Job).filter(models.Job.id == job_id).first()
 
 
-def create_job(db: Session, job: schemas.JobCreate):
-    db_job = models.Job(
-        name=job.name,
-        description=job.description,
-        application_url_id=job.application_url_id,
-        is_template=job.is_template,
-    )
-    db.add(db_job)
-    db.commit()
-
-    if job.role_ids is not None and len(job.role_ids) > 0:
-        db_job_roles = [
-            models.JobRole(job_id=db_job.id, role_id=role_id)
-            for role_id in job.role_ids
-        ]
-        db.add_all(db_job_roles)
-        db.commit()
-
-    db.refresh(db_job)
-    return db_job
-
-
-def delete_job(db: Session, job_id: int):
-    job = get_job(db, job_id)
-    if not job:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Job not found")
-    delete_job_mapping(db, job_id)
-    db.delete(job)
-    db.commit()
-    return job
-
-
-def edit_job(db: Session, job_id: int, job: schemas.JobEdit) -> schemas.Job:
-    db_job = get_job(db, job_id)
-    if not db_job:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Job not found")
-    update_data = job.dict(exclude_unset=True)
-
-    for key, value in update_data.items():
-        if key == "role_ids":
-            delete_job_role(db, db_job.id)
-            db_job_roles = [
-                models.JobRole(job_id=db_job.id, role_id=role_id)
-                for role_id in value
-            ]
-            db.add_all(db_job_roles)
-            db.commit()
-        elif key == "steps":
-            setattr(db_job, key, {k.decode(): v for k, v in value.items()})
-        else:
-            setattr(db_job, key, value)
-
-    db.add(db_job)
-    db.commit()
-
-    db.refresh(db_job)
-    return db_job
-
-
 def validate_extension_token(request: Request):
     if f"Bearer {security.EXTENSION_TOKEN}" != request.headers.get(
         "Authorization"
@@ -96,33 +37,15 @@ def validate_user_and_job(db: Session, job_id, user_id, mode):
     return job
 
 
-def delete_job_role(db: Session, job_id: int):
-    type = "jobs"
-    job_roles = get_job_roles(db, type, job_id)
-    if job_roles:
-        for value in job_roles:
-            db.delete(value)
-    db.commit()
-    return job_roles
-
-
-def get_job_roles(db: Session, type: str, id: int):
-    job_roles = False
-    if type == "jobs":
-        job_roles = (
-            db.query(models.JobRole).filter(models.JobRole.job_id == id).all()
-        )
-    elif type == "roles":
-        job_roles = (
-            db.query(models.JobRole).filter(models.JobRole.role_id == id).all()
-        )
-    if job_roles:
-        return job_roles
+def format_job_steps(job):
+    update_data = job.dict(exclude_unset=True)
+    if "steps" in update_data:
+        steps = {k.decode(): v for k, v in update_data["steps"].items()}
+        setattr(job, "steps", steps)
+    return job
 
 
 def delete_job_mapping(db: Session, job_id: int):
-    delete_job_role(db, job_id)
-
     # delete job mapping in use case
     affected_use_cases = (
         db.query(UseCase).filter(UseCase.job_ids.any(job_id)).all()

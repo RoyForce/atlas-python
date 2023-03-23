@@ -11,9 +11,9 @@ class Role(Base, CoreBase, TrackTimeMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     description = Column(String, nullable=True)
-    jobs = relationship(
-        "Job", secondary="job_role_mappings", back_populates="roles"
-    )
+    # jobs = relationship(
+    #     "Job", secondary="job_role_mappings", back_populates="roles"
+    # )
     # playbooks = relationship(
     #     "Playbook", secondary="playbook_role_mappings", back_populates="roles"
     # )
