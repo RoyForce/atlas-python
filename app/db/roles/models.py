@@ -14,6 +14,6 @@ class Role(Base, CoreBase, TrackTimeMixin):
     jobs = relationship(
         "Job", secondary="job_role_mappings", back_populates="roles"
     )
-    playbooks = relationship(
-        "Playbook", secondary="playbook_role_mappings", back_populates="roles"
-    )
+    # playbooks = relationship(
+    #     "Playbook", secondary="playbook_role_mappings", back_populates="roles"
+    # )

@@ -67,13 +67,13 @@ async def use_case_create(
 )
 async def use_cases_edit(
     use_case_id: int,
-    use_cases: UseCaseEdit,
+    use_case: UseCaseEdit,
     db=Depends(get_db),
 ):
     """
     Update existing UseCase
     """
-    return edit_item(db, models.UseCase, use_case_id, use_cases)
+    return edit_item(db, models.UseCase, use_case_id, use_case)
 
 
 @r.delete(

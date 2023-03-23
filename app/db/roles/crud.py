@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 from app.db.jobs.crud import get_job_roles
-from app.db.playbooks.crud import get_playbook_by_role
 
 
 def delete_role_mapping(db: Session, role_id: int):
@@ -13,9 +12,4 @@ def delete_role_mapping(db: Session, role_id: int):
 
     # To Do: Delete use case mapping
 
-    playbook_resp = get_playbook_by_role(db, role_id)
-    if playbook_resp:
-        for value in playbook_resp:
-            db.delete(value)
-            db.commit()
-    return True
+    # To Do: Delete playbook mapping

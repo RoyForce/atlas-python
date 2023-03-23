@@ -1,20 +1,9 @@
-from ctypes import Union
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy import Column, Integer, String, Boolean, Table, ForeignKey
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
-from typing import List
-from app import db
-
-
-class PlaybookRole(Base):
-    __tablename__ = "playbook_role_mappings"
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    playbook_id = Column(
-        "playbook_id", ForeignKey("playbooks.id"), primary_key=True
-    )
-    role_id = Column("role_id", ForeignKey("roles.id"), primary_key=True)
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.orm import relationship
 
 
 class Playbook(Base, CoreBase, TrackTimeMixin):
@@ -24,10 +13,9 @@ class Playbook(Base, CoreBase, TrackTimeMixin):
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     page_content = Column(String)
+    role_ids = Column(ARRAY(Integer))
     roles = relationship(
-        "Role", secondary="playbook_role_mappings", back_populates="playbooks"
+        "Role",
+        primaryjoin="Role.id == any_(foreign(Playbook.role_ids))",
+        uselist=True,
     )
-
-    @property
-    def role_ids(self) -> List[int]:
-        return [role.id for role in self.roles]
