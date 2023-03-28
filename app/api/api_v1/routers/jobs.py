@@ -5,7 +5,8 @@ from app.db.jobs import models
 from app.db.session import get_db
 from app.db.jobs.crud import (
     format_job_steps,
-    delete_job_mapping,
+    delete_all_job_mappings,
+    update_job_mappings,
     validate_extension_token,
     validate_user_and_job,
 )
@@ -78,6 +79,7 @@ async def jobs_edit(
     """
 
     job = format_job_steps(job)
+    update_job_mappings(db, job_id, job)
     return edit_item(db, models.Job, job_id, job)
 
 
@@ -89,7 +91,7 @@ async def job_delete(
     """
     Delete existing jobs
     """
-    delete_job_mapping(db, job_id)
+    delete_all_job_mappings(db, job_id)
     return delete_item(db, models.Job, job_id)
 
 

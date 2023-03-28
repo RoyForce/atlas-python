@@ -4,8 +4,12 @@ import typing as t
 from . import models, schemas
 from app.db.users.crud import get_user
 from app.core import security
+from app.db.jobs.models import Job
 from app.db.use_cases.models import UseCase
+from app.db.screens.models import Screen
 from sqlalchemy.orm.attributes import flag_modified
+
+__all__ = ("delete_all_job_mappings", "update_job_mappings")
 
 
 def get_job(db: Session, job_id: int):
@@ -47,14 +51,52 @@ def format_job_steps(job):
     return job
 
 
-def delete_job_mapping(db: Session, job_id: int):
-    # delete job mapping in use case
-    affected_use_cases = (
-        db.query(UseCase).filter(UseCase.job_ids.any(job_id)).all()
-    )
-    for use_case in affected_use_cases:
-        use_case.job_ids.remove(job_id)
-        flag_modified(use_case, "job_ids")
-        db.merge(use_case)
-        db.flush()
-        db.commit()
+def delete_all_job_mappings(db: Session, job_id: int):
+    # Remove role reference from other models
+    affected_models = [Screen, UseCase]
+
+    for model in affected_models:
+        items = db.query(model).filter(model.job_ids.any(job_id)).all()
+        for item in items:
+            item.job_ids.remove(job_id)
+            flag_modified(item, "job_ids")
+            db.merge(item)
+            db.flush()
+            db.commit()
+
+
+def update_job_mappings(db: Session, job_id, job: Job):
+    delete_all_job_mappings(db, job_id)
+
+    if job.screen_ids:
+        screens = db.query(Screen).filter(Screen.id.in_(job.screen_ids)).all()
+        for screen in screens:
+            screen.job_ids.append(job_id)
+            flag_modified(screen, "job_ids")
+            db.merge(screen)
+            db.flush()
+            db.commit()
+
+    if job.use_case_ids:
+        use_cases = (
+            db.query(UseCase).filter(UseCase.id.in_(job.use_case_ids)).all()
+        )
+        for use_case in use_cases:
+            use_case.job_ids.append(job_id)
+            flag_modified(use_case, "job_ids")
+            db.merge(use_case)
+            db.flush()
+            db.commit()
+
+
+# def delete_job_mapping(db: Session, job_id: int):
+#     # delete job mapping in use case
+#     affected_use_cases = (
+#         db.query(UseCase).filter(UseCase.job_ids.any(job_id)).all()
+#     )
+#     for use_case in affected_use_cases:
+#         use_case.job_ids.remove(job_id)
+#         flag_modified(use_case, "job_ids")
+#         db.merge(use_case)
+#         db.flush()
+#         db.commit()

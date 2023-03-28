@@ -17,6 +17,8 @@ class JobBase(BaseModel):
 class JobEdit(JobBase):
     application_url_id: int = None
     role_ids: Optional[List[int]] = []
+    screen_ids: Optional[List[int]] = []
+    use_case_ids: Optional[List[int]] = []
 
     class Config:
         orm_mode = True
@@ -27,6 +29,8 @@ class JobOut(JobBase):
     application_url: ApplicationUrl = None
     roles: List[Role] = None
     role_ids: Optional[List[int]] = []
+    screen_ids: Optional[List[int]] = []
+    use_case_ids: Optional[List[int]] = []
     application_url_id: int = None
     created_at: datetime = None
     updated_at: datetime = None

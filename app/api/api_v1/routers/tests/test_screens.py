@@ -17,9 +17,9 @@ def test_delete_screen(client, test_screen, test_db, superuser_token_headers):
     assert test_db.query(Screen).all() == []
 
 
-def test_edit_screen(client, test_screen, test_role, superuser_token_headers):
+def test_edit_screen(client, test_screen, test_job, superuser_token_headers):
     new_screen = {
-        "name": "New screens",
+        "name": "New Screen",
         "description": "New desc",
     }
 
@@ -30,3 +30,29 @@ def test_edit_screen(client, test_screen, test_role, superuser_token_headers):
     )
     assert response.status_code == 200
     assert all(response.json()[arg] == new_screen[arg] for arg in new_screen)
+
+    # Edit screen with jobs
+    job = test_job.dict()
+    response = client.put(
+        f"/api/v1/screens/{test_screen.id}",
+        json={"job_ids": [job["id"]]},
+        headers=superuser_token_headers,
+    )
+    assert response.status_code == 200
+    assert response.json()["job_ids"] == [job["id"]]
+
+
+def test_create_screen_with_job_and_delete_mapping(
+    client, test_job, superuser_token_headers
+):
+    job = test_job.dict()
+    screen = {
+        "name": "New Screen",
+        "description": "New desc",
+        "job_ids": [job["id"]],
+    }
+    response = client.post(
+        "/api/v1/screens", json=screen, headers=superuser_token_headers
+    )
+    assert response.status_code == 200
+    assert response.json()["job_ids"][0] == job["id"]

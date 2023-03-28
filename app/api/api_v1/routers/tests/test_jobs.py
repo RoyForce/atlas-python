@@ -165,3 +165,44 @@ def test_edit_job_can_accept_json_steps_value(
     )
     assert response.status_code == 200
     assert response.json()["steps"] == payload["steps"]
+
+
+def test_update_screen_ids_and_use_case_ids_from_job(
+    client,
+    test_job,
+    test_screen,
+    test_use_case,
+    superuser_token_headers,
+):
+    new_job = {
+        "screen_ids": [test_screen.id],
+        "use_case_ids": [test_use_case.id],
+    }
+    response = client.put(
+        f"/api/v1/jobs/{test_job.id}",
+        json=new_job,
+        headers=superuser_token_headers,
+    )
+
+    assert response.status_code == 200
+    assert response.json()["id"] == test_job.id
+    assert response.json()["screen_ids"] == new_job["screen_ids"]
+    assert response.json()["use_case_ids"] == new_job["use_case_ids"]
+
+    response = client.delete(
+        f"/api/v1/jobs/{test_job.id}", headers=superuser_token_headers
+    )
+    assert response.status_code == 200
+
+    response = client.get(
+        f"/api/v1/use-cases/{test_use_case.id}",
+        headers=superuser_token_headers,
+    )
+    use_case = response.json()
+    assert not test_job.id in use_case["job_ids"]
+
+    response = client.get(
+        f"/api/v1/screens/{test_screen.id}", headers=superuser_token_headers
+    )
+    screen = response.json()
+    assert not test_job.id in screen["job_ids"]

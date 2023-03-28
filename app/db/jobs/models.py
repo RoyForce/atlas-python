@@ -29,4 +29,16 @@ class Job(Base, CoreBase, TrackTimeMixin):
     application_url = relationship(
         "ApplicationUrl", lazy="subquery", backref="jobs"
     )
+    screens = relationship(
+        "Screen",
+        primaryjoin="Job.id == any_(foreign(Screen.job_ids))",
+    )
     is_template = Column(Boolean, default=False)
+
+    @property
+    def screen_ids(self):
+        return [screen.id for screen in self.screens]
+
+    @screen_ids.setter
+    def screen_ids(self, screen_ids):
+        pass
