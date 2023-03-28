@@ -24,9 +24,4 @@ def upgrade():
 
 
 def downgrade():
-    op.add_column(
-        "screens",
-        sa.Column("job_ids", sa.ARRAY(sa.Integer()), nullable=True),
-    )
-
-    op.drop_column("jobs", "screen_ids")
+    op.drop_column("screens", "job_ids")

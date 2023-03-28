@@ -12,9 +12,8 @@ from app.db.core import (
 )
 
 from app.db.screens.schemas import (
-    ScreenCreate,
     ScreenEdit,
-    Screen,
+    ScreenOut,
 )
 
 screens_router = r = APIRouter()
@@ -22,8 +21,7 @@ screens_router = r = APIRouter()
 
 @r.get(
     "/screens",
-    response_model=t.List[Screen],
-    response_model_exclude_none=True,
+    response_model=t.List[ScreenOut],
 )
 async def screens_list(
     request: Request,
@@ -40,8 +38,7 @@ async def screens_list(
 
 @r.get(
     "/screens/{screen_id}",
-    response_model=Screen,
-    response_model_exclude_none=True,
+    response_model=ScreenOut,
 )
 async def screens_details(
     screen_id: int,
@@ -55,11 +52,10 @@ async def screens_details(
 
 @r.post(
     "/screens",
-    response_model=Screen,
-    response_model_exclude_none=True,
+    response_model=ScreenOut,
 )
 async def screens_create(
-    screen: ScreenCreate,
+    screen: ScreenEdit,
     db=Depends(get_db),
 ):
     """
@@ -70,8 +66,7 @@ async def screens_create(
 
 @r.put(
     "/screens/{screen_id}",
-    response_model=Screen,
-    response_model_exclude_none=True,
+    response_model=ScreenOut,
 )
 async def screens_edit(
     screen_id: int,
@@ -86,8 +81,7 @@ async def screens_edit(
 
 @r.delete(
     "/screens/{screen_id}",
-    response_model=Screen,
-    response_model_exclude_none=True,
+    response_model=ScreenOut,
 )
 async def screens_delete(
     screen_id: int,
