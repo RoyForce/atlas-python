@@ -7,7 +7,6 @@ from app.db.jobs.schemas import JobOut
 class ScreenBase(BaseModel):
     name: str = None
     description: str = None
-    jobs: List[JobOut] = []
     created_at: datetime = None
     updated_at: datetime = None
 
