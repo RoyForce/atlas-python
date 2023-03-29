@@ -13,6 +13,7 @@ from app.db.core import (
 from app.db.playbooks.schemas import (
     PlaybookEdit,
     PlaybookOut,
+    PlaybookListOut,
 )
 
 playbook_router = r = APIRouter()
@@ -20,7 +21,7 @@ playbook_router = r = APIRouter()
 
 @r.get(
     "/playbooks",
-    response_model=t.List[PlaybookOut],
+    response_model=t.List[PlaybookListOut],
 )
 async def playbooks_list(
     request: Request,

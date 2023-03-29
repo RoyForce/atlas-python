@@ -5,7 +5,11 @@ def test_get_lessons(client, test_lesson, superuser_token_headers):
     lesson = test_lesson.dict()
     response = client.get("/api/v1/lessons", headers=superuser_token_headers)
     assert response.status_code == 200
-    assert all(response.json()[0][arg] == lesson[arg] for arg in lesson)
+    assert all(
+        response.json()[0][arg] == lesson[arg]
+        for arg in lesson
+        if arg != "page_content"
+    )
 
 
 def test_delete_lesson(client, test_lesson, test_db, superuser_token_headers):

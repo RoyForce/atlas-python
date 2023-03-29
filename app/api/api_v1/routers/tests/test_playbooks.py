@@ -5,7 +5,11 @@ def test_get_playbooks(client, test_playbook, superuser_token_headers):
     playbook = test_playbook.dict()
     response = client.get("/api/v1/playbooks", headers=superuser_token_headers)
     assert response.status_code == 200
-    assert all(response.json()[0][arg] == playbook[arg] for arg in playbook)
+    assert all(
+        response.json()[0][arg] == playbook[arg]
+        for arg in playbook
+        if arg != "page_content"
+    )
 
 
 def test_delete_playbook(

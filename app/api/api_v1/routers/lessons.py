@@ -10,15 +10,19 @@ from app.db.core import (
     delete_item,
     edit_item,
 )
-from app.db.lessons.schemas import LessonCreate, LessonEdit, Lesson
+from app.db.lessons.schemas import (
+    LessonCreate,
+    LessonEdit,
+    LessonOut,
+    LessonListOut,
+)
 
 lesson_router = r = APIRouter()
 
 
 @r.get(
     "/lessons",
-    response_model=t.List[Lesson],
-    response_model_exclude_none=True,
+    response_model=t.List[LessonListOut],
 )
 async def lessons_list(
     request: Request,
@@ -35,8 +39,7 @@ async def lessons_list(
 
 @r.get(
     "/lessons/{lesson_id}",
-    response_model=Lesson,
-    response_model_exclude_none=True,
+    response_model=LessonOut,
 )
 async def lesson_details(
     lesson_id: int,
@@ -48,7 +51,7 @@ async def lesson_details(
     return get_item(db, models.Lesson, lesson_id)
 
 
-@r.post("/lessons", response_model=Lesson, response_model_exclude_none=True)
+@r.post("/lessons", response_model=LessonOut)
 async def lesson_create(
     lesson: LessonCreate,
     db=Depends(get_db),
@@ -59,11 +62,7 @@ async def lesson_create(
     return create_item(db, models.Lesson, lesson)
 
 
-@r.put(
-    "/lessons/{lesson_id}",
-    response_model=Lesson,
-    response_model_exclude_none=True,
-)
+@r.put("/lessons/{lesson_id}", response_model=LessonOut)
 async def lesson_edit(
     lesson_id: int,
     lesson: LessonEdit,
@@ -77,8 +76,7 @@ async def lesson_edit(
 
 @r.delete(
     "/lessons/{lesson_id}",
-    response_model=Lesson,
-    response_model_exclude_none=True,
+    response_model=LessonOut,
 )
 async def lesson_delete(
     lesson_id: int,
