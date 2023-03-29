@@ -7,6 +7,7 @@ from app.db.jobs.schemas import JobOut
 class ScreenBase(BaseModel):
     name: str = None
     description: str = None
+    screen_url: str = None
     created_at: datetime = None
     updated_at: datetime = None
 

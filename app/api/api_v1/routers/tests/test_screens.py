@@ -21,6 +21,7 @@ def test_edit_screen(client, test_screen, test_job, superuser_token_headers):
     new_screen = {
         "name": "New Screen",
         "description": "New desc",
+        "screen_url": "New desc",
     }
 
     response = client.put(
@@ -49,6 +50,7 @@ def test_create_screen_with_job_and_delete_mapping(
     screen = {
         "name": "New Screen",
         "description": "New desc",
+        "screen_url": "New desc",
         "job_ids": [job["id"]],
     }
     response = client.post(
