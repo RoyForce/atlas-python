@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from app.db.roles.schemas import Role
-from app.db.application_urls.schemas import ApplicationUrl
+from app.db.application_urls.schemas import ApplicationUrlOut
 from typing import List, Any, Dict, AnyStr, Optional
 from enum import Enum
 from datetime import datetime
@@ -26,7 +26,7 @@ class JobEdit(JobBase):
 
 class JobOut(JobBase):
     id: int
-    application_url: ApplicationUrl = None
+    application_url: ApplicationUrlOut = None
     roles: List[Role] = None
     role_ids: Optional[List[int]] = []
     screen_ids: Optional[List[int]] = []

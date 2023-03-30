@@ -1,18 +1,13 @@
+from app.db.application_types.schemas import ApplicationTypeOut
 from pydantic import BaseModel
 from datetime import datetime
 
 
 class ApplicationUrlBase(BaseModel):
-    name: str
+    name: str = None
     description: str = None
     url: str = None
-    created_at: datetime = None
-    updated_at: datetime = None
-
-
-class ApplicationUrlCreate(ApplicationUrlBase):
-    class Config:
-        orm_mode = True
+    application_type_id: int = None
 
 
 class ApplicationUrlEdit(ApplicationUrlBase):
@@ -20,8 +15,11 @@ class ApplicationUrlEdit(ApplicationUrlBase):
         orm_mode = True
 
 
-class ApplicationUrl(ApplicationUrlBase):
+class ApplicationUrlOut(ApplicationUrlBase):
     id: int
+    application_type: ApplicationTypeOut = None
+    created_at: datetime = None
+    updated_at: datetime = None
 
     class Config:
         orm_mode = True

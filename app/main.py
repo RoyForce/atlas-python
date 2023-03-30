@@ -7,6 +7,7 @@ from app.api.api_v1.routers.users import users_router
 from app.api.api_v1.routers.roles import roles_router
 from app.api.api_v1.routers.auth import auth_router
 from app.api.api_v1.routers.application_urls import application_urls_router
+from app.api.api_v1.routers.application_types import application_types_router
 from app.api.api_v1.routers.jobs import jobs_router, extension_router
 from app.api.api_v1.routers.playbooks import playbook_router
 from app.api.api_v1.routers.lessons import lesson_router
@@ -76,6 +77,12 @@ app.include_router(
     application_urls_router,
     prefix="/api/v1",
     tags=["application-urls"],
+    dependencies=[Depends(get_current_active_user)],
+)
+app.include_router(
+    application_types_router,
+    prefix="/api/v1",
+    tags=["application-types"],
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(

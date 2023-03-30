@@ -12,9 +12,8 @@ from app.db.core import (
 )
 
 from app.db.application_urls.schemas import (
-    ApplicationUrlCreate,
     ApplicationUrlEdit,
-    ApplicationUrl,
+    ApplicationUrlOut,
 )
 
 application_urls_router = r = APIRouter()
@@ -22,8 +21,7 @@ application_urls_router = r = APIRouter()
 
 @r.get(
     "/application-urls",
-    response_model=t.List[ApplicationUrl],
-    response_model_exclude_none=True,
+    response_model=t.List[ApplicationUrlOut],
 )
 async def application_urls_list(
     request: Request,
@@ -42,8 +40,7 @@ async def application_urls_list(
 
 @r.get(
     "/application-urls/{application_url_id}",
-    response_model=ApplicationUrl,
-    response_model_exclude_none=True,
+    response_model=ApplicationUrlOut,
 )
 async def application_urls_details(
     application_url_id: int,
@@ -57,11 +54,10 @@ async def application_urls_details(
 
 @r.post(
     "/application-urls",
-    response_model=ApplicationUrl,
-    response_model_exclude_none=True,
+    response_model=ApplicationUrlOut,
 )
 async def application_urls_create(
-    application_url: ApplicationUrlCreate,
+    application_url: ApplicationUrlEdit,
     db=Depends(get_db),
 ):
     """
@@ -72,8 +68,7 @@ async def application_urls_create(
 
 @r.put(
     "/application-urls/{application_url_id}",
-    response_model=ApplicationUrl,
-    response_model_exclude_none=True,
+    response_model=ApplicationUrlOut,
 )
 async def application_urls_edit(
     application_url_id: int,
@@ -90,8 +85,7 @@ async def application_urls_edit(
 
 @r.delete(
     "/application-urls/{application_url_id}",
-    response_model=ApplicationUrl,
-    response_model_exclude_none=True,
+    response_model=ApplicationUrlOut,
 )
 async def application_urls_delete(
     application_url_id: int,

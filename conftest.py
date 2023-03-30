@@ -12,6 +12,8 @@ from app.db.users.models import User
 from app.db.roles.models import Role
 from app.db.jobs.models import Job
 from app.db.application_urls.models import ApplicationUrl
+from app.db.application_types.models import ApplicationType
+
 from app.db.playbooks.models import Playbook
 from app.db.lessons.models import Lesson
 from app.db.courses.models import Course
@@ -209,6 +211,18 @@ def test_application_url(test_db) -> ApplicationUrl:
     test_db.add(application_url)
     test_db.commit()
     return application_url
+
+
+@pytest.fixture
+def test_application_type(test_db) -> ApplicationType:
+    """
+    Make a test application type in the database
+    """
+
+    application_type = ApplicationType(name="Atlas", description="test")
+    test_db.add(application_type)
+    test_db.commit()
+    return application_type
 
 
 @pytest.fixture
