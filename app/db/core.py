@@ -75,12 +75,14 @@ def get_lists(db: Session, model, query_params):
                     )
                     query = query.join(attr).order_by(order_by)
 
-    if all(key in query_params for key in ("_start", "_end")):
-        skip = int(query_params["_start"])
-        limit = int(query_params["_end"]) - skip
-        return query.offset(skip).limit(limit).all()
-    else:
-        return query.all()
+    return query.all()
+
+    # if all(key in query_params for key in ("_start", "_end")):
+    #     skip = int(query_params["_start"])
+    #     limit = int(query_params["_end"]) - skip
+    #     return query.offset(skip).limit(limit).all()
+    # else:
+    #     return query.all()
 
 
 def get_item(db: Session, model, id: int):
