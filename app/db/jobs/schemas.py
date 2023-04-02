@@ -1,3 +1,4 @@
+from app.db.application_types.schemas import ApplicationTypeOut
 from pydantic import BaseModel
 from app.db.roles.schemas import Role
 from app.db.application_urls.schemas import ApplicationUrlOut
@@ -16,6 +17,7 @@ class JobBase(BaseModel):
 
 class JobEdit(JobBase):
     application_url_id: int = None
+    application_type_id: int = None
     role_ids: Optional[List[int]] = []
     screen_ids: Optional[List[int]] = []
     use_case_ids: Optional[List[int]] = []
@@ -32,6 +34,8 @@ class JobOut(JobBase):
     screen_ids: Optional[List[int]] = []
     use_case_ids: Optional[List[int]] = []
     application_url_id: int = None
+    application_type_id: int = None
+    application_type: ApplicationTypeOut = None
     created_at: datetime = None
     updated_at: datetime = None
 

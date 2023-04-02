@@ -1,5 +1,5 @@
 from typing import List
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
 from sqlalchemy.orm import relationship
@@ -18,4 +18,10 @@ class Screen(Base, CoreBase, TrackTimeMixin):
         "Job",
         primaryjoin="Job.id == any_(foreign(Screen.job_ids))",
         uselist=True,
+    )
+    application_type_id = Column(
+        Integer, ForeignKey("application_types.id"), nullable=True
+    )
+    application_type = relationship(
+        "ApplicationType", lazy="subquery", backref="screens"
     )

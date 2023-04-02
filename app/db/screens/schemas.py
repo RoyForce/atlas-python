@@ -1,4 +1,5 @@
 from typing import Any, List, Optional
+from app.db.application_types.schemas import ApplicationTypeOut
 from pydantic import BaseModel
 from datetime import datetime
 from app.db.jobs.schemas import JobOut
@@ -14,6 +15,7 @@ class ScreenBase(BaseModel):
 
 class ScreenEdit(ScreenBase):
     job_ids: Optional[List[int]] = []
+    application_type_id: int = None
 
     class Config:
         orm_mode = True
@@ -25,6 +27,8 @@ class ScreenOut(ScreenBase):
     jobs: List[JobOut] = []
     created_at: datetime = None
     updated_at: datetime = None
+    application_type_id: int = None
+    application_type: ApplicationTypeOut = None
 
     class Config:
         orm_mode = True
