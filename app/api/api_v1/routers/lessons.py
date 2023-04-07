@@ -33,8 +33,9 @@ async def lessons_list(
     Get all lessons
     """
     lessons = get_lists(db, models.Lesson, request.query_params)
-    response.headers["Content-Range"] = f"0-9/{len(lessons)}"
-    return lessons
+    filtered_lessons = [lesson for lesson in lessons if lesson.is_template]
+    response.headers["Content-Range"] = f"0-9/{len(filtered_lessons)}"
+    return filtered_lessons
 
 
 @r.get(

@@ -269,7 +269,7 @@ def test_lesson(test_db) -> Lesson:
         description="test desc",
         duration=1,
         page_content="testpagecont",
-        is_template=False,
+        is_template=True,
     )
     test_db.add(lesson)
     test_db.commit()
