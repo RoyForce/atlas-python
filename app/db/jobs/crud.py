@@ -51,9 +51,9 @@ def format_job_steps(job):
     return job
 
 
-def delete_all_job_mappings(db: Session, job_id: int):
+def delete_all_job_mappings(db: Session, job_id: int, model=None):
     # Remove role reference from other models
-    affected_models = [Screen, UseCase]
+    affected_models = [Screen, UseCase] if not model else [model]
 
     for model in affected_models:
         items = db.query(model).filter(model.job_ids.any(job_id)).all()
@@ -66,9 +66,8 @@ def delete_all_job_mappings(db: Session, job_id: int):
 
 
 def update_job_mappings(db: Session, job_id, job: Job):
-    delete_all_job_mappings(db, job_id)
-
     if job.screen_ids:
+        delete_all_job_mappings(db, job_id, Screen)
         screens = db.query(Screen).filter(Screen.id.in_(job.screen_ids)).all()
         for screen in screens:
             screen.job_ids.append(job_id)
@@ -78,6 +77,7 @@ def update_job_mappings(db: Session, job_id, job: Job):
             db.commit()
 
     if job.use_case_ids:
+        delete_all_job_mappings(db, job_id, UseCase)
         use_cases = (
             db.query(UseCase).filter(UseCase.id.in_(job.use_case_ids)).all()
         )

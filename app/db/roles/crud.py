@@ -9,9 +9,9 @@ from app.db.roles.models import Role
 __all__ = ("delete_all_role_mappings", "update_role_mappings")
 
 
-def delete_all_role_mappings(db: Session, role_id: int):
+def delete_all_role_mappings(db: Session, role_id: int, model=None):
     # Remove role reference from other models
-    affected_models = [Job, UseCase, Playbook]
+    affected_models = [Job, UseCase, Playbook] if not model else [model]
 
     for model in affected_models:
         items = db.query(model).filter(model.role_ids.any(role_id)).all()
@@ -24,9 +24,8 @@ def delete_all_role_mappings(db: Session, role_id: int):
 
 
 def update_role_mappings(db: Session, role_id, role: Role):
-    delete_all_role_mappings(db, role_id)
-
     if role.job_ids:
+        delete_all_role_mappings(db, role_id, Job)
         jobs = db.query(Job).filter(Job.id.in_(role.job_ids)).all()
         for job in jobs:
             job.role_ids.append(role_id)
@@ -36,6 +35,7 @@ def update_role_mappings(db: Session, role_id, role: Role):
             db.commit()
 
     if role.use_case_ids:
+        delete_all_role_mappings(db, role_id, UseCase)
         use_cases = (
             db.query(UseCase).filter(UseCase.id.in_(role.use_case_ids)).all()
         )
@@ -47,6 +47,7 @@ def update_role_mappings(db: Session, role_id, role: Role):
             db.commit()
 
     if role.playbook_ids:
+        delete_all_role_mappings(db, role_id, Playbook)
         playbooks = (
             db.query(Playbook).filter(Playbook.id.in_(role.playbook_ids)).all()
         )

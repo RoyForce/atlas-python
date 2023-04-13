@@ -33,6 +33,8 @@ class UseCaseOut(UseCaseBase):
     job_ids: Optional[List[int]] = []
     jobs: List[JobOut] = []
     roles: List[Role] = []
+    ordered_jobs: List[JobOut] = []
+    ordered_roles: List[Role] = []
     created_at: datetime = None
     updated_at: datetime = None
 

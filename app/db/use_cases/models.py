@@ -1,4 +1,3 @@
-from typing import List
 from sqlalchemy import Column, Integer, String
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
@@ -25,3 +24,15 @@ class UseCase(Base, CoreBase, TrackTimeMixin):
         primaryjoin="Role.id == any_(foreign(UseCase.role_ids))",
         uselist=True,
     )
+
+    @property
+    def ordered_jobs(self):
+        job_map = {job.id: job for job in self.jobs}
+        ordered_jobs = [job_map[job_id] for job_id in self.job_ids]
+        return ordered_jobs
+
+    @property
+    def ordered_roles(self):
+        role_map = {role.id: role for role in self.roles}
+        ordered_roles = [role_map[role_id] for role_id in self.role_ids]
+        return ordered_roles
