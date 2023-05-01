@@ -11,6 +11,7 @@ SECRET_KEY = "89023f0j2039jf90jkakmciumcses9mcs99mcs93c48ym72tmarf737mc7h47wna4c
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 120
 EXTENSION_TOKEN = "xTurDgE9QtNxhhePxFKfNinoTmew6HIX"
+EXTERNAL_API_TOKEN = "exTavThytMfGiz2xVBjQhk8TYUdj0mq"
 
 
 def get_password_hash(password: str) -> str:

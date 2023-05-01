@@ -11,6 +11,7 @@ class UserBase(BaseModel):
     last_name: str = None
     role_id: int = None
     is_designer: bool = False
+    app_type_id: int = None
 
 
 class UserCreate(UserBase):
