@@ -1,12 +1,10 @@
 from email.policy import default
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
 from sqlalchemy.dialects.postgresql import ARRAY
-
-from typing import List
 
 
 class Job(Base, CoreBase, TrackTimeMixin):
@@ -15,7 +13,7 @@ class Job(Base, CoreBase, TrackTimeMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
-    steps = Column(JSONB, nullable=True, default={})
+    steps = Column(JSON, nullable=True, default={})
     is_locked = Column(Boolean, default=False)
     is_template = Column(Boolean, default=False)
 

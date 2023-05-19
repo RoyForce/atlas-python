@@ -41,16 +41,6 @@ def validate_user_and_job(db: Session, job_id, user_id, mode):
     return job
 
 
-def format_job_steps(job):
-    update_data = job.dict(exclude_unset=True)
-    if "steps" in update_data:
-        if update_data["steps"] is None:
-            update_data["steps"] = {}
-        steps = {k.decode(): v for k, v in update_data["steps"].items()}
-        setattr(job, "steps", steps)
-    return job
-
-
 def delete_all_job_mappings(db: Session, job_id: int, model=None):
     # Remove role reference from other models
     affected_models = [Screen, UseCase] if not model else [model]

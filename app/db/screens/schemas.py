@@ -1,5 +1,6 @@
-from typing import Any, List, Optional
+from typing import List, Optional
 from app.db.application_types.schemas import ApplicationTypeOut
+from app.db.screen_objects.schemas import ScreenObjectOut
 from pydantic import BaseModel
 from datetime import datetime
 from app.db.jobs.schemas import JobOut
@@ -29,6 +30,7 @@ class ScreenOut(ScreenBase):
     updated_at: datetime = None
     application_type_id: int = None
     application_type: ApplicationTypeOut = None
+    objects: List[ScreenObjectOut] = []
 
     class Config:
         orm_mode = True

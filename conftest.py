@@ -1,4 +1,3 @@
-from pickle import TRUE
 import pytest
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
@@ -312,10 +311,6 @@ def test_use_case(test_db) -> UseCase:
 
 @pytest.fixture
 def test_screen(test_db) -> Screen:
-    """
-    Make a test playbook in the database
-    """
-
     screens = Screen(name="testNameScreen", description="testDescScreen")
     test_db.add(screens)
     test_db.commit()

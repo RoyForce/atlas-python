@@ -25,3 +25,8 @@ class Screen(Base, CoreBase, TrackTimeMixin):
     application_type = relationship(
         "ApplicationType", lazy="subquery", backref="screens"
     )
+    objects = relationship(
+        "ScreenObject",
+        primaryjoin="Screen.id == ScreenObject.screen_id",
+        uselist=True,
+    )

@@ -4,7 +4,6 @@ import typing as t
 from app.db.jobs import models
 from app.db.session import get_db
 from app.db.jobs.crud import (
-    format_job_steps,
     delete_all_job_mappings,
     update_job_mappings,
     validate_extension_token,
@@ -78,7 +77,6 @@ async def jobs_edit(
     Update existing Job
     """
 
-    job = format_job_steps(job)
     update_job_mappings(db, job_id, job)
     return edit_item(db, models.Job, job_id, job)
 
@@ -125,5 +123,4 @@ async def save_job_steps(
     Save job steps
     """
     validate_extension_token(request)
-    job = format_job_steps(job)
     return edit_item(db, models.Job, job_id, job)

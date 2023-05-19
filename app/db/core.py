@@ -1,11 +1,12 @@
-# from sqlalchemy.ext.declarative import declared_attr
-
 from datetime import datetime
 from sqlalchemy import Column, desc, TIMESTAMP, text
 from sqlalchemy.orm import Session
 from typing import List, Union
 from fastapi import HTTPException
 from sqlalchemy.inspection import inspect
+
+
+from sqlalchemy.dialects.postgresql import JSON, JSONB
 
 
 class TrackTimeMixin:
@@ -92,7 +93,25 @@ def get_item(db: Session, model, id: int):
     return item
 
 
+def sanitize_json_values(model, item: dict):
+    for column in model.__table__.columns:
+        if (
+            isinstance(column.type, JSON) or isinstance(column.type, JSONB)
+        ) and column.name in item.dict():
+            if isinstance(item.dict()[column.name], dict):
+                setattr(
+                    item,
+                    column.name,
+                    {
+                        k.decode(): v
+                        for k, v in item.dict()[column.name].items()
+                    },
+                )
+    return item
+
+
 def create_item(db: Session, model, item: dict):
+    item = sanitize_json_values(model, item)
     db_item = model(**item.dict(exclude_unset=True))
     db.add(db_item)
     db.commit()
@@ -113,6 +132,8 @@ def edit_item(db: Session, model, id: int, item: dict):
     db_item = get_item(db, model, id)
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
+
+    item = sanitize_json_values(model, item)
     update_data = item.dict(exclude_unset=True)
 
     for key, value in update_data.items():
