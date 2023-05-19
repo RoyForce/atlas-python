@@ -23,7 +23,7 @@ screen_objects_router = r = APIRouter()
     "/screen-objects",
     response_model=t.List[ScreenObjectOut],
 )
-async def screen_objects_list(
+async def screen_object_list(
     request: Request,
     response: Response,
     db=Depends(get_db),
@@ -40,7 +40,7 @@ async def screen_objects_list(
     "/screen-objects/{screen_object_id}",
     response_model=ScreenObjectOut,
 )
-async def screens_objects_details(
+async def screens_object_details(
     screen_object_id: int,
     db=Depends(get_db),
 ):
@@ -68,7 +68,7 @@ async def screen_object_create(
     "/screen-objects/{screen_object_id}",
     response_model=ScreenObjectOut,
 )
-async def screens_edit(
+async def screen_object_edit(
     screen_object_id: int,
     screen_object: ScreenObjectEdit,
     db=Depends(get_db),
@@ -83,7 +83,7 @@ async def screens_edit(
     "/screen-objects/{screen_object_id}",
     response_model=ScreenObjectOut,
 )
-async def screens_delete(
+async def screen_object_delete(
     screen_object_id: int,
     db=Depends(get_db),
 ):

@@ -1,5 +1,6 @@
 from typing import Any, Dict, AnyStr
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class ScreenObjectBase(BaseModel):
@@ -16,6 +17,8 @@ class ScreenObjectEdit(ScreenObjectBase):
 
 class ScreenObjectOut(ScreenObjectBase):
     id: int
+    created_at: datetime = None
+    updated_at: datetime = None
 
     class Config:
         orm_mode = True
