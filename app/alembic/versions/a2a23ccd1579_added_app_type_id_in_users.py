@@ -18,10 +18,58 @@ depends_on = None
 
 
 def upgrade():
+    source = postgresql.ENUM("INTERNAL", "EXTERNAL", name="source")
+    source.create(op.get_bind(), checkfirst=True)
+    op.add_column("users", sa.Column("source", source))
+    op.alter_column("users", "source", server_default="INTERNAL")
+
+    source_app = postgresql.ENUM("JIRA-ALIGN", "JIRA", name="source_type")
+    source_app.create(op.get_bind(), checkfirst=True)
+    op.add_column("users", sa.Column("source_app", source_app))
+    op.add_column("users", sa.Column("source_id", sa.Integer(), nullable=True))
     op.add_column(
-        "users", sa.Column("app_type_id", sa.Integer(), nullable=True)
+        "users",
+        sa.Column(
+            "source_update_date", sa.TIMESTAMP(timezone=True), nullable=True
+        ),
+    )
+
+    source = postgresql.ENUM("INTERNAL", "EXTERNAL", name="source")
+    source.create(op.get_bind(), checkfirst=True)
+    op.add_column("roles", sa.Column("source", source))
+    op.alter_column("roles", "source", server_default="INTERNAL")
+
+    source_app = postgresql.ENUM("JIRA-ALIGN", "JIRA", name="source_type")
+    source_app.create(op.get_bind(), checkfirst=True)
+    op.add_column("roles", sa.Column("source_app", source_app))
+    op.add_column("roles", sa.Column("source_id", sa.Integer(), nullable=True))
+    op.add_column(
+        "roles",
+        sa.Column(
+            "source_update_date", sa.TIMESTAMP(timezone=True), nullable=True
+        ),
     )
 
 
 def downgrade():
-    op.drop_column("users", "app_type_id")
+    op.drop_column("users", "source")
+    source = postgresql.ENUM("INTERNAL", "EXTERNAL", name="source")
+    source.drop(op.get_bind())
+
+    op.drop_column("users", "source_app")
+    source_app = postgresql.ENUM("JIRA-ALIGN", "JIRA", name="source_app")
+    source_app.drop(op.get_bind())
+
+    op.drop_column("users", "source_id")
+    op.drop_column("users", "source_update_date")
+
+    op.drop_column("roles", "source")
+    source = postgresql.ENUM("INTERNAL", "EXTERNAL", name="source")
+    source.drop(op.get_bind())
+
+    op.drop_column("roles", "source_app")
+    source_app = postgresql.ENUM("JIRA-ALIGN", "JIRA", name="source_app")
+    source_app.drop(op.get_bind())
+
+    op.drop_column("roles", "source_id")
+    op.drop_column("roles", "source_update_date")

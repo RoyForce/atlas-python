@@ -20,5 +20,5 @@ async def fetch_data(
     response: Response,
     db=Depends(get_db),
 ):
-    validate_external_api_token(request)
+    # validate_external_api_token(request)
     return fetch_data_api(db)

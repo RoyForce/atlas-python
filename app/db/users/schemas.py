@@ -11,7 +11,10 @@ class UserBase(BaseModel):
     last_name: str = None
     role_id: int = None
     is_designer: bool = False
-    app_type_id: int = None
+    source: str = None
+    source_app: str = None
+    source_id: int = None
+    source_update_date: datetime = None
 
 
 class UserCreate(UserBase):

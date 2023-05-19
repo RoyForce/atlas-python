@@ -1,22 +1,27 @@
 from enum import Enum
 
 
-class AppType(str, Enum):
-    JIRA_ALIGN = "Jira Align"
+class Source(str, Enum):
+    INTERNAL = "INTERNAL"
+    EXTERNAL = "EXTERNAL"
+
+
+class SourceApp(str, Enum):
+    JIRA_ALIGN = "JIRA-ALIGN"
+    JIRA = "JIRA"
 
 
 class ResourceType(str, Enum):
+    TEAM = "TEAM"
     USER = "USER"
-    ROLE = "ROLE"
     PORTFOLIO = "PORTFOLIO"
     PROGRAM = "PROGRAM"
-    TEAMS = "TEAMS"
-    ORG = "ORG"
     SPRINT = "SPRINT"
 
 
-class ResourceTypeUrl(str, Enum):
-    USER = "User"
-    PORTFOLIO_URL = "Portfolio"
-    PROGRAM_URL = "Program"
-    TEAMS_URL = "Teams"
+class ResourceUrl(str, Enum):
+    USER = "Users?expand=true"
+    PORTFOLIO = "Portfolios"
+    PROGRAM = "Programs"
+    TEAM = "Teams"
+    SPRINT = "Iterations"

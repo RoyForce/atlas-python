@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
@@ -11,6 +11,10 @@ class Role(Base, CoreBase, TrackTimeMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     description = Column(String, nullable=True)
+    source = Column(String, nullable=True)
+    source_app = Column(String, nullable=True)
+    source_id = Column(Integer, nullable=True)
+    source_update_date = Column(DateTime, nullable=True)
     jobs = relationship(
         "Job",
         primaryjoin="Role.id == any_(foreign(Job.role_ids))",

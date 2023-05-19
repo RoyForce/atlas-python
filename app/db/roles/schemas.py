@@ -11,6 +11,10 @@ class RoleBase(BaseModel):
     use_case_ids: Optional[List[int]] = []
     created_at: datetime = None
     updated_at: datetime = None
+    source: str = None
+    source_app: str = None
+    source_id: int = None
+    source_update_date: datetime = None
 
 
 class RoleCreate(RoleBase):

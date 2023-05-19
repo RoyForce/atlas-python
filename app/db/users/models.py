@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String, DateTime
 
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
@@ -16,4 +16,7 @@ class User(Base, CoreBase, TrackTimeMixin):
     is_superuser = Column(Boolean, default=False)
     role_id = Column(Integer)
     is_designer = Column(Boolean, default=False)
-    app_type_id = Column(Integer, nullable=True)
+    source = Column(String, nullable=True)
+    source_app = Column(String, nullable=True)
+    source_id = Column(Integer, nullable=True)
+    source_update_date = Column(DateTime, nullable=True)

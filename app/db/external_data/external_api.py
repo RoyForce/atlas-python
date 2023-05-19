@@ -5,7 +5,7 @@ import requests
 from app.db.external_data import engine
 from app.core import security
 
-from app.db.enums import AppType, ResourceType, ResourceTypeUrl
+from app.db.enums import SourceApp, ResourceType, ResourceUrl
 
 
 BEARER_TOKEN = "user:1229|PB[uuqXnMlJj9yV\j_nHZeEdszNanH=Hpm4O%Daw"
@@ -14,7 +14,7 @@ JA_BASE_URL = "https://cprime.jiraalign.com/rest/align/api/2"
 
 def fetch_data_api(db: Session) -> str:
     app_types = []
-    for app_type in AppType:
+    for app_type in SourceApp:
         app_types.append(app_type.value)
 
     fetch_resource = []
@@ -23,30 +23,28 @@ def fetch_data_api(db: Session) -> str:
 
     for app_type in app_types:
         for resource in fetch_resource:
-            if (
-                app_type == AppType.JIRA_ALIGN.value
-                and resource == ResourceType.USER.value
-            ):
+            if app_type == SourceApp.JIRA_ALIGN.value:
                 session = requests.Session()
                 session.headers.update(
                     {"Authorization": f"Bearer {BEARER_TOKEN}"}
                 )
-                url = f"{JA_BASE_URL}/Users"
-                params = {"$skip": 0, "$select": "*"}
-                users = []
+                path = ResourceUrl[ResourceType[resource].name].value
+                url = f"{JA_BASE_URL}/{path}"
+                params = {"$skip": 0}
+                data = []
 
                 while True:
                     response = session.get(url, params=params)
                     response.raise_for_status()
                     page = response.json()
 
-                    users += page
+                    data += page
                     if len(page) != 100:
                         break
                     params["$skip"] += 100
 
                 response = engine.create_update_external_data(
-                    db, users, app_type, resource
+                    db, data, app_type, resource
                 )
     return f"Data fetched successfully"
 
