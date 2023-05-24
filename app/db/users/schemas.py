@@ -14,7 +14,11 @@ class UserBase(BaseModel):
     source: str = None
     source_app: str = None
     source_id: int = None
-    source_update_date: datetime = None
+    source_update_at: datetime = None
+    cost_center_id: int = None
+    is_deleted: bool = None
+    created_by: int = None
+    updated_by: int = None
 
 
 class UserCreate(UserBase):

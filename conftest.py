@@ -18,6 +18,9 @@ from app.db.lessons.models import Lesson
 from app.db.courses.models import Course
 from app.db.use_cases.models import UseCase
 from app.db.screens.models import Screen
+from app.db.portfolios.models import Portfolio
+from app.db.programs.models import Program
+from app.db.teams.models import Team
 from app.main import app
 
 
@@ -315,3 +318,31 @@ def test_screen(test_db) -> Screen:
     test_db.add(screens)
     test_db.commit()
     return screens
+
+
+@pytest.fixture
+def test_portfolio(test_db) -> Portfolio:
+    portfolio = Portfolio(
+        title="test_portfolio", description="testDescScreen", id=1
+    )
+    test_db.add(portfolio)
+    test_db.commit()
+    return portfolio
+
+
+@pytest.fixture
+def test_program(test_db) -> Program:
+    program = Program(title="Test Program", portfolio_id=1, team_id=1, id=1)
+    test_db.add(program)
+    test_db.commit()
+    return program
+
+
+@pytest.fixture
+def test_team(test_db) -> Team:
+    team = Team(
+        name="Test Teams", description="test desc", program_id=1, type=1, id=1
+    )
+    test_db.add(team)
+    test_db.commit()
+    return team

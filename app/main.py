@@ -16,6 +16,9 @@ from app.api.api_v1.routers.use_cases import use_case_router
 from app.api.api_v1.routers.screens import screens_router
 from app.api.api_v1.routers.screen_objects import screen_objects_router
 from app.api.api_v1.routers.fetch_external_data import external_api_router
+from app.api.api_v1.routers.portfolios import portfolio_router
+from app.api.api_v1.routers.programs import program_router
+from app.api.api_v1.routers.teams import team_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
@@ -138,9 +141,31 @@ app.include_router(
 )
 
 app.include_router(
+    portfolio_router,
+    prefix="/api/v1",
+    tags=["portfolio"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    program_router,
+    prefix="/api/v1",
+    tags=["program"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    team_router,
+    prefix="/api/v1",
+    tags=["teams"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
     external_api_router,
     prefix="/api/v1",
     tags=["external-api"],
+    dependencies=[Depends(get_current_active_user)],
 )
 
 app.include_router(auth_router, prefix="/api", tags=["auth"])
