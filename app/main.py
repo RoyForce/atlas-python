@@ -19,6 +19,7 @@ from app.api.api_v1.routers.fetch_external_data import external_api_router
 from app.api.api_v1.routers.portfolios import portfolio_router
 from app.api.api_v1.routers.programs import program_router
 from app.api.api_v1.routers.teams import team_router
+from app.api.api_v1.routers.cost_centers import cost_center_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
@@ -158,6 +159,13 @@ app.include_router(
     team_router,
     prefix="/api/v1",
     tags=["teams"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    cost_center_router,
+    prefix="/api/v1",
+    tags=["cost-centers"],
     dependencies=[Depends(get_current_active_user)],
 )
 

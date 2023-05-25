@@ -1,24 +1,25 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from app.db.session import Base
-from app.db.core import CoreBase, TrackTimeMixin
+from app.db.core import CoreBase, TrackTimeMixin, ExternalSource
+from sqlalchemy.orm import relationship
 
 
-class Team(Base, CoreBase, TrackTimeMixin):
+class Team(Base, CoreBase, TrackTimeMixin, ExternalSource):
     __tablename__ = "teams"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    program_id = Column(Integer)
+    program_id = Column(Integer, ForeignKey("programs.id"), nullable=True)
     type = Column(Integer)
     is_active = Column(Boolean, default=True)
     description = Column(String, nullable=True)
     sprint_prefix = Column(String, nullable=True)
     short_name = Column(String, nullable=True)
-    source_id = Column(Integer, nullable=True)
-    source_update_at = Column(DateTime, nullable=True)
-    created_by = Column(Integer, nullable=True)
-    updated_by = Column(Integer, nullable=True)
-    is_deleted = Column(Boolean, default=False)
     user_ids = Column(ARRAY(Integer), default=[])
+    users = relationship(
+        "User",
+        primaryjoin="User.id == any_(foreign(Team.user_ids))",
+        uselist=True,
+    )

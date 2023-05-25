@@ -149,11 +149,7 @@ def process_teams_data(db: Session, raw_data):
             )
             if db_program is not None:
                 programId = db_program.id
-                print("-------")
-                print(programId)
 
-        print("---ssss----")
-        print(programId)
         db_team = (
             db.query(TeamModel.Team)
             .filter(TeamModel.Team.source_id == team["id"])
@@ -221,7 +217,7 @@ def process_portfolios_data(db: Session, raw_data):
         )
         if db_portfolio is None:
             db_portfolio = PortfolioModel.Portfolio(
-                title=portfolio["title"],
+                name=portfolio["title"],
                 description=portfolio["description"],
                 team_id=teamId,
                 is_active=portfolio["isActive"],
@@ -244,7 +240,7 @@ def process_portfolios_data(db: Session, raw_data):
                 )
                 if db_last_update < source_last_update:
                     update_data = dict(exclude_unset=True)
-                    update_data["title"] = portfolio["title"]
+                    update_data["name"] = portfolio["title"]
                     update_data["description"] = portfolio["description"]
                     update_data["team_id"] = teamId
                     update_data["is_active"] = portfolio["isActive"]
@@ -292,7 +288,7 @@ def process_programs_data(db: Session, data):
             portfolio_id = db_portfolio.id
         if db_program is None:
             db_program = ProgramModel.Program(
-                title=program["title"],
+                name=program["title"],
                 portfolio_id=portfolio_id,
                 team_id=team_id,
                 source_id=program["id"],
@@ -312,7 +308,7 @@ def process_programs_data(db: Session, data):
                 )
                 if db_last_update < source_last_update:
                     update_data = dict(exclude_unset=True)
-                    update_data["title"] = program["title"]
+                    update_data["name"] = program["title"]
                     update_data["portfolio_id"] = portfolio_id
                     update_data["team_id"] = team_id
                     update_data["source_update_at"] = program[
@@ -344,7 +340,6 @@ def update_user_team_mapping(db: Session, user_id, teams):
         else:
             update_data = dict(exclude_unset=True)
             update_data["user_ids"] = (user_id,)
-            update_data["description"] = ("sssssssss",)
             for key, value in update_data.items():
                 setattr(db_team, key, value)
             db.add(db_team)
@@ -363,11 +358,7 @@ def process_teams_data_update_program(db: Session, raw_data):
             )
             if db_program is not None:
                 programId = db_program.id
-                print("-------")
-                print(programId)
 
-        print("---ssss----")
-        print(programId)
         db_team = (
             db.query(TeamModel.Team)
             .filter(TeamModel.Team.source_id == team["id"])

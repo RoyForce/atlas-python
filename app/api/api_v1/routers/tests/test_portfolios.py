@@ -35,12 +35,14 @@ def test_get_portfolio(
     assert all(response.json()[arg] == portfolio[arg] for arg in portfolio)
 
 
-def test_edit_portfolio(client, test_portfolio, superuser_token_headers):
+def test_edit_portfolio(
+    client, test_portfolio, test_team, superuser_token_headers
+):
     update_portfolio = {
         "id": test_portfolio.id,
-        "title": "test name",
+        "name": "test name",
         "description": "test desc",
-        "team_id": 1,
+        "team_id": test_team.id,
     }
 
     response = client.put(

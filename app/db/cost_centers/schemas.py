@@ -1,13 +1,11 @@
-from typing import List
-from app.db.programs.schemas import ProgramOut
 from pydantic import BaseModel
 from datetime import datetime
+from typing import List, Any, Dict, AnyStr, Optional
 
 
-class PortfolioBase(BaseModel):
+class CostCenterBase(BaseModel):
     name: str
-    team_id: int = None
-    is_active: int = None
+    hr_rate: int = None
     description: str = None
     source_id: int = None
     source_update_at: datetime = None
@@ -16,29 +14,25 @@ class PortfolioBase(BaseModel):
     updated_by: int = None
 
 
-class PortfolioOut(PortfolioBase):
+class CostCenterOut(CostCenterBase):
     id: int
     created_at: datetime = None
     updated_at: datetime = None
-    programs: List[ProgramOut] = []
 
     class Config:
         orm_mode = True
 
 
-class PortfolioCreate(PortfolioBase):
-    name: str
-    team_id: int = None
-    description: str = None
+class CostCenterCreate(CostCenterBase):
     created_by: int = None
-    updated_by: int = None
 
     class Config:
         orm_mode = True
 
 
-class PortfolioEdit(PortfolioBase):
+class CostCenterEdit(CostCenterBase):
     id: int
+    updated_by: int = None
 
     class Config:
         orm_mode = True

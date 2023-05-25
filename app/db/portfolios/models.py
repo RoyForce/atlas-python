@@ -1,19 +1,20 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 
 from app.db.session import Base
-from app.db.core import CoreBase, TrackTimeMixin
+from app.db.core import CoreBase, TrackTimeMixin, ExternalSource
+from sqlalchemy.orm import relationship
 
 
-class Portfolio(Base, CoreBase, TrackTimeMixin):
+class Portfolio(Base, CoreBase, TrackTimeMixin, ExternalSource):
     __tablename__ = "portfolios"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    team_id = Column(Integer)
+    name = Column(String)
+    team_id = Column(Integer, ForeignKey("teams.id"), nullable=True)
     is_active = Column(Integer)
     description = Column(String, nullable=True)
-    source_id = Column(Integer, nullable=True)
-    source_update_at = Column(DateTime, nullable=True)
-    created_by = Column(Integer, nullable=True)
-    updated_by = Column(Integer, nullable=True)
-    is_deleted = Column(Boolean, default=False)
+    programs = relationship(
+        "Program",
+        primaryjoin="Portfolio.id == Program.portfolio_id",
+        uselist=True,
+    )

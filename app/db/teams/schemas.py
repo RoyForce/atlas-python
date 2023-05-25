@@ -1,3 +1,4 @@
+from app.db.users.schemas import User
 from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Any, Dict, AnyStr, Optional
@@ -21,6 +22,7 @@ class TeamBase(BaseModel):
 
 class TeamOut(TeamBase):
     id: int
+    users: List[User] = []
     created_at: datetime = None
     updated_at: datetime = None
 

@@ -1,50 +1,46 @@
-from app.db.programs.models import Program
+from app.db.teams.models import Team
 
 
-def test_get_programs(client, test_program, superuser_token_headers):
-    program = test_program.dict()
-    response = client.get("/api/v1/programs", headers=superuser_token_headers)
+def test_get_teams(client, test_team, superuser_token_headers):
+    team = test_team.dict()
+    response = client.get("/api/v1/teams", headers=superuser_token_headers)
     assert response.status_code == 200
-    assert all(response.json()[0][arg] == program[arg] for arg in program)
+    assert all(response.json()[0][arg] == team[arg] for arg in team)
 
 
-def test_delete_program(
-    client, test_program, test_db, superuser_token_headers
-):
+def test_delete_team(client, test_team, test_db, superuser_token_headers):
     response = client.delete(
-        f"/api/v1/programs/{test_program.id}", headers=superuser_token_headers
+        f"/api/v1/teams/{test_team.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert test_db.query(Program).all() == []
+    assert test_db.query(Team).all() == []
 
 
-def test_get_program(
+def test_get_team(
     client,
-    test_program,
+    test_team,
     superuser_token_headers,
 ):
     response = client.get(
-        f"/api/v1/programs/{test_program.id}", headers=superuser_token_headers
+        f"/api/v1/teams/{test_team.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    program = test_program.dict()
-    assert all(response.json()[arg] == program[arg] for arg in program)
+    team = test_team.dict()
+    assert all(response.json()[arg] == team[arg] for arg in team)
 
 
-def test_edit_program(client, test_program, superuser_token_headers):
-    update_program = {
-        "id": test_program.id,
-        "title": "test program name",
-        "portfolio_id": 1,
-        "team_id": 1,
+def test_edit_team(client, test_team, test_program, superuser_token_headers):
+    update_team = {
+        "id": test_team.id,
+        "name": "test team name",
+        "program_id": test_program.id,
+        "type": 1,
     }
 
     response = client.put(
-        f"/api/v1/programs/{test_program.id}",
-        json=update_program,
+        f"/api/v1/teams/{test_team.id}",
+        json=update_team,
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    assert all(
-        response.json()[arg] == update_program[arg] for arg in update_program
-    )
+    assert all(response.json()[arg] == update_team[arg] for arg in update_team)

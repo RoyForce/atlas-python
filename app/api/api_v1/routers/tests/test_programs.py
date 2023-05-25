@@ -31,12 +31,14 @@ def test_get_program(
     assert all(response.json()[arg] == program[arg] for arg in program)
 
 
-def test_edit_program(client, test_program, superuser_token_headers):
+def test_edit_program(
+    client, test_program, test_portfolio, test_team, superuser_token_headers
+):
     update_program = {
         "id": test_program.id,
-        "title": "test program name",
-        "portfolio_id": 1,
-        "team_id": 1,
+        "name": "test program name",
+        "portfolio_id": test_portfolio.id,
+        "team_id": test_team.id,
     }
 
     response = client.put(

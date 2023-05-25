@@ -191,7 +191,7 @@ def test_portfolios_external_data(
         .first()
     )
     assert portfolio_data[0]["id"] == portfolio.source_id
-    assert portfolio_data[0]["title"] == portfolio.title
+    assert portfolio_data[0]["title"] == portfolio.name
 
     portfolio_data = [
         {
@@ -212,7 +212,7 @@ def test_portfolios_external_data(
         .filter(PortfolioModel.Portfolio.source_id == portfolio_data[0]["id"])
         .first()
     )
-    assert portfolio_data[0]["title"] == portfolio.title
+    assert portfolio_data[0]["title"] == portfolio.name
 
 
 def test_programs_external_data(
@@ -237,7 +237,7 @@ def test_programs_external_data(
         .first()
     )
     assert program_data[0]["id"] == program.source_id
-    assert program_data[0]["title"] == program.title
+    assert program_data[0]["title"] == program.name
 
     program_data = [
         {
@@ -257,4 +257,4 @@ def test_programs_external_data(
         .filter(ProgramModel.Program.source_id == program_data[0]["id"])
         .first()
     )
-    assert program_data[0]["title"] == program.title
+    assert program_data[0]["title"] == program.name

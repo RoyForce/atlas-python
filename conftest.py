@@ -21,6 +21,7 @@ from app.db.screens.models import Screen
 from app.db.portfolios.models import Portfolio
 from app.db.programs.models import Program
 from app.db.teams.models import Team
+from app.db.cost_centers.models import CostCenter
 from app.main import app
 
 
@@ -323,7 +324,7 @@ def test_screen(test_db) -> Screen:
 @pytest.fixture
 def test_portfolio(test_db) -> Portfolio:
     portfolio = Portfolio(
-        title="test_portfolio", description="testDescScreen", id=1
+        name="test_portfolio", description="testDescScreen", id=1
     )
     test_db.add(portfolio)
     test_db.commit()
@@ -331,8 +332,13 @@ def test_portfolio(test_db) -> Portfolio:
 
 
 @pytest.fixture
-def test_program(test_db) -> Program:
-    program = Program(title="Test Program", portfolio_id=1, team_id=1, id=1)
+def test_program(test_db, test_portfolio, test_team) -> Program:
+    program = Program(
+        name="Test Program",
+        portfolio_id=test_portfolio.id,
+        team_id=test_team.id,
+        id=1,
+    )
     test_db.add(program)
     test_db.commit()
     return program
@@ -340,9 +346,17 @@ def test_program(test_db) -> Program:
 
 @pytest.fixture
 def test_team(test_db) -> Team:
-    team = Team(
-        name="Test Teams", description="test desc", program_id=1, type=1, id=1
-    )
+    team = Team(name="Test Teams", description="test desc", type=1, id=1)
     test_db.add(team)
     test_db.commit()
     return team
+
+
+@pytest.fixture
+def test_cost_center(test_db) -> CostCenter:
+    costcenter = CostCenter(
+        name="Test Cost center", description="test desc", hr_rate=1, id=1
+    )
+    test_db.add(costcenter)
+    test_db.commit()
+    return costcenter

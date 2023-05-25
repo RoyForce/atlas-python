@@ -1,5 +1,14 @@
 from datetime import datetime
-from sqlalchemy import Column, desc, TIMESTAMP, text
+from sqlalchemy import (
+    Column,
+    desc,
+    TIMESTAMP,
+    text,
+    Integer,
+    String,
+    DateTime,
+    Boolean,
+)
 from sqlalchemy.orm import Session
 from typing import List, Union
 from fastapi import HTTPException
@@ -18,6 +27,14 @@ class TrackTimeMixin:
         TIMESTAMP(timezone=True),
         server_default=text("TIMEZONE('utc', CURRENT_TIMESTAMP)"),
     )
+
+
+class ExternalSource:
+    source_id = Column(Integer, nullable=True)
+    source_update_at = Column(DateTime, nullable=True)
+    created_by = Column(Integer, nullable=True)
+    updated_by = Column(Integer, nullable=True)
+    is_deleted = Column(Boolean, default=False)
 
 
 class CoreBase(object):
