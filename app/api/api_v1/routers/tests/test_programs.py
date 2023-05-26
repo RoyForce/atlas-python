@@ -37,6 +37,7 @@ def test_edit_program(
     update_program = {
         "id": test_program.id,
         "name": "test program name",
+        "description": "test program description",
         "portfolio_id": test_portfolio.id,
         "team_id": test_team.id,
     }
@@ -46,6 +47,7 @@ def test_edit_program(
         json=update_program,
         headers=superuser_token_headers,
     )
+
     assert response.status_code == 200
     assert all(
         response.json()[arg] == update_program[arg] for arg in update_program

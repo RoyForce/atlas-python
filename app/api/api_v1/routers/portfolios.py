@@ -3,6 +3,7 @@ import typing as t
 
 from app.db.session import get_db
 from app.db.portfolios import models
+from app.db.teams import models as TeamModel
 from app.db.core import (
     get_lists,
     get_item,
@@ -15,6 +16,7 @@ from app.db.portfolios.schemas import (
     PortfolioEdit,
     PortfolioOut,
 )
+
 
 portfolio_router = r = APIRouter()
 
@@ -58,6 +60,15 @@ async def portfolio_create(
     """
     Create a new portfolio
     """
+    team = TeamModel.Team()
+    team = TeamModel.Team(
+        name=portfolio.name + " Team",
+        description=portfolio.description,
+        type=5,
+    )
+    db.add(team)
+    db.commit()
+    portfolio.team_id = team.id
     return create_item(db, models.Portfolio, portfolio)
 
 

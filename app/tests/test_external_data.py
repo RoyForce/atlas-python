@@ -222,6 +222,7 @@ def test_programs_external_data(
         {
             "id": 1,
             "title": "Program",
+            "teamDescription": "Program desc",
             "portfolioId": 1,
             "teamId": 1,
             "lastUpdatedDate": "2022-05-19T18:49:48Z",
@@ -243,6 +244,7 @@ def test_programs_external_data(
         {
             "id": 1,
             "title": "Updated Program",
+            "teamDescription": "Program desc",
             "portfolioId": 2,
             "teamId": 2,
             "lastUpdatedDate": "2022-06-19T18:49:48Z",

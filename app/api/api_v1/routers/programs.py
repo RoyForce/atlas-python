@@ -3,6 +3,8 @@ import typing as t
 
 from app.db.session import get_db
 from app.db.programs import models
+from app.db.teams import models as TeamModel
+from app.db.portfolios import models as portfolioModel
 from app.db.core import (
     get_lists,
     get_item,
@@ -58,7 +60,34 @@ async def program_create(
     """
     Create a new program
     """
-    return create_item(db, models.Program, program)
+    db_team = TeamModel.Team(
+        name=program.name + " Team", description=program.description, type=2
+    )
+    db.add(db_team)
+    db.commit()
+
+    program.team_id = db_team.id
+    db_program = create_item(db, models.Program, program)
+
+    up_team_data = dict(exclude_unset=True)
+    up_team_data["program_id"] = (db_program.id,)
+    for key, value in up_team_data.items():
+        setattr(db_team, key, value)
+    db.add(db_team)
+    db.commit()
+    db.refresh(db_team)
+
+    db_portfolio = get_item(db, portfolioModel.Portfolio, program.portfolio_id)
+    db_port_team = get_item(db, TeamModel.Team, db_portfolio.team_id)
+    up_team_data = dict(exclude_unset=True)
+    up_team_data["program_id"] = (db_program.id,)
+    for key, value in up_team_data.items():
+        setattr(db_port_team, key, value)
+    db.add(db_port_team)
+    db.commit()
+    db.refresh(db_port_team)
+
+    return db_program
 
 
 @r.put("/programs/{program_id}", response_model=ProgramOut)
@@ -70,7 +99,22 @@ async def program_edit(
     """
     Update existing program
     """
-    return edit_item(db, models.Program, program_id, program)
+    db_program = edit_item(db, models.Program, program_id, program)
+    if db_program.portfolio_id is not None:
+        db_portfolio = get_item(
+            db, portfolioModel.Portfolio, program.portfolio_id
+        )
+        if db_portfolio.team_id is not None:
+            db_port_team = get_item(db, TeamModel.Team, db_portfolio.team_id)
+            up_team_data = dict(exclude_unset=True)
+            up_team_data["program_id"] = (db_program.id,)
+            for key, value in up_team_data.items():
+                setattr(db_port_team, key, value)
+            db.add(db_port_team)
+            db.commit()
+            db.refresh(db_port_team)
+
+    return db_program
 
 
 @r.delete(

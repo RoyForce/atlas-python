@@ -20,7 +20,7 @@ cost_center_router = r = APIRouter()
 
 
 @r.get(
-    "/cost_centers",
+    "/cost-centers",
     response_model=t.List[CostCenterOut],
 )
 async def cost_centers_list(
@@ -29,7 +29,7 @@ async def cost_centers_list(
     db=Depends(get_db),
 ):
     """
-    Get all cost_centers
+    Get all cost-centers
     """
     cost_centers = get_lists(db, models.CostCenter, request.query_params)
     response.headers["Content-Range"] = f"0-9/{len(cost_centers)}"
@@ -37,7 +37,7 @@ async def cost_centers_list(
 
 
 @r.get(
-    "/cost_centers/{cost_center_id}",
+    "/cost-centers/{cost_center_id}",
     response_model=CostCenterOut,
 )
 async def cost_center_details(
@@ -45,23 +45,23 @@ async def cost_center_details(
     db=Depends(get_db),
 ):
     """
-    Get any cost_center details
+    Get any cost-center details
     """
     return get_item(db, models.CostCenter, cost_center_id)
 
 
-@r.post("/cost_centers", response_model=CostCenterOut)
+@r.post("/cost-centers", response_model=CostCenterOut)
 async def cost_center_create(
     cost_center: CostCenterCreate,
     db=Depends(get_db),
 ):
     """
-    Create a new cost_center
+    Create a new cost-center
     """
     return create_item(db, models.CostCenter, cost_center)
 
 
-@r.put("/cost_centers/{cost_center_id}", response_model=CostCenterOut)
+@r.put("/cost-centers/{cost_center_id}", response_model=CostCenterOut)
 async def cost_center_edit(
     cost_center_id: int,
     cost_center: CostCenterEdit,
@@ -74,7 +74,7 @@ async def cost_center_edit(
 
 
 @r.delete(
-    "/cost_centers/{cost_center_id}",
+    "/cost-centers/{cost_center_id}",
     response_model=CostCenterOut,
 )
 async def cost_center_delete(
@@ -82,6 +82,6 @@ async def cost_center_delete(
     db=Depends(get_db),
 ):
     """
-    Delete existing cost_center
+    Delete existing cost-center
     """
     return delete_item(db, models.CostCenter, cost_center_id)

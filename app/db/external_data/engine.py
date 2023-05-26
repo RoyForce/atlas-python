@@ -33,58 +33,55 @@ def create_update_external_data(db: Session, raw_data, type):
 
 def process_user_data(db: Session, raw_data):
     for user in raw_data:
-        if user["status"] == "Active":
-            if user["roleId"] is not None:
-                db_role = (
-                    db.query(RoleModel.Role)
-                    .filter(RoleModel.Role.source_id == user["roleId"])
-                    .first()
+        status = True if user["status"] == "Active" else False
+        if user["roleId"] is not None:
+            db_role = (
+                db.query(RoleModel.Role)
+                .filter(RoleModel.Role.source_id == user["roleId"])
+                .first()
+            )
+        roleId = None
+        if db_role is not None:
+            roleId = db_role.id
+        db_user = get_source_user(db, user["id"])
+        if db_user is None:
+            db_user = UserModel.User(
+                first_name=user["firstName"],
+                last_name=user["lastName"],
+                email=user["email"],
+                is_active=status,
+                role_id=roleId,
+                is_designer=False,
+                is_superuser=False,
+                source_id=user["id"],
+                source_update_at=user["lastUpdatedDate"],
+                cost_center_id=user["costCenterId"],
+            )
+            db.add(db_user)
+            db.commit()
+            db.refresh(db_user)
+        else:
+            if user["lastUpdatedDate"] != None:
+                db_last_update = datetime.strptime(
+                    db_user.source_update_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "%Y-%m-%dT%H:%M:%SZ",
                 )
-            roleId = None
-            if db_role is not None:
-                roleId = db_role.id
-            db_user = get_source_user(db, user["id"])
-            if db_user is None:
-                db_user = UserModel.User(
-                    first_name=user["firstName"],
-                    last_name=user["lastName"],
-                    email=user["email"],
-                    is_active=True,
-                    role_id=roleId,
-                    is_designer=False,
-                    is_superuser=False,
-                    source_id=user["id"],
-                    source_update_at=user["lastUpdatedDate"],
-                    cost_center_id=user["costCenterId"],
+                source_last_update = datetime.strptime(
+                    user["lastUpdatedDate"], "%Y-%m-%dT%H:%M:%SZ"
                 )
-                db.add(db_user)
-                db.commit()
-                db.refresh(db_user)
-            else:
-                if user["lastUpdatedDate"] != None:
-                    db_last_update = datetime.strptime(
-                        db_user.source_update_at.strftime(
-                            "%Y-%m-%dT%H:%M:%SZ"
-                        ),
-                        "%Y-%m-%dT%H:%M:%SZ",
-                    )
-                    source_last_update = datetime.strptime(
-                        user["lastUpdatedDate"], "%Y-%m-%dT%H:%M:%SZ"
-                    )
-                    if db_last_update < source_last_update:
-                        update_data = dict(exclude_unset=True)
-                        update_data["first_name"] = user["firstName"]
-                        update_data["last_name"] = user["lastName"]
-                        update_data["source_update_at"] = user[
-                            "lastUpdatedDate"
-                        ]
-                        update_data["cost_center_id"] = user["costCenterId"]
-                        for key, value in update_data.items():
-                            setattr(db_user, key, value)
+                if db_last_update < source_last_update:
+                    update_data = dict(exclude_unset=True)
+                    update_data["first_name"] = user["firstName"]
+                    update_data["last_name"] = user["lastName"]
+                    update_data["is_active"] = status
+                    update_data["source_update_at"] = user["lastUpdatedDate"]
+                    update_data["cost_center_id"] = user["costCenterId"]
+                    for key, value in update_data.items():
+                        setattr(db_user, key, value)
 
-                        db.add(db_user)
-                        db.commit()
-                        db.refresh(db_user)
+                    db.add(db_user)
+                    db.commit()
+                    db.refresh(db_user)
         if "teams" in user and len(user) > 0:
             update_user_team_mapping(db, db_user.id, user["teams"])
     return True
@@ -212,7 +209,7 @@ def process_portfolios_data(db: Session, raw_data):
 
         db_portfolio = (
             db.query(PortfolioModel.Portfolio)
-            .filter(PortfolioModel.Portfolio.id == portfolio["id"])
+            .filter(PortfolioModel.Portfolio.source_id == portfolio["id"])
             .first()
         )
         if db_portfolio is None:
@@ -289,6 +286,7 @@ def process_programs_data(db: Session, data):
         if db_program is None:
             db_program = ProgramModel.Program(
                 name=program["title"],
+                description=program["teamDescription"],
                 portfolio_id=portfolio_id,
                 team_id=team_id,
                 source_id=program["id"],
@@ -309,6 +307,7 @@ def process_programs_data(db: Session, data):
                 if db_last_update < source_last_update:
                     update_data = dict(exclude_unset=True)
                     update_data["name"] = program["title"]
+                    update_data["description"] = program["teamDescription"]
                     update_data["portfolio_id"] = portfolio_id
                     update_data["team_id"] = team_id
                     update_data["source_update_at"] = program[

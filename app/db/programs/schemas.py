@@ -6,6 +6,7 @@ from datetime import datetime
 
 class ProgramBase(BaseModel):
     name: str
+    description: str = None
     team_id: int = None
     portfolio_id: int = None
     source_id: int = None

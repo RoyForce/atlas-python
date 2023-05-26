@@ -323,9 +323,7 @@ def test_screen(test_db) -> Screen:
 
 @pytest.fixture
 def test_portfolio(test_db) -> Portfolio:
-    portfolio = Portfolio(
-        name="test_portfolio", description="testDescScreen", id=1
-    )
+    portfolio = Portfolio(name="test-portfolio", description="testDesc", id=1)
     test_db.add(portfolio)
     test_db.commit()
     return portfolio
@@ -335,6 +333,7 @@ def test_portfolio(test_db) -> Portfolio:
 def test_program(test_db, test_portfolio, test_team) -> Program:
     program = Program(
         name="Test Program",
+        description="Test Program desc",
         portfolio_id=test_portfolio.id,
         team_id=test_team.id,
         id=1,
