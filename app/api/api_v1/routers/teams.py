@@ -9,6 +9,7 @@ from app.db.core import (
     create_item,
     delete_item,
     edit_item,
+    soft_delete_item,
 )
 from app.db.teams.schemas import (
     TeamCreate,
@@ -84,4 +85,4 @@ async def team_delete(
     """
     Delete existing team
     """
-    return delete_item(db, models.Team, team_id)
+    return soft_delete_item(db, models.Team, team_id)

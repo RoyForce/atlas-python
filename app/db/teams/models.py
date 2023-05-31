@@ -14,6 +14,7 @@ class Team(Base, CoreBase, TrackTimeMixin, ExternalSource):
     program_id = Column(Integer, ForeignKey("programs.id"), nullable=True)
     type = Column(Integer)
     is_active = Column(Boolean, default=True)
+    is_kanban_team = Column(Boolean, default=False)
     description = Column(String, nullable=True)
     sprint_prefix = Column(String, nullable=True)
     short_name = Column(String, nullable=True)

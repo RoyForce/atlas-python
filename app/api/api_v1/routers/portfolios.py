@@ -10,6 +10,7 @@ from app.db.core import (
     create_item,
     delete_item,
     edit_item,
+    soft_delete_item,
 )
 from app.db.portfolios.schemas import (
     PortfolioCreate,
@@ -95,4 +96,4 @@ async def portfolio_delete(
     """
     Delete existing portfolio
     """
-    return delete_item(db, models.Portfolio, portfolio_id)
+    return soft_delete_item(db, models.Portfolio, portfolio_id)

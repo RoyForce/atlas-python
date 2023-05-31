@@ -13,7 +13,8 @@ def test_delete_team(client, test_team, test_db, superuser_token_headers):
         f"/api/v1/teams/{test_team.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert test_db.query(Team).all() == []
+    assert response.json()["id"] == test_team.id
+    assert response.json()["is_deleted"] == True
 
 
 def test_get_team(

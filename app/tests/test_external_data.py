@@ -126,6 +126,7 @@ def test_teams_external_data(
             "sprintPrefix": "JA-TOT",
             "shortName": "TOT-team1",
             "isActive": True,
+            "isKanbanTeam": False,
             "lastUpdatedDate": "2022-01-09T18:49:48Z",
         }
     ]
@@ -152,6 +153,7 @@ def test_teams_external_data(
             "sprintPrefix": "JA-PORT",
             "shortName": "TOT-team2",
             # "isActive": True,
+            "isKanbanTeam": True,
             "lastUpdatedDate": "2022-05-09T18:49:48Z",
         }
     ]

@@ -9,6 +9,7 @@ from app.db.core import (
     create_item,
     delete_item,
     edit_item,
+    soft_delete_item,
 )
 from app.db.cost_centers.schemas import (
     CostCenterCreate,
@@ -84,4 +85,4 @@ async def cost_center_delete(
     """
     Delete existing cost-center
     """
-    return delete_item(db, models.CostCenter, cost_center_id)
+    return soft_delete_item(db, models.CostCenter, cost_center_id)

@@ -11,6 +11,7 @@ from app.db.core import (
     create_item,
     delete_item,
     edit_item,
+    soft_delete_item,
 )
 from app.db.programs.schemas import (
     ProgramCreate,
@@ -76,7 +77,6 @@ async def program_create(
     db.add(db_team)
     db.commit()
     db.refresh(db_team)
-
     db_portfolio = get_item(db, portfolioModel.Portfolio, program.portfolio_id)
     db_port_team = get_item(db, TeamModel.Team, db_portfolio.team_id)
     up_team_data = dict(exclude_unset=True)
@@ -86,7 +86,6 @@ async def program_create(
     db.add(db_port_team)
     db.commit()
     db.refresh(db_port_team)
-
     return db_program
 
 
@@ -113,7 +112,6 @@ async def program_edit(
             db.add(db_port_team)
             db.commit()
             db.refresh(db_port_team)
-
     return db_program
 
 
@@ -126,6 +124,6 @@ async def program_delete(
     db=Depends(get_db),
 ):
     """
-    Delete existing program
+    Soft delete existing program
     """
-    return delete_item(db, models.Program, program_id)
+    return soft_delete_item(db, models.Program, program_id)

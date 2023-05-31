@@ -20,7 +20,8 @@ def test_delete_cost_center(
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    assert test_db.query(CostCenter).all() == []
+    assert response.json()["id"] == test_cost_center.id
+    assert response.json()["is_deleted"] == True
 
 
 def test_get_cost_center(

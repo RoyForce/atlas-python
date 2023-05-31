@@ -12,44 +12,49 @@ from app.db.roles import models as RoleModel
 from app.db.teams import models as TeamModel
 from app.db.portfolios import models as PortfolioModel
 from app.db.programs import models as ProgramModel
+from app.db.core import (
+    get_item_by_source_id,
+)
 
 
 def create_update_external_data(db: Session, raw_data, type):
     if len(raw_data) > 0:
         if type == ResourceType.USER.value:
-            process_user_data(db, raw_data)
+            users_ids = process_user_data(db, raw_data)
         if type == ResourceType.ROLE.value:
-            process_role_data(db, raw_data)
+            role_ids = process_role_data(db, raw_data)
+            soft_delete(db, RoleModel.Role, role_ids)
         if type == ResourceType.TEAM.value:
-            process_teams_data(db, raw_data)
+            team_ids = process_teams_data(db, raw_data)
+            soft_delete(db, TeamModel.Team, team_ids)
         if type == ResourceType.PORTFOLIO.value:
-            process_portfolios_data(db, raw_data)
+            portfolio_ids = process_portfolios_data(db, raw_data)
+            soft_delete(db, PortfolioModel.Portfolio, portfolio_ids)
         if type == ResourceType.PROGRAM.value:
-            process_programs_data(db, raw_data)
+            program_ids = process_programs_data(db, raw_data)
+            soft_delete(db, ProgramModel.Program, program_ids)
         if type == ResourceType.TEAMPRO.value:
             process_teams_data_update_program(db, raw_data)
     return True
 
 
 def process_user_data(db: Session, raw_data):
+    user_ids = []
     for user in raw_data:
         status = True if user["status"] == "Active" else False
-        if user["roleId"] is not None:
-            db_role = (
-                db.query(RoleModel.Role)
-                .filter(RoleModel.Role.source_id == user["roleId"])
-                .first()
-            )
+        del_status = False if user["status"] == "Active" else True
         roleId = None
-        if db_role is not None:
-            roleId = db_role.id
-        db_user = get_source_user(db, user["id"])
+        if user["roleId"] is not None:
+            db_role = get_item_by_source_id(db, RoleModel.Role, user["roleId"])
+        roleId = db_role.id if db_role is not None else None
+        db_user = get_item_by_source_id(db, UserModel.User, user["id"])
         if db_user is None:
             db_user = UserModel.User(
                 first_name=user["firstName"],
                 last_name=user["lastName"],
                 email=user["email"],
                 is_active=status,
+                is_deleted=del_status,
                 role_id=roleId,
                 is_designer=False,
                 is_superuser=False,
@@ -62,46 +67,30 @@ def process_user_data(db: Session, raw_data):
             db.refresh(db_user)
         else:
             if user["lastUpdatedDate"] != None:
-                db_last_update = datetime.strptime(
-                    db_user.source_update_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "%Y-%m-%dT%H:%M:%SZ",
-                )
-                source_last_update = datetime.strptime(
-                    user["lastUpdatedDate"], "%Y-%m-%dT%H:%M:%SZ"
+                db_last_update = formate_date(db_user.source_update_at, "DB")
+                source_last_update = formate_date(
+                    user["lastUpdatedDate"], "JA"
                 )
                 if db_last_update < source_last_update:
-                    update_data = dict(exclude_unset=True)
-                    update_data["first_name"] = user["firstName"]
-                    update_data["last_name"] = user["lastName"]
-                    update_data["is_active"] = status
-                    update_data["source_update_at"] = user["lastUpdatedDate"]
-                    update_data["cost_center_id"] = user["costCenterId"]
-                    for key, value in update_data.items():
-                        setattr(db_user, key, value)
-
+                    db_user.first_name = user["firstName"]
+                    db_user.last_name = user["lastName"]
+                    db_user.is_active = status
+                    db_user.is_deleted = status
+                    db_user.source_update_at = user["lastUpdatedDate"]
+                    db_user.cost_center_id = user["costCenterId"]
                     db.add(db_user)
                     db.commit()
                     db.refresh(db_user)
         if "teams" in user and len(user) > 0:
             update_user_team_mapping(db, db_user.id, user["teams"])
-    return True
-
-
-def get_source_user(db: Session, source_id: int):
-    return (
-        db.query(UserModel.User)
-        .filter(UserModel.User.source_id == source_id)
-        .first()
-    )
+        user_ids.append(db_user.id)
+    return user_ids
 
 
 def process_role_data(db: Session, raw_data: int):
+    role_ids = []
     for role_data in raw_data:
-        db_role = (
-            db.query(RoleModel.Role)
-            .filter(RoleModel.Role.source_id == role_data["id"])
-            .first()
-        )
+        db_role = get_item_by_source_id(db, RoleModel.Role, role_data["id"])
         if db_role is None:
             db_role = RoleModel.Role(
                 name=role_data["name"],
@@ -114,43 +103,33 @@ def process_role_data(db: Session, raw_data: int):
             db.refresh(db_role)
         else:
             if role_data["updateDate"] != None:
-                db_last_update = datetime.strptime(
-                    db_role.source_update_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "%Y-%m-%dT%H:%M:%SZ",
-                )
-                source_last_update = datetime.strptime(
-                    role_data["updateDate"], "%Y-%m-%dT%H:%M:%SZ"
+                db_last_update = formate_date(db_role.source_update_at, "DB")
+                source_last_update = formate_date(
+                    role_data["updateDate"], "JA"
                 )
                 if db_last_update < source_last_update:
-                    update_data = dict(exclude_unset=True)
-                    update_data["name"] = role_data["name"]
-                    update_data["description"] = role_data["description"]
-                    update_data["source_update_at"] = role_data["updateDate"]
-                    for key, value in update_data.items():
-                        setattr(db_role, key, value)
-
+                    db_role.name = role_data["name"]
+                    db_role.description = role_data["description"]
+                    db_role.source_update_at = role_data["updateDate"]
                     db.add(db_role)
                     db.commit()
                     db.refresh(db_role)
-    return True
+        role_ids.append(db_role.id)
+    return role_ids
 
 
 def process_teams_data(db: Session, raw_data):
+    team_ids = []
     for team in raw_data:
         programId = None
         if team["programId"] is not None:
-            db_program = (
-                db.query(ProgramModel.Program)
-                .filter(ProgramModel.Program.source_id == team["programId"])
-                .first()
+            db_program = get_item_by_source_id(
+                db, ProgramModel.Program, team["programId"]
             )
-            if db_program is not None:
-                programId = db_program.id
-
-        db_team = (
-            db.query(TeamModel.Team)
-            .filter(TeamModel.Team.source_id == team["id"])
-            .first()
+            programId = db_program.id if db_program is not None else None
+        db_team = get_item_by_source_id(db, TeamModel.Team, team["id"])
+        is_kanban_team = (
+            team["isKanbanTeam"] if team["isKanbanTeam"] is not None else False
         )
         if db_team is None:
             db_team = TeamModel.Team(
@@ -163,54 +142,45 @@ def process_teams_data(db: Session, raw_data):
                 is_active=team["isActive"],
                 source_id=team["id"],
                 source_update_at=team["lastUpdatedDate"],
+                is_kanban_team=is_kanban_team,
             )
             db.add(db_team)
             db.commit()
             db.refresh(db_team)
         else:
             if team["lastUpdatedDate"] != None:
-                db_last_update = datetime.strptime(
-                    db_team.source_update_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "%Y-%m-%dT%H:%M:%SZ",
-                )
-                source_last_update = datetime.strptime(
-                    team["lastUpdatedDate"], "%Y-%m-%dT%H:%M:%SZ"
+                db_last_update = formate_date(db_team.source_update_at, "DB")
+                source_last_update = formate_date(
+                    team["lastUpdatedDate"], "JA"
                 )
                 if db_last_update < source_last_update:
-                    update_data = dict(exclude_unset=True)
-                    update_data["name"] = team["name"]
-                    update_data["type"] = team["type"]
-                    update_data["program_id"] = programId
-                    update_data["description"] = team["description"]
-                    update_data["sprint_prefix"] = team["sprintPrefix"]
-                    update_data["short_name"] = team["shortName"]
-                    update_data["source_update_at"] = team["lastUpdatedDate"]
-                    for key, value in update_data.items():
-                        setattr(db_team, key, value)
+                    db_team.name = team["name"]
+                    db_team.type = team["type"]
+                    db_team.program_id = programId
+                    db_team.description = team["description"]
+                    db_team.sprint_prefix = team["sprintPrefix"]
+                    db_team.short_name = team["shortName"]
+                    db_team.source_update_at = team["lastUpdatedDate"]
+                    db_team.is_kanban_team = is_kanban_team
 
                     db.add(db_team)
                     db.commit()
                     db.refresh(db_team)
-
-    return True
+        team_ids.append(db_team.id)
+    return team_ids
 
 
 def process_portfolios_data(db: Session, raw_data):
+    portfolio_ids = []
     for portfolio in raw_data:
         teamId = None
         if portfolio["teamId"] is not None:
-            db_team = (
-                db.query(TeamModel.Team)
-                .filter(TeamModel.Team.source_id == portfolio["teamId"])
-                .first()
+            db_team = get_item_by_source_id(
+                db, TeamModel.Team, portfolio["teamId"]
             )
-            if db_team is not None:
-                teamId = db_team.id
-
-        db_portfolio = (
-            db.query(PortfolioModel.Portfolio)
-            .filter(PortfolioModel.Portfolio.source_id == portfolio["id"])
-            .first()
+            teamId = db_team.id if db_team is not None else None
+        db_portfolio = get_item_by_source_id(
+            db, PortfolioModel.Portfolio, portfolio["id"]
         )
         if db_portfolio is None:
             db_portfolio = PortfolioModel.Portfolio(
@@ -226,63 +196,52 @@ def process_portfolios_data(db: Session, raw_data):
             db.refresh(db_portfolio)
         else:
             if portfolio["lastUpdatedDate"] != None:
-                db_last_update = datetime.strptime(
-                    db_portfolio.source_update_at.strftime(
-                        "%Y-%m-%dT%H:%M:%SZ"
-                    ),
-                    "%Y-%m-%dT%H:%M:%SZ",
+                db_last_update = formate_date(
+                    db_portfolio.source_update_at, "DB"
                 )
-                source_last_update = datetime.strptime(
-                    portfolio["lastUpdatedDate"], "%Y-%m-%dT%H:%M:%SZ"
+                source_last_update = formate_date(
+                    portfolio["lastUpdatedDate"], "JA"
                 )
                 if db_last_update < source_last_update:
-                    update_data = dict(exclude_unset=True)
-                    update_data["name"] = portfolio["title"]
-                    update_data["description"] = portfolio["description"]
-                    update_data["team_id"] = teamId
-                    update_data["is_active"] = portfolio["isActive"]
-                    update_data["source_update_at"] = portfolio[
+                    db_portfolio.name = portfolio["title"]
+                    db_portfolio.description = portfolio["description"]
+                    db_portfolio.team_id = teamId
+                    db_portfolio.is_active = portfolio["isActive"]
+                    db_portfolio.source_update_at = portfolio[
                         "lastUpdatedDate"
                     ]
-                    for key, value in update_data.items():
-                        setattr(db_portfolio, key, value)
 
                     db.add(db_portfolio)
                     db.commit()
                     db.refresh(db_portfolio)
-    return True
+        portfolio_ids.append(db_portfolio.id)
+    return portfolio_ids
 
 
 def process_programs_data(db: Session, data):
+    program_ids = []
     for program in data:
-        team_id = None
         team_id = program["teamId"]
         if program["teamId"] == -1:
             team_id = None
         else:
             if program["teamId"] is not None:
-                db_team = (
-                    db.query(TeamModel.Team)
-                    .filter(TeamModel.Team.source_id == program["teamId"])
-                    .first()
+                db_team = get_item_by_source_id(
+                    db, TeamModel.Team, program["teamId"]
                 )
                 if db_team is not None:
                     team_id = db_team.id
-        db_program = (
-            db.query(ProgramModel.Program)
-            .filter(ProgramModel.Program.source_id == program["id"])
-            .first()
-        )
-        db_portfolio = (
-            db.query(PortfolioModel.Portfolio)
-            .filter(
-                PortfolioModel.Portfolio.source_id == program["portfolioId"]
-            )
-            .first()
+
+        db_portfolio = get_item_by_source_id(
+            db, PortfolioModel.Portfolio, program["portfolioId"]
         )
         portfolio_id = None
         if db_portfolio is not None:
             portfolio_id = db_portfolio.id
+
+        db_program = get_item_by_source_id(
+            db, ProgramModel.Program, program["id"]
+        )
         if db_program is None:
             db_program = ProgramModel.Program(
                 name=program["title"],
@@ -297,38 +256,29 @@ def process_programs_data(db: Session, data):
             db.refresh(db_program)
         else:
             if program["lastUpdatedDate"] != None:
-                db_last_update = datetime.strptime(
-                    db_program.source_update_at.strftime("%Y-%m-%dT%H:%M:%SZ"),
-                    "%Y-%m-%dT%H:%M:%SZ",
+                db_last_update = formate_date(
+                    db_program.source_update_at, "DB"
                 )
-                source_last_update = datetime.strptime(
-                    program["lastUpdatedDate"], "%Y-%m-%dT%H:%M:%SZ"
+                source_last_update = formate_date(
+                    program["lastUpdatedDate"], "JA"
                 )
                 if db_last_update < source_last_update:
-                    update_data = dict(exclude_unset=True)
-                    update_data["name"] = program["title"]
-                    update_data["description"] = program["teamDescription"]
-                    update_data["portfolio_id"] = portfolio_id
-                    update_data["team_id"] = team_id
-                    update_data["source_update_at"] = program[
-                        "lastUpdatedDate"
-                    ]
-                    for key, value in update_data.items():
-                        setattr(db_program, key, value)
+                    db_program.name = program["title"]
+                    db_program.description = program["teamDescription"]
+                    db_program.portfolio_id = portfolio_id
+                    db_program.team_id = team_id
+                    db_program.source_update_at = program["lastUpdatedDate"]
 
                     db.add(db_program)
                     db.commit()
                     db.refresh(db_program)
-    return True
+        program_ids.append(db_program.id)
+    return program_ids
 
 
 def update_user_team_mapping(db: Session, user_id, teams):
     for team in teams:
-        db_team = (
-            db.query(TeamModel.Team)
-            .filter(TeamModel.Team.source_id == team["teamId"])
-            .first()
-        )
+        db_team = get_item_by_source_id(db, TeamModel.Team, team["teamId"])
         if db_team.user_ids is not None:
             if user_id not in db_team.user_ids:
                 db_team.user_ids.append(user_id)
@@ -337,10 +287,7 @@ def update_user_team_mapping(db: Session, user_id, teams):
                 db.flush()
                 db.commit()
         else:
-            update_data = dict(exclude_unset=True)
-            update_data["user_ids"] = (user_id,)
-            for key, value in update_data.items():
-                setattr(db_team, key, value)
+            db_team.user_ids = user_id
             db.add(db_team)
             db.commit()
             db.refresh(db_team)
@@ -350,26 +297,40 @@ def process_teams_data_update_program(db: Session, raw_data):
     for team in raw_data:
         programId = None
         if team["programId"] is not None:
-            db_program = (
-                db.query(ProgramModel.Program)
-                .filter(ProgramModel.Program.source_id == team["programId"])
-                .first()
+            db_program = get_item_by_source_id(
+                db, ProgramModel.Program, team["programId"]
             )
             if db_program is not None:
                 programId = db_program.id
 
-        db_team = (
-            db.query(TeamModel.Team)
-            .filter(TeamModel.Team.source_id == team["id"])
-            .first()
-        )
+        db_team = get_item_by_source_id(db, TeamModel.Team, team["id"])
         if db_team is not None:
-            update_data = dict(exclude_unset=True)
-            update_data["program_id"] = programId
-            for key, value in update_data.items():
-                setattr(db_team, key, value)
-
+            db_team.program_id = programId
             db.add(db_team)
             db.commit()
             db.refresh(db_team)
     return True
+
+
+def soft_delete(db: Session, model, data):
+    resp = (
+        db.query(model)
+        .filter(model.is_deleted.is_(False))
+        .filter(model.source_id.isnot(None))
+        .filter(model.id.notin_(data))
+    )
+    for item in resp:
+        item.is_deleted = True
+        db.add(item)
+        db.commit()
+        db.refresh(item)
+
+
+def formate_date(date, type):
+    if type == "DB":
+        return datetime.strptime(
+            date.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "%Y-%m-%dT%H:%M:%SZ",
+        )
+    else:
+        return datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")

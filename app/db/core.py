@@ -140,6 +140,7 @@ def delete_item(db: Session, model, id: int):
     item = get_item(db, model, id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
+
     db.delete(item)
     db.commit()
     return item
@@ -159,3 +160,21 @@ def edit_item(db: Session, model, id: int, item: dict):
     db.add(db_item)
     db.commit()
     return db_item
+
+
+def get_item_by_source_id(db: Session, model, id: any):
+    item = db.query(model).filter(model.source_id == id).first()
+    if not item:
+        return None
+    return item
+
+
+def soft_delete_item(db: Session, model, id: int):
+    item = get_item(db, model, id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    item.is_deleted = True
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return item

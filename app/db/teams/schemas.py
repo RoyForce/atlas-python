@@ -15,6 +15,7 @@ class TeamBase(BaseModel):
     source_id: int = None
     source_update_at: datetime = None
     is_deleted: bool = None
+    is_kanban_team: bool = None
     created_by: int = None
     updated_by: int = None
     user_ids: Optional[List[int]] = []
