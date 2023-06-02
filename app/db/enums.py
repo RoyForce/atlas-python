@@ -23,3 +23,14 @@ class ResourceUrl(str, Enum):
     TEAM = "Teams"
     SPRINT = "Iterations"
     TEAMPRO = "Teams"
+
+
+class OrganizationType(str, Enum):
+    """
+    NOTE: Remember to update the "organization_type_enum" enum in the database as well
+    if you add a new organization type here. Ref: app/alembic/versions/9e07696e059f_create_play_table.py
+    """
+
+    PORTFOLIO = "PORTFOLIO"
+    PROGRAM = "PROGRAM"
+    TEAM = "TEAM"
