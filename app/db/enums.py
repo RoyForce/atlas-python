@@ -34,3 +34,9 @@ class OrganizationType(str, Enum):
     PORTFOLIO = "PORTFOLIO"
     PROGRAM = "PROGRAM"
     TEAM = "TEAM"
+
+
+class MetricsType(str, Enum):
+    PERCENTAGE = "PERCENTAGE"
+    DOLLARS = "DOLLARS"
+    UNITS = "UNITS"

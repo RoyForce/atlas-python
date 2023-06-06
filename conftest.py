@@ -24,6 +24,7 @@ from app.db.teams.models import Team
 from app.db.cost_centers.models import CostCenter
 from app.db.assessments.models import Assessment
 from app.db.dimensions.models import Dimension
+from app.db.objectives.models import Objective
 from app.main import app
 
 
@@ -381,3 +382,17 @@ def test_dimension(test_db) -> Dimension:
     test_db.add(dimensions)
     test_db.commit()
     return dimensions
+
+
+@pytest.fixture
+def test_objective(test_db) -> Objective:
+    objective = Objective(
+        name="Test objective",
+        description="test objective desc",
+        start_value=1,
+        target_value=2,
+        metrics_type="UNITS",
+    )
+    test_db.add(objective)
+    test_db.commit()
+    return objective
