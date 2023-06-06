@@ -20,6 +20,9 @@ from app.api.api_v1.routers.portfolios import portfolio_router
 from app.api.api_v1.routers.programs import program_router
 from app.api.api_v1.routers.teams import team_router
 from app.api.api_v1.routers.cost_centers import cost_center_router
+from app.api.api_v1.routers.assessments import assessment_router
+from app.api.api_v1.routers.dimensions import dimension_router
+from app.api.api_v1.routers.questions import question_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
@@ -173,6 +176,27 @@ app.include_router(
     external_api_router,
     prefix="/api/v1",
     tags=["external-api"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    assessment_router,
+    prefix="/api/v1",
+    tags=["assessments"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    dimension_router,
+    prefix="/api/v1",
+    tags=["dimensions"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    question_router,
+    prefix="/api/v1",
+    tags=["questions"],
     dependencies=[Depends(get_current_active_user)],
 )
 

@@ -22,6 +22,8 @@ from app.db.portfolios.models import Portfolio
 from app.db.programs.models import Program
 from app.db.teams.models import Team
 from app.db.cost_centers.models import CostCenter
+from app.db.assessments.models import Assessment
+from app.db.dimensions.models import Dimension
 from app.main import app
 
 
@@ -359,3 +361,23 @@ def test_cost_center(test_db) -> CostCenter:
     test_db.add(costcenter)
     test_db.commit()
     return costcenter
+
+
+@pytest.fixture
+def test_assessment(test_db) -> Assessment:
+    assessment = Assessment(
+        name="Test Assessment", description="test assessment desc"
+    )
+    test_db.add(assessment)
+    test_db.commit()
+    return assessment
+
+
+@pytest.fixture
+def test_dimension(test_db) -> Dimension:
+    dimensions = Dimension(
+        name="Test dimensions", description="test dimensions desc"
+    )
+    test_db.add(dimensions)
+    test_db.commit()
+    return dimensions
