@@ -17,6 +17,8 @@ The only dependencies for this project should be docker and docker-compose.
 Starting the project with hot-reloading enabled
 (the first time it will take a while):
 
+Copy .env.sample and paste it as .env in the root directory of the project.
+
 ```bash
 docker-compose up -d
 ```
