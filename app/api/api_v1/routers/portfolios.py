@@ -8,7 +8,6 @@ from app.db.core import (
     get_lists,
     get_item,
     create_item,
-    delete_item,
     edit_item,
     soft_delete_item,
 )

@@ -14,7 +14,6 @@ from app.db.core import (
     soft_delete_item,
 )
 from app.db.programs.schemas import (
-    ProgramCreate,
     ProgramEdit,
     ProgramOut,
 )
@@ -55,7 +54,7 @@ async def program_details(
 
 @r.post("/programs", response_model=ProgramOut)
 async def program_create(
-    program: ProgramCreate,
+    program: ProgramEdit,
     db=Depends(get_db),
 ):
     """

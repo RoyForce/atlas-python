@@ -1,5 +1,5 @@
 from typing import List
-from app.db.programs.schemas import ProgramOut
+from app.db.programs.schemas import ProgramBase
 from pydantic import BaseModel
 from datetime import datetime
 
@@ -20,7 +20,7 @@ class PortfolioOut(PortfolioBase):
     id: int
     created_at: datetime = None
     updated_at: datetime = None
-    programs: List[ProgramOut] = []
+    programs: List[ProgramBase] = []
 
     class Config:
         orm_mode = True
