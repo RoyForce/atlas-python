@@ -13,8 +13,8 @@ from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
-revision = '74795461c0e6'
-down_revision = 'e706726cdee0'
+revision = "74795461c0e6"
+down_revision = "e706726cdee0"
 branch_labels = None
 depends_on = None
 
@@ -30,9 +30,7 @@ def upgrade():
     create_table_with_default_columns(
         table_name="actions", additional_columns=columns
     )
-    action_type_enum = postgresql.ENUM(
-        ActionType, name="action_type_enum"
-    )
+    action_type_enum = postgresql.ENUM(ActionType, name="action_type_enum")
     action_type_enum.create(op.get_bind())
     op.add_column(
         "actions",

@@ -6,7 +6,7 @@ from typing import List, Optional
 class AgilityPlanBase(BaseModel):
     name: str = None
     description: str = None
-    
+
     created_at: datetime = None
     updated_at: datetime = None
 

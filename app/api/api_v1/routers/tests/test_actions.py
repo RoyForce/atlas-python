@@ -38,7 +38,7 @@ def test_edit_action(client, test_action, superuser_token_headers):
         "id": test_action.id,
         "name": "test name",
         "description": "test desc",
-        "action_type": "COURSE"
+        "action_type": "COURSE",
     }
 
     response = client.put(
