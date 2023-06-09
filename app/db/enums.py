@@ -5,6 +5,12 @@ class SourceApp(str, Enum):
     JIRA_ALIGN = "JIRA-ALIGN"
 
 
+class ActionType(str, Enum):
+    COURSE = "COURSE"
+    ASSESSMENT = "ASSESSMENT"
+    MENTORING = "MENTORING"
+
+
 class ResourceType(str, Enum):
     TEAM = "TEAM"
     ROLE = "ROLE"
