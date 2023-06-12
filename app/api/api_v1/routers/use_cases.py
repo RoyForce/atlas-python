@@ -15,6 +15,7 @@ from app.db.use_cases.schemas import (
     UseCaseEdit,
     UseCaseOut,
 )
+from app.core.auth import get_current_active_user
 
 use_case_router = r = APIRouter()
 
@@ -54,10 +55,12 @@ async def use_case_details(
 async def use_case_create(
     use_case: UseCaseCreate,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new use_case
     """
+    use_case.created_by = current_user.id
     return create_item(db, models.UseCase, use_case)
 
 
@@ -69,10 +72,12 @@ async def use_cases_edit(
     use_case_id: int,
     use_case: UseCaseEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing UseCase
     """
+    use_case.updated_by = current_user.id
     return edit_item(db, models.UseCase, use_case_id, use_case)
 
 

@@ -16,6 +16,8 @@ from app.db.screens.schemas import (
     ScreenOut,
 )
 
+from app.core.auth import get_current_active_user
+
 screens_router = r = APIRouter()
 
 
@@ -57,10 +59,12 @@ async def screens_details(
 async def screens_create(
     screen: ScreenEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new screen
     """
+    screen.created_by = current_user.id
     return create_item(db, models.Screen, screen)
 
 
@@ -72,10 +76,12 @@ async def screens_edit(
     screen_id: int,
     screen: ScreenEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing screen
     """
+    screen.updated_by = current_user.id
     return edit_item(db, models.Screen, screen_id, screen)
 
 

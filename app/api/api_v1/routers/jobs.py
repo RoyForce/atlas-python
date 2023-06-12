@@ -20,6 +20,7 @@ from app.db.core import (
     create_item,
     edit_item,
 )
+from app.core.auth import get_current_active_user
 
 jobs_router = r = APIRouter()
 extension_router = er = APIRouter()
@@ -60,10 +61,12 @@ async def job_details(
 async def job_create(
     job: JobEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new job
     """
+    job.created_by = current_user.id
     return create_item(db, models.Job, job)
 
 
@@ -72,11 +75,12 @@ async def jobs_edit(
     job_id: int,
     job: JobEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing Job
     """
-
+    job.updated_by = current_user.id
     update_job_mappings(db, job_id, job)
     return edit_item(db, models.Job, job_id, job)
 

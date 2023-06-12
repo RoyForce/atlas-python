@@ -12,6 +12,7 @@ from app.db.core import (
 )
 from app.db.roles.crud import delete_all_role_mappings, update_role_mappings
 from app.db.roles.schemas import RoleCreate, RoleEdit, Role
+from app.core.auth import get_current_active_user
 
 roles_router = r = APIRouter()
 
@@ -51,10 +52,12 @@ async def role_details(
 async def role_create(
     role: RoleCreate,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new role
     """
+    role.created_by = current_user.id
     new_role = create_item(db, models.Role, role)
     update_role_mappings(db, new_role.id, role)
     return new_role
@@ -65,10 +68,12 @@ async def role_edit(
     role_id: int,
     role: RoleEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing role
     """
+    role.updated_by = current_user.id
     update_role_mappings(db, role_id, role)
     return edit_item(db, models.Role, role_id, role)
 

@@ -13,8 +13,6 @@ class Role(Base, CoreBase, TrackTimeMixin):
     description = Column(String, nullable=True)
     source_id = Column(Integer, nullable=True)
     source_update_at = Column(DateTime, nullable=True)
-    created_by = Column(Boolean, nullable=True)
-    updated_by = Column(Boolean, nullable=True)
     is_deleted = Column(Boolean, default=False)
 
     jobs = relationship(
@@ -28,6 +26,16 @@ class Role(Base, CoreBase, TrackTimeMixin):
     use_cases = relationship(
         "UseCase",
         primaryjoin="Role.id == any_(foreign(UseCase.role_ids))",
+    )
+    created_by_user = relationship(
+        "User",
+        primaryjoin="Role.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="Role.updated_by == User.id",
+        uselist=False,
     )
 
     @property

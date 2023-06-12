@@ -17,6 +17,7 @@ from app.db.programs.schemas import (
     ProgramEdit,
     ProgramOut,
 )
+from app.core.auth import get_current_active_user
 
 program_router = r = APIRouter()
 
@@ -56,17 +57,22 @@ async def program_details(
 async def program_create(
     program: ProgramEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new program
     """
     db_team = TeamModel.Team(
-        name=program.name + " Team", description=program.description, type=2
+        name=program.name + " Team",
+        description=program.description,
+        type=2,
+        created_by=current_user.id,
     )
     db.add(db_team)
     db.commit()
 
     program.team_id = db_team.id
+    program.created_by = current_user.id
     db_program = create_item(db, models.Program, program)
 
     up_team_data = dict(exclude_unset=True)
@@ -93,10 +99,12 @@ async def program_edit(
     program_id: int,
     program: ProgramEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing program
     """
+    program.updated_by = current_user.id
     db_program = edit_item(db, models.Program, program_id, program)
     if db_program.portfolio_id is not None:
         db_portfolio = get_item(
@@ -104,10 +112,8 @@ async def program_edit(
         )
         if db_portfolio.team_id is not None:
             db_port_team = get_item(db, TeamModel.Team, db_portfolio.team_id)
-            up_team_data = dict(exclude_unset=True)
-            up_team_data["program_id"] = (db_program.id,)
-            for key, value in up_team_data.items():
-                setattr(db_port_team, key, value)
+            db_port_team.program_id = db_program.id
+            db_port_team.updated_by = current_user.id
             db.add(db_port_team)
             db.commit()
             db.refresh(db_port_team)

@@ -27,3 +27,13 @@ class Course(Base, CoreBase, TrackTimeMixin):
     enroll_required = Column(Boolean, default=False)
     passing_percentage = Column(Integer, nullable=True)
     items = relationship("CourseItems", back_populates="courses")
+    created_by_user = relationship(
+        "User",
+        primaryjoin="Course.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="Course.updated_by == User.id",
+        uselist=False,
+    )

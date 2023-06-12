@@ -3,6 +3,7 @@ from app.db.questions.schemas import QuestionOut
 from typing import Any, Dict, AnyStr
 from pydantic import BaseModel
 from datetime import datetime
+from app.db.users.schemas import UserName
 
 
 class DimensionBase(BaseModel):
@@ -25,6 +26,8 @@ class DimensionOut(DimensionBase):
     created_at: datetime = None
     updated_at: datetime = None
     questions: List[QuestionOut] = []
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

@@ -14,3 +14,13 @@ class ScreenObject(Base, CoreBase, TrackTimeMixin):
     description = Column(String, nullable=True)
     properties = Column(JSON, default={})
     screen_id = Column(Integer, ForeignKey("screens.id"), nullable=False)
+    created_by_user = relationship(
+        "User",
+        primaryjoin="ScreenObject.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="ScreenObject.updated_by == User.id",
+        uselist=False,
+    )

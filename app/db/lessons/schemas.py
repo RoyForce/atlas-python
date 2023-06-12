@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from app.db.users.schemas import UserName
 
 
 class LessonBase(BaseModel):
@@ -9,6 +10,8 @@ class LessonBase(BaseModel):
     is_template: bool = None
     created_at: datetime = None
     updated_at: datetime = None
+    created_by: int = None
+    updated_by: int = None
 
 
 class LessonCreate(LessonBase):
@@ -36,6 +39,8 @@ class LessonOut(LessonBase):
 
 class LessonListOut(LessonBase):
     id: int
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

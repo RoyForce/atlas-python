@@ -35,7 +35,15 @@ class UserEdit(UserBase):
         orm_mode = True
 
 
-class User(UserBase):
+class UserName(BaseModel):
+    id: int
+    name: str = None
+
+    class Config:
+        orm_mode = True
+
+
+class User(UserBase, UserName):
     id: int
     created_at: datetime = None
     updated_at: datetime = None

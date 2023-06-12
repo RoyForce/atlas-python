@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -23,6 +23,16 @@ class UseCase(Base, CoreBase, TrackTimeMixin):
         "Role",
         primaryjoin="Role.id == any_(foreign(UseCase.role_ids))",
         uselist=True,
+    )
+    created_by_user = relationship(
+        "User",
+        primaryjoin="UseCase.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="UseCase.updated_by == User.id",
+        uselist=False,
     )
 
     @property

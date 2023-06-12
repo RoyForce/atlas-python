@@ -14,6 +14,7 @@ def create_course(db: Session, course: schemas.CourseCreate):
         duration=course.duration,
         enroll_required=course.enroll_required,
         passing_percentage=course.passing_percentage,
+        created_by=course.created_by,
     )
     db.add(db_course)
     db.commit()

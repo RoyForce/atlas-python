@@ -1,4 +1,5 @@
 from app.db.objectives.models import Objective
+from app.db.users.models import User
 
 
 def test_objective_crud(client, test_db, superuser_token_headers):

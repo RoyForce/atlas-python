@@ -15,6 +15,7 @@ from app.db.playbooks.schemas import (
     PlaybookOut,
     PlaybookListOut,
 )
+from app.core.auth import get_current_active_user
 
 playbook_router = r = APIRouter()
 
@@ -54,10 +55,12 @@ async def playbook_details(
 async def playbook_create(
     playbook: PlaybookEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new playbook
     """
+    playbook.created_by = current_user.id
     return create_item(db, models.Playbook, playbook)
 
 
@@ -70,10 +73,12 @@ async def playbooks_edit(
     playbook_id: int,
     playbook: PlaybookEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing Playbook
     """
+    playbook.updated_by = current_user.id
     return edit_item(db, models.Playbook, playbook_id, playbook)
 
 

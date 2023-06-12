@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy.orm import relationship
 
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
@@ -19,6 +20,18 @@ class User(Base, CoreBase, TrackTimeMixin):
     is_designer = Column(Boolean, default=False)
     source_id = Column(Integer, nullable=True)
     source_update_at = Column(DateTime, nullable=True)
-    created_by = Column(Integer, nullable=True)
-    updated_by = Column(Integer, nullable=True)
     is_deleted = Column(Boolean, default=False)
+    created_by_user = relationship(
+        "User",
+        primaryjoin="User.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="User.updated_by == User.id",
+        uselist=False,
+    )
+
+    @property
+    def name(self):
+        return f"{self.first_name if self.first_name else ''} {self.last_name if self.last_name else ''}".strip()

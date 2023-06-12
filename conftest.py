@@ -206,13 +206,17 @@ def test_role(test_db) -> Role:
 
 
 @pytest.fixture
-def test_application_url(test_db) -> ApplicationUrl:
+def test_application_url(test_db, test_user) -> ApplicationUrl:
     """
     Make a test application url in the database
     """
 
     application_url = ApplicationUrl(
-        name="Atlas", url="atlas.com", description="test"
+        name="Atlas",
+        url="atlas.com",
+        description="test",
+        created_by=test_user.id,
+        updated_by=test_user.id,
     )
     test_db.add(application_url)
     test_db.commit()
@@ -220,19 +224,24 @@ def test_application_url(test_db) -> ApplicationUrl:
 
 
 @pytest.fixture
-def test_application_type(test_db) -> ApplicationType:
+def test_application_type(test_db, test_user) -> ApplicationType:
     """
     Make a test application type in the database
     """
 
-    application_type = ApplicationType(name="Atlas", description="test")
+    application_type = ApplicationType(
+        name="Atlas",
+        description="test",
+        created_by=test_user.id,
+        updated_by=test_user.id,
+    )
     test_db.add(application_type)
     test_db.commit()
     return application_type
 
 
 @pytest.fixture
-def test_job(test_db, test_application_url) -> Job:
+def test_job(test_db, test_user, test_application_url) -> Job:
     """
     Make a test Job in the database
     """
@@ -242,6 +251,8 @@ def test_job(test_db, test_application_url) -> Job:
         description="testDesc",
         application_url_id=test_application_url.id,
         is_template=False,
+        created_by=test_user.id,
+        updated_by=test_user.id,
     )
     test_db.add(jobs)
     test_db.commit()
@@ -249,7 +260,7 @@ def test_job(test_db, test_application_url) -> Job:
 
 
 @pytest.fixture
-def test_playbook(test_db) -> Playbook:
+def test_playbook(test_db, test_user) -> Playbook:
     """
     Make a test playbook in the database
     """
@@ -258,6 +269,8 @@ def test_playbook(test_db) -> Playbook:
         name="testName",
         description="testDesc",
         page_content="testpagecont",
+        created_by=test_user.id,
+        updated_by=test_user.id,
     )
     test_db.add(playbooks)
     test_db.commit()
@@ -265,7 +278,7 @@ def test_playbook(test_db) -> Playbook:
 
 
 @pytest.fixture
-def test_lesson(test_db) -> Lesson:
+def test_lesson(test_db, test_user) -> Lesson:
     """
     Make a test lessons in the database
     """
@@ -276,6 +289,8 @@ def test_lesson(test_db) -> Lesson:
         duration=1,
         page_content="testpagecont",
         is_template=True,
+        created_by=test_user.id,
+        updated_by=test_user.id,
     )
     test_db.add(lesson)
     test_db.commit()
@@ -283,7 +298,7 @@ def test_lesson(test_db) -> Lesson:
 
 
 @pytest.fixture
-def test_course(test_db) -> Course:
+def test_course(test_db, test_user) -> Course:
     """
     Make a test course in the database
     """
@@ -294,6 +309,8 @@ def test_course(test_db) -> Course:
         duration=1,
         enroll_required=True,
         passing_percentage=1,
+        created_by=test_user.id,
+        updated_by=test_user.id,
     )
     test_db.add(course)
     test_db.commit()
@@ -301,7 +318,7 @@ def test_course(test_db) -> Course:
 
 
 @pytest.fixture
-def test_use_case(test_db) -> UseCase:
+def test_use_case(test_db, test_user) -> UseCase:
     """
     Make a test UseCase in the database
     """
@@ -310,6 +327,8 @@ def test_use_case(test_db) -> UseCase:
         name="testname",
         description="testdesc",
         table_config="testconf",
+        created_by=test_user.id,
+        updated_by=test_user.id,
     )
     test_db.add(use_cases)
     test_db.commit()
@@ -317,8 +336,13 @@ def test_use_case(test_db) -> UseCase:
 
 
 @pytest.fixture
-def test_screen(test_db) -> Screen:
-    screens = Screen(name="testNameScreen", description="testDescScreen")
+def test_screen(test_db, test_user) -> Screen:
+    screens = Screen(
+        name="testNameScreen",
+        description="testDescScreen",
+        created_by=test_user.id,
+        updated_by=test_user.id,
+    )
     test_db.add(screens)
     test_db.commit()
     return screens

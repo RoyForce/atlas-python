@@ -4,6 +4,7 @@ from app.db.screen_objects.schemas import ScreenObjectOut
 from pydantic import BaseModel
 from datetime import datetime
 from app.db.jobs.schemas import JobOut
+from app.db.users.schemas import UserName
 
 
 class ScreenBase(BaseModel):
@@ -12,6 +13,8 @@ class ScreenBase(BaseModel):
     screen_url: str = None
     created_at: datetime = None
     updated_at: datetime = None
+    created_by: int = None
+    updated_by: int = None
 
 
 class ScreenEdit(ScreenBase):
@@ -31,6 +34,8 @@ class ScreenOut(ScreenBase):
     application_type_id: int = None
     application_type: ApplicationTypeOut = None
     objects: List[ScreenObjectOut] = []
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
@@ -14,3 +14,13 @@ class Lesson(Base, CoreBase, TrackTimeMixin):
     duration = Column(Integer, nullable=True)
     page_content = Column(String, nullable=True)
     is_template = Column(Boolean, default=False)
+    created_by_user = relationship(
+        "User",
+        primaryjoin="Lesson.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="Lesson.updated_by == User.id",
+        uselist=False,
+    )

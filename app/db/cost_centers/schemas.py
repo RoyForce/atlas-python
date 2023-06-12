@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Any, Dict, AnyStr, Optional
+from app.db.users.schemas import UserName
 
 
 class CostCenterBase(BaseModel):
@@ -18,6 +19,8 @@ class CostCenterOut(CostCenterBase):
     id: int
     created_at: datetime = None
     updated_at: datetime = None
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

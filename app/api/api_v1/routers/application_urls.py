@@ -15,6 +15,7 @@ from app.db.application_urls.schemas import (
     ApplicationUrlEdit,
     ApplicationUrlOut,
 )
+from app.core.auth import get_current_active_user
 
 application_urls_router = r = APIRouter()
 
@@ -59,10 +60,12 @@ async def application_urls_details(
 async def application_urls_create(
     application_url: ApplicationUrlEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new application-url
     """
+    application_url.created_by = current_user.id
     return create_item(db, models.ApplicationUrl, application_url)
 
 
@@ -74,10 +77,12 @@ async def application_urls_edit(
     application_url_id: int,
     application_url: ApplicationUrlEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing application-url
     """
+    application_url.updated_by = current_user.id
     return edit_item(
         db, models.ApplicationUrl, application_url_id, application_url
     )

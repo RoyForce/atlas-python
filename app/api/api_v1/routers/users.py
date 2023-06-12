@@ -66,6 +66,7 @@ async def user_create(
     """
     Create a new user
     """
+    user.created_by = current_user.id
     return create_user(db, user)
 
 
@@ -81,6 +82,7 @@ async def user_edit(
     """
     Update existing user
     """
+    user.updated_by = current_user.id
     return edit_user(db, user_id, user)
 
 

@@ -16,6 +16,7 @@ from app.db.portfolios.schemas import (
     PortfolioEdit,
     PortfolioOut,
 )
+from app.core.auth import get_current_active_user
 
 
 portfolio_router = r = APIRouter()
@@ -56,6 +57,7 @@ async def portfolio_details(
 async def portfolio_create(
     portfolio: PortfolioCreate,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new portfolio
@@ -64,11 +66,13 @@ async def portfolio_create(
     team = TeamModel.Team(
         name=portfolio.name + " Team",
         description=portfolio.description,
+        created_by=current_user.id,
         type=5,
     )
     db.add(team)
     db.commit()
     portfolio.team_id = team.id
+    portfolio.created_by = current_user.id
     return create_item(db, models.Portfolio, portfolio)
 
 
@@ -77,10 +81,12 @@ async def portfolio_edit(
     portfolio_id: int,
     portfolio: PortfolioEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing portfolio
     """
+    portfolio.updated_by = current_user.id
     return edit_item(db, models.Portfolio, portfolio_id, portfolio)
 
 
