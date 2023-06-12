@@ -3,6 +3,7 @@ import typing as t
 from typing import List, Any, Dict, AnyStr
 from enum import Enum
 from datetime import datetime
+from app.db.users.schemas import UserName
 
 
 class ItemsEnum(str, Enum):
@@ -31,6 +32,8 @@ class CourseBase(BaseModel):
     items: Any = None
     created_at: datetime = None
     updated_at: datetime = None
+    created_by: int = None
+    updated_by: int = None
 
 
 class CourseCreate(CourseBase):
@@ -51,6 +54,8 @@ class CourseEdit(CourseBase):
 class Course(CourseBase):
     id: int
     items: List[CourseItemBase] = None
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

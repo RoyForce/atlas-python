@@ -5,6 +5,7 @@ from app.db.application_urls.schemas import ApplicationUrlOut
 from typing import List, Any, Dict, AnyStr, Optional
 from enum import Enum
 from datetime import datetime
+from app.db.users.schemas import UserName
 
 
 class JobBase(BaseModel):
@@ -13,6 +14,8 @@ class JobBase(BaseModel):
     is_locked: bool = None
     steps: Dict[AnyStr, Any] = None
     is_template: bool = None
+    created_by: int = None
+    updated_by: int = None
 
 
 class JobEdit(JobBase):
@@ -38,6 +41,8 @@ class JobOut(JobBase):
     application_type: ApplicationTypeOut = None
     created_at: datetime = None
     updated_at: datetime = None
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

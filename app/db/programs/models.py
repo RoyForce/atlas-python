@@ -18,3 +18,13 @@ class Program(Base, CoreBase, TrackTimeMixin, ExternalSource):
         primaryjoin="Program.id == Team.program_id",
         uselist=True,
     )
+    created_by_user = relationship(
+        "User",
+        primaryjoin="Program.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="Program.updated_by == User.id",
+        uselist=False,
+    )

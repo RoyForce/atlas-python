@@ -4,14 +4,12 @@ from sqlalchemy import (
     Integer,
     String,
     ForeignKey,
-    CheckConstraint,
     Numeric,
 )
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
 from sqlalchemy import orm
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import JSON
 from fastapi import HTTPException
 from app.db.enums import MetricsType
 
@@ -25,12 +23,20 @@ class Objective(Base, CoreBase, TrackTimeMixin):
     metrics_type = Column(String, nullable=False)
     start_value = Column(Numeric)
     target_value = Column(Numeric)
-    created_by = Column(Integer)
-    updated_by = Column(Integer)
     results = relationship(
         "Result",
         primaryjoin="Objective.id == Result.objective_id",
         uselist=True,
+    )
+    created_by_user = relationship(
+        "User",
+        primaryjoin="Objective.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="Objective.updated_by == User.id",
+        uselist=False,
     )
 
     @orm.validates("start_value", "target_value")

@@ -8,14 +8,14 @@ from sqlalchemy import (
     String,
     DateTime,
     Boolean,
+    ForeignKey,
 )
 from sqlalchemy.orm import Session
 from typing import List, Union
 from fastapi import HTTPException
 from sqlalchemy.inspection import inspect
-
-
 from sqlalchemy.dialects.postgresql import JSON, JSONB
+from sqlalchemy.ext.declarative import declared_attr
 
 
 class TrackTimeMixin:
@@ -28,12 +28,21 @@ class TrackTimeMixin:
         server_default=text("TIMEZONE('utc', CURRENT_TIMESTAMP)"),
     )
 
+    @declared_attr
+    def created_by(cls):
+        return Column(Integer, ForeignKey("users.id"), nullable=True)
+
+    @declared_attr
+    def updated_by(cls):
+        return Column(Integer, ForeignKey("users.id"), nullable=True)
+
+    # created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    # updated_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+
 
 class ExternalSource:
     source_id = Column(Integer, nullable=True)
     source_update_at = Column(DateTime, nullable=True)
-    created_by = Column(Integer, nullable=True)
-    updated_by = Column(Integer, nullable=True)
     is_deleted = Column(Boolean, default=False)
 
 

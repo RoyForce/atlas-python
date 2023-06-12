@@ -16,6 +16,7 @@ from app.db.lessons.schemas import (
     LessonOut,
     LessonListOut,
 )
+from app.core.auth import get_current_active_user
 
 lesson_router = r = APIRouter()
 
@@ -56,10 +57,12 @@ async def lesson_details(
 async def lesson_create(
     lesson: LessonCreate,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new lesson
     """
+    lesson.created_by = current_user.id
     return create_item(db, models.Lesson, lesson)
 
 
@@ -68,10 +71,13 @@ async def lesson_edit(
     lesson_id: int,
     lesson: LessonEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing lesson
     """
+
+    lesson.updated_by = current_user.id
     return edit_item(db, models.Lesson, lesson_id, lesson)
 
 

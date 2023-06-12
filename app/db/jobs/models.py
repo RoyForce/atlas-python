@@ -39,6 +39,16 @@ class Job(Base, CoreBase, TrackTimeMixin):
         "Screen",
         primaryjoin="Job.id == any_(foreign(Screen.job_ids))",
     )
+    created_by_user = relationship(
+        "User",
+        primaryjoin="Job.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="Job.updated_by == User.id",
+        uselist=False,
+    )
 
     @property
     def screen_ids(self):

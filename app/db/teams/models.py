@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin, ExternalSource
 from sqlalchemy.orm import relationship
+from app.db.users.models import User
 
 
 class Team(Base, CoreBase, TrackTimeMixin, ExternalSource):
@@ -23,4 +24,5 @@ class Team(Base, CoreBase, TrackTimeMixin, ExternalSource):
         "User",
         primaryjoin="User.id == any_(foreign(Team.user_ids))",
         uselist=True,
+        lazy="noload",
     )

@@ -12,10 +12,18 @@ class Assessment(Base, CoreBase, TrackTimeMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     description = Column(String, nullable=True)
-    created_by = Column(Integer)
-    updated_by = Column(Integer)
     dimensions = relationship(
         "Dimension",
         primaryjoin="Assessment.id == Dimension.assessment_id",
         uselist=True,
+    )
+    created_by_user = relationship(
+        "User",
+        primaryjoin="Assessment.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="Assessment.updated_by == User.id",
+        uselist=False,
     )

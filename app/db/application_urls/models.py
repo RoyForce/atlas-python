@@ -17,3 +17,13 @@ class ApplicationUrl(Base, CoreBase, TrackTimeMixin):
     application_type = relationship(
         "ApplicationType", lazy="subquery", backref="application_urls"
     )
+    created_by_user = relationship(
+        "User",
+        primaryjoin="ApplicationUrl.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="ApplicationUrl.updated_by == User.id",
+        uselist=False,
+    )

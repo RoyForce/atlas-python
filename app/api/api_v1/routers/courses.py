@@ -10,6 +10,8 @@ from app.db.courses.crud import (
 )
 from app.db.courses.schemas import CourseCreate, CourseEdit, Course
 
+from app.core.auth import get_current_active_user
+
 courses_router = r = APIRouter()
 
 
@@ -50,10 +52,12 @@ async def course_details(
 async def course_create(
     course: CourseCreate,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new course
     """
+    course.created_by = current_user.id
     return create_course(db, course)
 
 
@@ -66,10 +70,12 @@ async def course_edit(
     course_id: int,
     course: CourseEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing course
     """
+    course.updated_by = current_user.id
     return edit_course(db, course_id, course)
 
 

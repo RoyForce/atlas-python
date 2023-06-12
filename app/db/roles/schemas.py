@@ -1,6 +1,7 @@
 from typing import Any, List, Optional
 from pydantic import BaseModel
 from datetime import datetime
+from app.db.users.schemas import UserName
 
 
 class RoleBase(BaseModel):
@@ -33,6 +34,8 @@ class RoleEdit(RoleBase):
 
 class Role(RoleBase):
     id: int
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

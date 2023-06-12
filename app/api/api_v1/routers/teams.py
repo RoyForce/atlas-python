@@ -16,6 +16,7 @@ from app.db.teams.schemas import (
     TeamEdit,
     TeamOut,
 )
+from app.core.auth import get_current_active_user
 
 team_router = r = APIRouter()
 
@@ -55,10 +56,12 @@ async def team_details(
 async def team_create(
     team: TeamCreate,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Create a new team
     """
+    team.created_by = current_user.id
     return create_item(db, models.Team, team)
 
 
@@ -67,10 +70,12 @@ async def team_edit(
     team_id: int,
     team: TeamEdit,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Update existing team
     """
+    team.updated_by = current_user.id
     return edit_item(db, models.Team, team_id, team)
 
 

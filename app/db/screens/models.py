@@ -30,3 +30,13 @@ class Screen(Base, CoreBase, TrackTimeMixin):
         primaryjoin="Screen.id == ScreenObject.screen_id",
         uselist=True,
     )
+    created_by_user = relationship(
+        "User",
+        primaryjoin="Screen.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="Screen.updated_by == User.id",
+        uselist=False,
+    )

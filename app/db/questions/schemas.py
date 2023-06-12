@@ -1,6 +1,7 @@
 from typing import Any, Dict, AnyStr
 from pydantic import BaseModel
 from datetime import datetime
+from app.db.users.schemas import UserName
 
 
 class QuestionBase(BaseModel):
@@ -20,6 +21,8 @@ class QuestionOut(QuestionBase):
     id: int
     created_by: int = None
     updated_by: int = None
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

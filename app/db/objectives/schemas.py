@@ -1,8 +1,9 @@
-from typing import Any, Dict, AnyStr, List
+from typing import Any, Dict, AnyStr, List, Optional
 from app.db.results.schemas import ResultOut
 from pydantic import BaseModel
 from datetime import datetime
 from app.db.enums import MetricsType
+from app.db.users.schemas import UserName
 
 
 class ObjectiveBase(BaseModel):
@@ -25,6 +26,8 @@ class ObjectiveOut(ObjectiveBase):
     created_at: datetime = None
     updated_at: datetime = None
     results: List[ResultOut] = []
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

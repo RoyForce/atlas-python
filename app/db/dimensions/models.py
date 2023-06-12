@@ -24,12 +24,20 @@ class Dimension(Base, CoreBase, TrackTimeMixin):
         Integer,
         CheckConstraint("baseline_value >= -5 AND baseline_value <= 5"),
     )
-    created_by = Column(Integer, nullable=True)
-    updated_by = Column(Integer, nullable=True)
     questions = relationship(
         "Question",
         primaryjoin="Dimension.id == Question.dimension_id",
         uselist=True,
+    )
+    created_by_user = relationship(
+        "User",
+        primaryjoin="Dimension.created_by == User.id",
+        uselist=False,
+    )
+    updated_by_user = relationship(
+        "User",
+        primaryjoin="Dimension.updated_by == User.id",
+        uselist=False,
     )
 
     @orm.validates("baseline_value", "ideal_value")

@@ -1,7 +1,8 @@
 from typing import List
-from app.db.programs.schemas import ProgramOut
+from app.db.programs.schemas import ProgramBase
 from pydantic import BaseModel
 from datetime import datetime
+from app.db.users.schemas import UserName
 
 
 class PortfolioBase(BaseModel):
@@ -20,7 +21,9 @@ class PortfolioOut(PortfolioBase):
     id: int
     created_at: datetime = None
     updated_at: datetime = None
-    programs: List[ProgramOut] = []
+    programs: List[ProgramBase] = []
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True
