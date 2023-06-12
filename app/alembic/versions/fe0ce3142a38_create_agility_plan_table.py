@@ -20,15 +20,8 @@ depends_on = None
 
 
 def upgrade():
-    columns = [
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("description", sa.String(), nullable=True),
-        sa.Column("is_active", sa.Boolean(), nullable=True),
-        sa.Column("created_by", sa.Integer(), nullable=True),
-        sa.Column("updated_by", sa.Integer(), nullable=True),
-    ]
     create_table_with_default_columns(
-        table_name="agility_plans", additional_columns=columns
+        table_name="agility_plans", additional_columns=[]
     )
     op.add_column(
         "agility_plans",

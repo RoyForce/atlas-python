@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Any
+from app.db.enums import MetricsType
 
 
 class AgilityPlanBase(BaseModel):
@@ -11,33 +12,26 @@ class AgilityPlanBase(BaseModel):
     updated_at: datetime = None
 
 
+class ObjectiveItemBase(BaseModel):
+    id: int = None
+    name: str = None
+    description: str = None
+
+
 class AgilityPlanCreate(AgilityPlanBase):
     name: str
-    action_ids: Optional[List[int]] = []
-    role_ids: Optional[List[int]] = []
-    user_ids: Optional[List[int]] = []
-    org_ids: Optional[List[int]] = []
 
     class Config:
         orm_mode = True
 
 
 class AgilityPlanEdit(AgilityPlanBase):
-    action_ids: Optional[List[int]] = []
-    role_ids: Optional[List[int]] = []
-    user_ids: Optional[List[int]] = []
-    org_ids: Optional[List[int]] = []
-
     class Config:
         orm_mode = True
 
 
 class AgilityPlanOut(AgilityPlanBase):
     id: int
-    action_ids: Optional[List[int]] = []
-    role_ids: Optional[List[int]] = []
-    user_ids: Optional[List[int]] = []
-    org_ids: Optional[List[int]] = []
 
     class Config:
         orm_mode = True

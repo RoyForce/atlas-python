@@ -228,7 +228,7 @@ app.include_router(
 app.include_router(
     agility_plan_router,
     prefix="/api/v1",
-    tags=["agility_plans"],
+    tags=["agility-plans"],
     dependencies=[Depends(get_current_active_user)],
 )
 

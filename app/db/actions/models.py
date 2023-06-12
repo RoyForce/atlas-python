@@ -12,3 +12,6 @@ class Action(Base, CoreBase, TrackTimeMixin):
     name = Column(String)
     description = Column(String, nullable=True)
     action_type = Column(String, nullable=False)
+    created_by = Column(Integer)
+    updated_by = Column(Integer)
+    is_active = Column(Boolean)

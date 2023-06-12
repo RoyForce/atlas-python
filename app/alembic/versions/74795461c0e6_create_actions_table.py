@@ -20,15 +20,8 @@ depends_on = None
 
 
 def upgrade():
-    columns = [
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("description", sa.String(), nullable=True),
-        sa.Column("is_active", sa.Boolean(), nullable=True),
-        sa.Column("created_by", sa.Integer(), nullable=True),
-        sa.Column("updated_by", sa.Integer(), nullable=True),
-    ]
     create_table_with_default_columns(
-        table_name="actions", additional_columns=columns
+        table_name="actions", additional_columns=[]
     )
     action_type_enum = postgresql.ENUM(ActionType, name="action_type_enum")
     action_type_enum.create(op.get_bind())
