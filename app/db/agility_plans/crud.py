@@ -39,7 +39,10 @@ def create_agility_plan(db: Session, agility_plan: schemas.AgilityPlanCreate):
         db.add_all(db_agility_plan_action_item)
         db.commit()
 
-    if agility_plan.objectives is not None and len(agility_plan.objectives) > 0:
+    if (
+        agility_plan.objectives is not None
+        and len(agility_plan.objectives) > 0
+    ):
         db_agility_plan_objective_item = [
             models.Objective(
                 item_id=items.item_id,
