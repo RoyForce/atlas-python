@@ -15,3 +15,4 @@ class Action(Base, CoreBase, TrackTimeMixin):
     created_by = Column(Integer)
     updated_by = Column(Integer)
     is_active = Column(Boolean)
+    action_type = Column(String)
