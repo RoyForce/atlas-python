@@ -25,6 +25,9 @@ from app.api.api_v1.routers.dimensions import dimension_router
 from app.api.api_v1.routers.questions import question_router
 from app.api.api_v1.routers.objectives import objective_router
 from app.api.api_v1.routers.results import result_router
+from app.api.api_v1.routers.objectives import objective_router
+from app.api.api_v1.routers.actions import action_router
+from app.api.api_v1.routers.agility_plans import agility_plan_router
 from app.core import config
 from app.db.session import SessionLocal
 from app.core.auth import get_current_active_user
@@ -213,6 +216,29 @@ app.include_router(
     result_router,
     prefix="/api/v1",
     tags=["results"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+app.include_router(
+    objective_router,
+    prefix="/api/v1",
+    tags=["objectives"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+
+app.include_router(
+    action_router,
+    prefix="/api/v1",
+    tags=["actions"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+
+app.include_router(
+    agility_plan_router,
+    prefix="/api/v1",
+    tags=["agility-plans"],
     dependencies=[Depends(get_current_active_user)],
 )
 

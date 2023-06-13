@@ -5,6 +5,12 @@ class SourceApp(str, Enum):
     JIRA_ALIGN = "JIRA-ALIGN"
 
 
+class ActionType(str, Enum):
+    COURSE = "COURSE"
+    ASSESSMENT = "ASSESSMENT"
+    MENTORING = "MENTORING"
+
+    
 class ResourceType(str, Enum):
     TEAM = "TEAM"
     ROLE = "ROLE"
@@ -40,3 +46,15 @@ class MetricsType(str, Enum):
     PERCENTAGE = "PERCENTAGE"
     DOLLARS = "DOLLARS"
     UNITS = "UNITS"
+
+
+class AgilityPlanRelationType(str, Enum):
+    ACTION = "ACTION"
+    OBJECTIVE = "OBJECTIVE"
+    USER = "USER"
+    ROLE = "ROLE"
+    LEAD = "LEAD"
+    SPONSOR = "SPONSOR"
+    CORETEAM = "CORETEAM"
+    COACH = "COACH"
+    ORGANIZATION = "ORGANIZATION"
