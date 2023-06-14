@@ -19,13 +19,3 @@ class Playbook(Base, CoreBase, TrackTimeMixin):
         primaryjoin="Role.id == any_(foreign(Playbook.role_ids))",
         uselist=True,
     )
-    created_by_user = relationship(
-        "User",
-        primaryjoin="Playbook.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="Playbook.updated_by == User.id",
-        uselist=False,
-    )

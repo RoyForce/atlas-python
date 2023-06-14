@@ -21,16 +21,6 @@ class User(Base, CoreBase, TrackTimeMixin):
     source_id = Column(Integer, nullable=True)
     source_update_at = Column(DateTime, nullable=True)
     is_deleted = Column(Boolean, default=False)
-    created_by_user = relationship(
-        "User",
-        primaryjoin="User.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="User.updated_by == User.id",
-        uselist=False,
-    )
 
     @property
     def name(self):

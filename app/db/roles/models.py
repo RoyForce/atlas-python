@@ -27,16 +27,6 @@ class Role(Base, CoreBase, TrackTimeMixin):
         "UseCase",
         primaryjoin="Role.id == any_(foreign(UseCase.role_ids))",
     )
-    created_by_user = relationship(
-        "User",
-        primaryjoin="Role.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="Role.updated_by == User.id",
-        uselist=False,
-    )
 
     @property
     def job_ids(self):

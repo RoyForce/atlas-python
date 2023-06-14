@@ -29,16 +29,6 @@ class Dimension(Base, CoreBase, TrackTimeMixin):
         primaryjoin="Dimension.id == Question.dimension_id",
         uselist=True,
     )
-    created_by_user = relationship(
-        "User",
-        primaryjoin="Dimension.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="Dimension.updated_by == User.id",
-        uselist=False,
-    )
 
     @orm.validates("baseline_value", "ideal_value")
     def validate_values(self, key, value):

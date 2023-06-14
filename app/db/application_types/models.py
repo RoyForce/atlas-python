@@ -11,13 +11,3 @@ class ApplicationType(Base, CoreBase, TrackTimeMixin):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     description = Column(String, nullable=True)
-    created_by_user = relationship(
-        "User",
-        primaryjoin="ApplicationType.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="ApplicationType.updated_by == User.id",
-        uselist=False,
-    )

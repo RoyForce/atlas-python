@@ -5,7 +5,6 @@ from sqlalchemy import (
     TIMESTAMP,
     text,
     Integer,
-    String,
     DateTime,
     Boolean,
     ForeignKey,
@@ -16,6 +15,7 @@ from fastapi import HTTPException
 from sqlalchemy.inspection import inspect
 from sqlalchemy.dialects.postgresql import JSON, JSONB
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.orm import relationship
 
 
 class TrackTimeMixin:
@@ -36,8 +36,21 @@ class TrackTimeMixin:
     def updated_by(cls):
         return Column(Integer, ForeignKey("users.id"), nullable=True)
 
-    # created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
-    # updated_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    @declared_attr
+    def created_by_user(cls):
+        return relationship(
+            "User",
+            uselist=False,
+            foreign_keys=[cls.created_by],
+        )
+
+    @declared_attr
+    def updated_by_user(cls):
+        return relationship(
+            "User",
+            uselist=False,
+            foreign_keys=[cls.updated_by],
+        )
 
 
 class ExternalSource:

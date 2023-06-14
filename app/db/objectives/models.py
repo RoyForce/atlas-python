@@ -28,16 +28,6 @@ class Objective(Base, CoreBase, TrackTimeMixin):
         primaryjoin="Objective.id == Result.objective_id",
         uselist=True,
     )
-    created_by_user = relationship(
-        "User",
-        primaryjoin="Objective.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="Objective.updated_by == User.id",
-        uselist=False,
-    )
 
     @orm.validates("start_value", "target_value")
     def validate_values(self, key, value):

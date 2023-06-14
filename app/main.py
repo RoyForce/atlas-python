@@ -3,12 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 import uvicorn
 
+from app.api.api_v1.routers.extension import extension_router
 from app.api.api_v1.routers.users import users_router
 from app.api.api_v1.routers.roles import roles_router
 from app.api.api_v1.routers.auth import auth_router
 from app.api.api_v1.routers.application_urls import application_urls_router
 from app.api.api_v1.routers.application_types import application_types_router
-from app.api.api_v1.routers.jobs import jobs_router, extension_router
+from app.api.api_v1.routers.jobs import jobs_router
+from app.api.api_v1.routers.job_snippets import job_snippet_router
 from app.api.api_v1.routers.playbooks import playbook_router
 from app.api.api_v1.routers.lessons import lesson_router
 from app.api.api_v1.routers.courses import courses_router
@@ -27,9 +29,8 @@ from app.api.api_v1.routers.objectives import objective_router
 from app.api.api_v1.routers.results import result_router
 from app.core import config
 from app.db.session import SessionLocal
-from app.core.auth import get_current_active_user
+from app.core.auth import get_current_active_user, validate_extension_token
 from app.core.celery_app import celery_app
-from app import tasks
 
 
 app = FastAPI(
@@ -103,9 +104,16 @@ app.include_router(
     dependencies=[Depends(get_current_active_user)],
 )
 app.include_router(
-    extension_router,
+    job_snippet_router,
     prefix="/api/v1",
+    tags=["job-snippets"],
+    dependencies=[Depends(get_current_active_user)],
+)
+app.include_router(
+    extension_router,
+    prefix="/api/ext",
     tags=["jobs"],
+    dependencies=[Depends(validate_extension_token)],
 )
 app.include_router(
     playbook_router,

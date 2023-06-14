@@ -18,13 +18,3 @@ class Portfolio(Base, CoreBase, TrackTimeMixin, ExternalSource):
         primaryjoin="Portfolio.id == Program.portfolio_id",
         uselist=True,
     )
-    created_by_user = relationship(
-        "User",
-        primaryjoin="Portfolio.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="Portfolio.updated_by == User.id",
-        uselist=False,
-    )
