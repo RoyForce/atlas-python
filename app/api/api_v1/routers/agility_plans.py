@@ -21,9 +21,23 @@ from app.db.agility_plans.schemas import (
 from app.db.agility_plans.crud import (
     create_agility_plan,
     get_agility_plan_by_id,
+    update_agility_plan_by_id,
+    delete_agility_plan_by_id,
+    add_action_to_agility_plan,
+    add_objective_to_agility_plan,
 )
 
 agility_plan_router = r = APIRouter()
+AGILITY_PLAN_RELATION_TYPES = [
+    "ACTION",
+    "OBJECTIVE",
+    "LEAD",
+    "SPONSOR",
+    "CORETEAM",
+    "COACH",
+    "USER",
+    "ROLE",
+]
 
 
 @r.get(
@@ -40,39 +54,48 @@ async def agility_plans_list(
     """
     agility_plans = get_lists(db, models.AgilityPlan, request.query_params)
     filtered_agility_plans = [agility_plan for agility_plan in agility_plans]
-
+    related_ids = dict()
     for agility_plan in filtered_agility_plans:
-        relations = (
-            db.query(models.AgilityPlanRelation)
-            .filter(
-                models.AgilityPlanRelation.relation_type == "ACTION"
-                and models.AgilityPlanRelation.agility_plan_id
-                == agility_plan.id
+        for type in AGILITY_PLAN_RELATION_TYPES:
+            relations = (
+                db.query(models.AgilityPlanRelation)
+                .filter(
+                    models.AgilityPlanRelation.relation_type == type
+                    and models.AgilityPlanRelation.agility_plan_id
+                    == agility_plan.id
+                )
+                .all()
             )
-            .all()
-        )
-        related_ids = []
-        for relation in relations:
-            related_ids.append(relation.related_id)
+            related_ids[type] = []
+            for relation in relations:
+                related_ids[type].append(relation.related_id)
         agility_plan.actions = list(
-            filter(lambda x: x.id in related_ids, agility_plan.actions)
-        )
-
-    for agility_plan in filtered_agility_plans:
-        relations = (
-            db.query(models.AgilityPlanRelation)
-            .filter(
-                models.AgilityPlanRelation.relation_type == "OBJECTIVE"
-                and models.AgilityPlanRelation.agility_plan_id
-                == agility_plan.id
+            filter(
+                lambda x: x.id in related_ids["ACTION"], agility_plan.actions
             )
-            .all()
         )
-        related_ids = []
-        for relation in relations:
-            related_ids.append(relation.related_id)
         agility_plan.objectives = list(
-            filter(lambda x: x.id in related_ids, agility_plan.objectives)
+            filter(
+                lambda x: x.id in related_ids["OBJECTIVE"],
+                agility_plan.objectives,
+            )
+        )
+        agility_plan.leads = list(
+            filter(lambda x: x.id in related_ids["LEAD"], agility_plan.leads)
+        )
+        agility_plan.sponsors = list(
+            filter(
+                lambda x: x.id in related_ids["SPONSOR"], agility_plan.sponsors
+            )
+        )
+        agility_plan.coreteams = list(
+            filter(
+                lambda x: x.id in related_ids["CORETEAM"],
+                agility_plan.coreteams,
+            )
+        )
+        agility_plan.coaches = list(
+            filter(lambda x: x.id in related_ids["COACH"], agility_plan.coaches)
         )
 
     response.headers["Content-Range"] = f"0-9/{len(filtered_agility_plans)}"
@@ -89,7 +112,49 @@ async def agility_plan_details(
     """
     Get any agility-plan details
     """
-    return get_agility_plan_by_id(db, agility_plan_id)
+    agility_plan = get_agility_plan_by_id(db, agility_plan_id)
+    if agility_plan == "No result found for query":
+        return
+    related_ids = dict()
+    for type in AGILITY_PLAN_RELATION_TYPES:
+        relations = (
+            db.query(models.AgilityPlanRelation)
+            .filter(
+                models.AgilityPlanRelation.relation_type == type
+                and models.AgilityPlanRelation.agility_plan_id
+                == agility_plan.id
+            )
+            .all()
+        )
+        related_ids[type] = []
+        for relation in relations:
+            related_ids[type].append(relation.related_id)
+    agility_plan.actions = list(
+        filter(lambda x: x.id in related_ids["ACTION"], agility_plan.actions)
+    )
+    agility_plan.objectives = list(
+        filter(
+            lambda x: x.id in related_ids["OBJECTIVE"],
+            agility_plan.objectives,
+        )
+    )
+    agility_plan.leads = list(
+        filter(lambda x: x.id in related_ids["LEAD"], agility_plan.leads)
+    )
+    agility_plan.sponsors = list(
+        filter(lambda x: x.id in related_ids["SPONSOR"], agility_plan.sponsors)
+    )
+    agility_plan.coreteams = list(
+        filter(
+            lambda x: x.id in related_ids["CORETEAM"],
+            agility_plan.coreteams,
+        )
+    )
+    agility_plan.coaches = list(
+        filter(lambda x: x.id in related_ids["COACH"], agility_plan.coaches)
+    )
+
+    return agility_plan
 
 
 @r.post(
@@ -105,7 +170,35 @@ async def agility_plan_create(
     return create_agility_plan(db, agility_plan)
 
 
-@r.put("/agility-plans/{agility_plan_id}", response_model=AgilityPlanOut)
+@r.post(
+    "/agility-plans/{agility_plan_id}/add-action/{action_id}",
+)
+async def agility_plan_action_create(
+    agility_plan_id: int,
+    action_id: int,
+    db=Depends(get_db),
+):
+    """
+    Add a new action to agility-plan
+    """
+    return add_action_to_agility_plan(db, action_id, agility_plan_id)
+
+
+@r.post(
+    "/agility-plans/{agility_plan_id}/add-objective/{objective_id}",
+)
+async def agility_plan_objective_create(
+    agility_plan_id: int,
+    objective_id: int,
+    db=Depends(get_db),
+):
+    """
+    Add a new objective to agility-plan
+    """
+    return add_objective_to_agility_plan(db, objective_id, agility_plan_id)
+
+
+@r.put("/agility-plans/{agility_plan_id}")
 async def agility_plan_edit(
     agility_plan_id: int,
     agility_plan: AgilityPlanEdit,
@@ -114,7 +207,7 @@ async def agility_plan_edit(
     """
     Update existing agility_plan
     """
-    return edit_item(db, models.AgilityPlan, agility_plan_id, agility_plan)
+    return update_agility_plan_by_id(db, agility_plan_id, agility_plan)
 
 
 @r.delete(
@@ -128,4 +221,4 @@ async def agility_plan_delete(
     """
     Delete existing agility-plan
     """
-    return delete_item(db, models.AgilityPlan, agility_plan_id)
+    return delete_agility_plan_by_id(db, agility_plan_id)
