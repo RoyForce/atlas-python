@@ -17,13 +17,3 @@ class Result(Base, CoreBase, TrackTimeMixin):
     id = Column(Integer, primary_key=True, index=True)
     objective_id = Column(Integer, ForeignKey("objectives.id"), nullable=True)
     value = Column(Numeric)
-    created_by_user = relationship(
-        "User",
-        primaryjoin="Result.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="Result.updated_by == User.id",
-        uselist=False,
-    )

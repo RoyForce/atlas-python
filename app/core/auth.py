@@ -1,5 +1,5 @@
 import jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from jwt import PyJWTError
 
 from app.db import session
@@ -74,3 +74,12 @@ def sign_up_new_user(db, email: str, password: str):
             is_superuser=False,
         ),
     )
+
+
+def validate_extension_token(request: Request):
+    if f"Bearer {security.EXTENSION_TOKEN}" != request.headers.get(
+        "Authorization"
+    ):
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN, detail="Invalid extension token."
+        )

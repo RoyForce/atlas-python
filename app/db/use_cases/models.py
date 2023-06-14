@@ -24,16 +24,6 @@ class UseCase(Base, CoreBase, TrackTimeMixin):
         primaryjoin="Role.id == any_(foreign(UseCase.role_ids))",
         uselist=True,
     )
-    created_by_user = relationship(
-        "User",
-        primaryjoin="UseCase.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="UseCase.updated_by == User.id",
-        uselist=False,
-    )
 
     @property
     def ordered_jobs(self):

@@ -17,13 +17,3 @@ class Assessment(Base, CoreBase, TrackTimeMixin):
         primaryjoin="Assessment.id == Dimension.assessment_id",
         uselist=True,
     )
-    created_by_user = relationship(
-        "User",
-        primaryjoin="Assessment.created_by == User.id",
-        uselist=False,
-    )
-    updated_by_user = relationship(
-        "User",
-        primaryjoin="Assessment.updated_by == User.id",
-        uselist=False,
-    )

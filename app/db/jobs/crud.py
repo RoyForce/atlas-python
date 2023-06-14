@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status, Request
+from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 import typing as t
 from . import models, schemas
@@ -14,15 +14,6 @@ __all__ = ("delete_all_job_mappings", "update_job_mappings")
 
 def get_job(db: Session, job_id: int):
     return db.query(models.Job).filter(models.Job.id == job_id).first()
-
-
-def validate_extension_token(request: Request):
-    if f"Bearer {security.EXTENSION_TOKEN}" != request.headers.get(
-        "Authorization"
-    ):
-        raise HTTPException(
-            status.HTTP_403_FORBIDDEN, detail="Invalid extension token."
-        )
 
 
 def validate_user_and_job(db: Session, job_id, user_id, mode):
