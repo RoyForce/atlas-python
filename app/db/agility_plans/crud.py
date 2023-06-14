@@ -30,7 +30,10 @@ def create_agility_plan(db: Session, agility_plan: schemas.AgilityPlanCreate):
         db.commit()
 
     relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.objectives is not None and len(agility_plan.objectives) > 0:
+    if (
+        agility_plan.objectives is not None
+        and len(agility_plan.objectives) > 0
+    ):
         db_agility_plan_relation_item = [
             models.AgilityPlanRelation(
                 id=relation_count + index,
