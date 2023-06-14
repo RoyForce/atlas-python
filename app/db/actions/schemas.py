@@ -3,11 +3,14 @@ from datetime import datetime
 
 
 class ActionBase(BaseModel):
+    id: int
     name: str = None
     description: str = None
     action_type: str = None
     created_at: datetime = None
     updated_at: datetime = None
+    created_by: int = None
+    updated_by: int = None
 
 
 class ActionCreate(ActionBase):

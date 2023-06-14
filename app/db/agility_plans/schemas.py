@@ -2,19 +2,16 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Optional, Any
 from app.db.enums import MetricsType
+from app.db.actions.schemas import ActionBase
+from app.db.objectives.schemas import ObjectiveBase
+from app.db.users.schemas import UserBase
+from app.db.roles.schemas import RoleBase
 
 
 class AgilityPlanBase(BaseModel):
     name: str = None
     description: str = None
     actions: Any = None
-    leads: Any = None
-    sponsors: Any = None
-    coreteams: Any = None
-    coaches: Any = None
-    roles: Any = None
-    users: Any = None
-    organizations: Any = None
     objectives: Any = None
 
     created_at: datetime = None
@@ -37,17 +34,23 @@ class RelatedItemBase(BaseModel):
         orm_mode = True
 
 
+class Action(BaseModel):
+    id: int = None
+    title: str = None
+
+
 class AgilityPlanCreate(AgilityPlanBase):
-    name: str
-    actions: List[RelatedItemBase] = None
-    leads: List[RelatedItemBase] = None
-    sponsors: List[RelatedItemBase] = None
-    coreteams: List[RelatedItemBase] = None
-    coaches: List[RelatedItemBase] = None
-    roles: List[RelatedItemBase] = None
-    users: List[RelatedItemBase] = None
-    organizations: List[RelatedItemBase] = None
-    objectives: List[RelatedItemBase] = None
+    name: str = None
+    description: str = None
+    actions: List[ActionBase] = None
+    leads: List[RelatedItemBase]
+    sponsors: List[RelatedItemBase]
+    coreteams: List[RelatedItemBase]
+    coaches: List[RelatedItemBase]
+    roles: List[RelatedItemBase]
+    users: List[RelatedItemBase]
+    organizations: List[RelatedItemBase]
+    objectives: List[ObjectiveBase] = None
 
     class Config:
         orm_mode = True
@@ -55,15 +58,15 @@ class AgilityPlanCreate(AgilityPlanBase):
 
 class AgilityPlanEdit(AgilityPlanBase):
     actions: Any = None
-    actions: List[RelatedItemBase] = None
-    leads: List[RelatedItemBase] = None
-    sponsors: List[RelatedItemBase] = None
-    coreteams: List[RelatedItemBase] = None
-    coaches: List[RelatedItemBase] = None
-    roles: List[RelatedItemBase] = None
-    users: List[RelatedItemBase] = None
-    organizations: List[RelatedItemBase] = None
-    objectives: List[RelatedItemBase] = None
+    actions: List[ActionBase]
+    leads: List[RelatedItemBase]
+    sponsors: List[RelatedItemBase]
+    coreteams: List[RelatedItemBase]
+    coaches: List[RelatedItemBase]
+    roles: List[RelatedItemBase]
+    users: List[RelatedItemBase]
+    organizations: List[RelatedItemBase]
+    objectives: List[ObjectiveBase]
 
     class Config:
         orm_mode = True
@@ -71,15 +74,13 @@ class AgilityPlanEdit(AgilityPlanBase):
 
 class AgilityPlanOut(AgilityPlanBase):
     id: int
-    actions: List[RelatedItemBase] = None
-    leads: List[RelatedItemBase] = None
-    sponsors: List[RelatedItemBase] = None
-    coreteams: List[RelatedItemBase] = None
-    coaches: List[RelatedItemBase] = None
-    roles: List[RelatedItemBase] = None
-    users: List[RelatedItemBase] = None
-    organizations: List[RelatedItemBase] = None
-    objectives: List[RelatedItemBase] = None
+    leads: List[RelatedItemBase]
+    sponsors: List[RelatedItemBase]
+    coreteams: List[RelatedItemBase]
+    coaches: List[RelatedItemBase]
+    roles: List[RelatedItemBase]
+    users: List[RelatedItemBase]
+    organizations: List[RelatedItemBase]
 
     class Config:
         orm_mode = True
@@ -87,15 +88,32 @@ class AgilityPlanOut(AgilityPlanBase):
 
 class AgilityPlanListOut(AgilityPlanBase):
     id: int
-    actions: List[RelatedItemBase] = None
-    leads: List[RelatedItemBase] = None
-    sponsors: List[RelatedItemBase] = None
-    coreteams: List[RelatedItemBase] = None
-    coaches: List[RelatedItemBase] = None
-    roles: List[RelatedItemBase] = None
-    users: List[RelatedItemBase] = None
-    organizations: List[RelatedItemBase] = None
-    objectives: List[RelatedItemBase] = None
+    leads: List[RelatedItemBase]
+    sponsors: List[RelatedItemBase]
+    coreteams: List[RelatedItemBase]
+    coaches: List[RelatedItemBase]
+    roles: List[RelatedItemBase]
+    users: List[RelatedItemBase]
+    organizations: List[RelatedItemBase]
 
     class Config:
         orm_mode = True
+
+
+class AgilityPlan(AgilityPlanBase):
+    id: int
+    name: str = None
+    description: str = None
+    actions: List[ActionBase] = None
+    objectives: List[ObjectiveBase] = None
+
+    class Config:
+        orm_mode = True
+
+    leads: List[RelatedItemBase]
+    sponsors: List[RelatedItemBase]
+    coreteams: List[RelatedItemBase]
+    coaches: List[RelatedItemBase]
+    roles: List[RelatedItemBase]
+    users: List[RelatedItemBase]
+    organizations: List[RelatedItemBase]

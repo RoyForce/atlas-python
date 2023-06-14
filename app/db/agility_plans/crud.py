@@ -12,53 +12,49 @@ def create_agility_plan(db: Session, agility_plan: schemas.AgilityPlanCreate):
     db_agility_plan = models.AgilityPlan(
         name=agility_plan.name,
         description=agility_plan.description,
-        actions=agility_plan.actions,
-        objectives=agility_plan.objectives,
-        users=agility_plan.users,
-        roles=agility_plan.roles,
-        leads=agility_plan.leads,
-        sponsors=agility_plan.sponsors,
-        coreteams=agility_plan.coreteams,
-        coaches=agility_plan.coaches,
-        organizations=agility_plan.organizations,
-        created_by=agility_plan.created_by,
     )
     db.add(db_agility_plan)
     db.commit()
-
+    relation_count = db.query(models.AgilityPlanRelation).count() + 1
     if agility_plan.actions is not None and len(agility_plan.actions) > 0:
-        db_agility_plan_action_item = [
-            models.Action(
-                item_id=items.item_id,
-                item_title=items.item_title,
-                item_type=items.item_action_type,
-                item_order=items.item_order,
+        db_agility_plan_relation_item = [
+            models.AgilityPlanRelation(
+                id=relation_count + index,
+                agility_plan_id=db_agility_plan.id,
+                related_id=item.id,
+                relation_type="ACTION",
             )
-            for items in agility_plan.actions
+            for index, item in enumerate(agility_plan.actions)
         ]
-        db.add_all(db_agility_plan_action_item)
+        db.add_all(db_agility_plan_relation_item)
         db.commit()
 
-    if (
-        agility_plan.objectives is not None
-        and len(agility_plan.objectives) > 0
-    ):
-        db_agility_plan_objective_item = [
-            models.Objective(
-                item_id=items.item_id,
-                item_title=items.item_title,
-                item_type=items.item_metrics_type,
-                item_start_value=items.item_start_value,
-                item_target_value=items.item_target_value,
-                item_order=items.item_order,
+    relation_count = db.query(models.AgilityPlanRelation).count() + 1
+    if agility_plan.objectives is not None and len(agility_plan.objectives) > 0:
+        db_agility_plan_relation_item = [
+            models.AgilityPlanRelation(
+                id=relation_count + index,
+                agility_plan_id=db_agility_plan.id,
+                related_id=items.id,
+                relation_type="OBJECTIVE",
             )
-            for items in agility_plan.objectives
+            for index, items in enumerate(agility_plan.objectives)
         ]
-        db.add_all(db_agility_plan_objective_item)
+        db.add_all(db_agility_plan_relation_item)
         db.commit()
 
     db.refresh(db_agility_plan)
     return db_agility_plan
+
+
+def get_agility_plan_by_id(db: Session, agility_plan_id: int):
+    agility_plan = (
+        db.query(models.AgilityPlan)
+        .filter(models.AgilityPlan.id == agility_plan_id)
+        .one()
+    )
+
+    return agility_plan
 
 
 def edit_course(

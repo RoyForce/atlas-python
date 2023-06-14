@@ -7,11 +7,14 @@ from app.db.users.schemas import UserName
 
 
 class ObjectiveBase(BaseModel):
+    id: int
     name: str = None
     description: str = None
     metrics_type: MetricsType = None
     start_value: float = None
     target_value: float = None
+    created_at: datetime = None
+    updated_at: datetime = None
     created_by: int = None
     updated_by: int = None
 
