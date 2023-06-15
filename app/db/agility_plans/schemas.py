@@ -13,9 +13,6 @@ class AgilityPlanBase(BaseModel):
     description: str = None
     actions: Any = None
     objectives: Any = None
-
-    created_at: datetime = None
-    updated_at: datetime = None
     created_by: int = None
     updated_by: int = None
 
@@ -42,15 +39,15 @@ class Action(BaseModel):
 class AgilityPlanCreate(AgilityPlanBase):
     name: str = None
     description: str = None
-    actions: List[ActionBase] = None
-    leads: List[RelatedItemBase]
-    sponsors: List[RelatedItemBase]
-    coreteams: List[RelatedItemBase]
-    coaches: List[RelatedItemBase]
-    roles: List[RelatedItemBase]
-    users: List[RelatedItemBase]
-    organizations: List[RelatedItemBase]
-    objectives: List[ObjectiveBase] = None
+    actions: List[int] = None
+    leads: List[int]
+    sponsors: List[int]
+    coreteams: List[int]
+    coaches: List[int]
+    roles: List[int]
+    users: List[int]
+    organizations: List[int]
+    objectives: List[int] = None
 
     class Config:
         orm_mode = True

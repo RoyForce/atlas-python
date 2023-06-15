@@ -44,7 +44,6 @@ AGILITY_PLAN_RELATION_TYPES = [
 
 @r.get(
     "/agility-plans",
-    response_model=t.List[AgilityPlanListOut],
 )
 async def agility_plans_list(
     request: Request,

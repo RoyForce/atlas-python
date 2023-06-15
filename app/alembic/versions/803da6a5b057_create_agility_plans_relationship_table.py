@@ -1,8 +1,8 @@
-"""create agility_plans_relationship table
+"""create agility plans relationship table
 
-Revision ID: 1f8816efa77e
-Revises: a745a21692d9
-Create Date: 2023-06-13 05:40:39.461678-07:00
+Revision ID: 803da6a5b057
+Revises: 3ff343fde80d
+Create Date: 2023-06-15 13:20:33.907156-07:00
 
 """
 from alembic import op
@@ -13,8 +13,8 @@ from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
-revision = "1f8816efa77e"
-down_revision = "a745a21692d9"
+revision = "803da6a5b057"
+down_revision = "3ff343fde80d"
 branch_labels = None
 depends_on = None
 

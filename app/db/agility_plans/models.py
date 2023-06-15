@@ -20,7 +20,7 @@ class AgilityPlanRelation(Base):
     relation_type = Column(String)
 
 
-class AgilityPlan(Base, CoreBase, TrackTimeMixin):
+class AgilityPlan(Base):
     __tablename__ = "agility_plans"
 
     id = Column(Integer, primary_key=True, index=True)

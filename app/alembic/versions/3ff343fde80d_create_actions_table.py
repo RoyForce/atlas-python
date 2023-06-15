@@ -1,8 +1,8 @@
 """create actions table
 
-Revision ID: 74795461c0e6
-Revises: e706726cdee0
-Create Date: 2023-06-09 02:08:20.699730-07:00
+Revision ID: 3ff343fde80d
+Revises: 013d99a466b1
+Create Date: 2023-06-15 13:20:16.936873-07:00
 
 """
 from alembic import op
@@ -13,8 +13,8 @@ from sqlalchemy.dialects import postgresql
 
 
 # revision identifiers, used by Alembic.
-revision = "74795461c0e6"
-down_revision = "e706726cdee0"
+revision = "3ff343fde80d"
+down_revision = "013d99a466b1"
 branch_labels = None
 depends_on = None
 
@@ -33,5 +33,4 @@ def upgrade():
 
 def downgrade():
     op.drop_table("actions")
-    op.drop_column("actions", "action_type")
-    op.execute("DROP TYPE organization_type_enum;")
+    op.execute("DROP TYPE action_type_enum;")

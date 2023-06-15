@@ -5,7 +5,7 @@ from app.db.core import CoreBase, TrackTimeMixin
 from sqlalchemy.orm import relationship
 
 
-class Action(Base, CoreBase, TrackTimeMixin):
+class Action(Base):
     __tablename__ = "actions"
 
     id = Column(Integer, primary_key=True, index=True)

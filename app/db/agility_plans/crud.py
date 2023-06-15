@@ -16,17 +16,17 @@ def create_agility_plan(db: Session, agility_plan: schemas.AgilityPlanCreate):
     db.add(db_agility_plan)
     db.commit()
     agility_plan_related_items = [
-        {"content": agility_plan.actions, type: "ACTION"},
-        {"content": agility_plan.objectives, type: "OBJECTIVE"},
-        {"content": agility_plan.leads, type: "LEAD"},
-        {"content": agility_plan.sponsors, type: "SPONSOR"},
-        {"content": agility_plan.coreteams, type: "CORETEAM"},
-        {"content": agility_plan.coaches, type: "COACH"},
-        {"content": agility_plan.users, type: "USER"},
-        {"content": agility_plan.roles, type: "ROLE"},
+        {"content": agility_plan.actions, "type": "ACTION"},
+        {"content": agility_plan.objectives, "type": "OBJECTIVE"},
+        {"content": agility_plan.leads, "type": "LEAD"},
+        {"content": agility_plan.sponsors, "type": "SPONSOR"},
+        {"content": agility_plan.coreteams, "type": "CORETEAM"},
+        {"content": agility_plan.coaches, "type": "COACH"},
+        {"content": agility_plan.users, "type": "USER"},
+        {"content": agility_plan.roles, "type": "ROLE"},
     ]
 
-    for related_item in enumerate(agility_plan_related_items):
+    for related_item in agility_plan_related_items:
         relation_count = db.query(models.AgilityPlanRelation).count() + 1
         if (
             related_item["content"] is not None
@@ -39,7 +39,7 @@ def create_agility_plan(db: Session, agility_plan: schemas.AgilityPlanCreate):
                     related_id=item,
                     relation_type=related_item["type"],
                 )
-                for index, item in enumerate(related_item)
+                for index, item in enumerate(related_item["content"])
             ]
             db.add_all(add_relation_items)
             db.commit()
@@ -84,17 +84,17 @@ def update_agility_plan_by_id(
     )
     db.commit()
     agility_plan_related_items = [
-        {"content": agility_plan.actions, type: "ACTION"},
-        {"content": agility_plan.objectives, type: "OBJECTIVE"},
-        {"content": agility_plan.leads, type: "LEAD"},
-        {"content": agility_plan.sponsors, type: "SPONSOR"},
-        {"content": agility_plan.coreteams, type: "CORETEAM"},
-        {"content": agility_plan.coaches, type: "COACH"},
-        {"content": agility_plan.users, type: "USER"},
-        {"content": agility_plan.roles, type: "ROLE"},
+        {"content": agility_plan.actions, "type": "ACTION"},
+        {"content": agility_plan.objectives, "type": "OBJECTIVE"},
+        {"content": agility_plan.leads, "type": "LEAD"},
+        {"content": agility_plan.sponsors, "type": "SPONSOR"},
+        {"content": agility_plan.coreteams, "type": "CORETEAM"},
+        {"content": agility_plan.coaches, "type": "COACH"},
+        {"content": agility_plan.users, "type": "USER"},
+        {"content": agility_plan.roles, "type": "ROLE"},
     ]
 
-    for related_item in enumerate(agility_plan_related_items):
+    for related_item in agility_plan_related_items:
         relation_count = db.query(models.AgilityPlanRelation).count() + 1
         if (
             related_item["content"] is not None
@@ -107,7 +107,7 @@ def update_agility_plan_by_id(
                     related_id=item,
                     relation_type=related_item["type"],
                 )
-                for index, item in enumerate(related_item)
+                for index, item in enumerate(related_item["content"])
             ]
             db.add_all(add_relation_items)
             db.commit()
