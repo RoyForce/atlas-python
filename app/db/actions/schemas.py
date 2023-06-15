@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import datetime
+from app.db.users.schemas import UserName
 
 
 class ActionBase(BaseModel):
@@ -38,6 +39,10 @@ class ActionOut(ActionBase):
 
 class ActionListOut(ActionBase):
     id: int
+    created_at: datetime = None
+    updated_at: datetime = None
+    created_by_user: UserName = None
+    updated_by_user: UserName = None
 
     class Config:
         orm_mode = True

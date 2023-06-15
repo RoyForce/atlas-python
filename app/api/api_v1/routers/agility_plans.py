@@ -25,6 +25,8 @@ from app.db.agility_plans.crud import (
     delete_agility_plan_by_id,
     add_action_to_agility_plan,
     add_objective_to_agility_plan,
+    delete_action_to_agility_plan,
+    delete_objective_to_agility_plan,
 )
 
 agility_plan_router = r = APIRouter()
@@ -110,7 +112,7 @@ async def agility_plan_details(
     db=Depends(get_db),
 ):
     """
-    Get any agility-plan details
+    Get a specific agility-plan details
     """
     agility_plan = get_agility_plan_by_id(db, agility_plan_id)
     if agility_plan == "No result found for query":
@@ -168,6 +170,34 @@ async def agility_plan_create(
     Create a new agility-plan
     """
     return create_agility_plan(db, agility_plan)
+
+
+@r.delete(
+    "/agility-plans/{agility_plan_id}/remove-action/{action_id}",
+)
+async def agility_plan_action_create(
+    agility_plan_id: int,
+    action_id: int,
+    db=Depends(get_db),
+):
+    """
+    Delete an action from agility-plan
+    """
+    return delete_action_to_agility_plan(db, action_id, agility_plan_id)
+
+
+@r.delete(
+    "/agility-plans/{agility_plan_id}/remove-objective/{objective_id}",
+)
+async def agility_plan_objective_create(
+    agility_plan_id: int,
+    objective_id: int,
+    db=Depends(get_db),
+):
+    """
+    Delete an objective from agility-plan
+    """
+    return delete_objective_to_agility_plan(db, objective_id, agility_plan_id)
 
 
 @r.post(

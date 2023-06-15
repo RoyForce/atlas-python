@@ -15,117 +15,34 @@ def create_agility_plan(db: Session, agility_plan: schemas.AgilityPlanCreate):
     )
     db.add(db_agility_plan)
     db.commit()
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.actions is not None and len(agility_plan.actions) > 0:
-        db_agility_plan_relation_item = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=db_agility_plan.id,
-                related_id=item,
-                relation_type="ACTION",
-            )
-            for index, item in enumerate(agility_plan.actions)
-        ]
-        db.add_all(db_agility_plan_relation_item)
-        db.commit()
+    agility_plan_related_items = [
+        {"content": agility_plan.actions, type: "ACTION"},
+        {"content": agility_plan.objectives, type: "OBJECTIVE"},
+        {"content": agility_plan.leads, type: "LEAD"},
+        {"content": agility_plan.sponsors, type: "SPONSOR"},
+        {"content": agility_plan.coreteams, type: "CORETEAM"},
+        {"content": agility_plan.coaches, type: "COACH"},
+        {"content": agility_plan.users, type: "USER"},
+        {"content": agility_plan.roles, type: "ROLE"},
+    ]
 
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.objectives is not None and len(agility_plan.objectives) > 0:
-        db_agility_plan_relation_item = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=db_agility_plan.id,
-                related_id=items,
-                relation_type="OBJECTIVE",
-            )
-            for index, items in enumerate(agility_plan.objectives)
-        ]
-        db.add_all(db_agility_plan_relation_item)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.leads is not None and len(agility_plan.leads) > 0:
-        db_agility_plan_relation_item = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=db_agility_plan.id,
-                related_id=items,
-                relation_type="LEAD",
-            )
-            for index, items in enumerate(agility_plan.leads)
-        ]
-        db.add_all(db_agility_plan_relation_item)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.sponsors is not None and len(agility_plan.sponsors) > 0:
-        db_agility_plan_relation_item = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=db_agility_plan.id,
-                related_id=items,
-                relation_type="SPONSOR",
-            )
-            for index, items in enumerate(agility_plan.sponsors)
-        ]
-        db.add_all(db_agility_plan_relation_item)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.coreteams is not None and len(agility_plan.coreteams) > 0:
-        db_agility_plan_relation_item = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=db_agility_plan.id,
-                related_id=items,
-                relation_type="CORETEAM",
-            )
-            for index, items in enumerate(agility_plan.coreteams)
-        ]
-        db.add_all(db_agility_plan_relation_item)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.coaches is not None and len(agility_plan.coaches) > 0:
-        db_agility_plan_relation_item = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=db_agility_plan.id,
-                related_id=items,
-                relation_type="COACH",
-            )
-            for index, items in enumerate(agility_plan.coaches)
-        ]
-        db.add_all(db_agility_plan_relation_item)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.users is not None and len(agility_plan.users) > 0:
-        db_agility_plan_relation_item = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=db_agility_plan.id,
-                related_id=items,
-                relation_type="USER",
-            )
-            for index, items in enumerate(agility_plan.users)
-        ]
-        db.add_all(db_agility_plan_relation_item)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.roles is not None and len(agility_plan.roles) > 0:
-        db_agility_plan_relation_item = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=db_agility_plan.id,
-                related_id=items,
-                relation_type="ROLE",
-            )
-            for index, items in enumerate(agility_plan.roles)
-        ]
-        db.add_all(db_agility_plan_relation_item)
-        db.commit()
+    for related_item in enumerate(agility_plan_related_items):
+        relation_count = db.query(models.AgilityPlanRelation).count() + 1
+        if (
+            related_item["content"] is not None
+            and len(related_item["content"]) > 0
+        ):
+            add_relation_items = [
+                models.AgilityPlanRelation(
+                    id=relation_count + index,
+                    agility_plan_id=db_agility_plan.id,
+                    related_id=item,
+                    relation_type=related_item["type"],
+                )
+                for index, item in enumerate(related_item)
+            ]
+            db.add_all(add_relation_items)
+            db.commit()
 
     db.refresh(db_agility_plan)
     return db_agility_plan
@@ -166,117 +83,34 @@ def update_agility_plan_by_id(
         .delete()
     )
     db.commit()
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.actions is not None and len(agility_plan.actions) > 0:
-        add_relation_items = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=agility_plan_id,
-                related_id=item,
-                relation_type="ACTION",
-            )
-            for index, item in enumerate(agility_plan.actions)
-        ]
-        db.add_all(add_relation_items)
-        db.commit()
+    agility_plan_related_items = [
+        {"content": agility_plan.actions, type: "ACTION"},
+        {"content": agility_plan.objectives, type: "OBJECTIVE"},
+        {"content": agility_plan.leads, type: "LEAD"},
+        {"content": agility_plan.sponsors, type: "SPONSOR"},
+        {"content": agility_plan.coreteams, type: "CORETEAM"},
+        {"content": agility_plan.coaches, type: "COACH"},
+        {"content": agility_plan.users, type: "USER"},
+        {"content": agility_plan.roles, type: "ROLE"},
+    ]
 
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.objectives is not None and len(agility_plan.objectives) > 0:
-        add_relation_items = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=agility_plan_id,
-                related_id=item,
-                relation_type="OBJECTIVE",
-            )
-            for index, item in enumerate(agility_plan.objectives)
-        ]
-        db.add_all(add_relation_items)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.leads is not None and len(agility_plan.leads) > 0:
-        add_relation_items = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=agility_plan_id,
-                related_id=item,
-                relation_type="LEAD",
-            )
-            for index, item in enumerate(agility_plan.leads)
-        ]
-        db.add_all(add_relation_items)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.sponsors is not None and len(agility_plan.sponsors) > 0:
-        add_relation_items = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=agility_plan_id,
-                related_id=item,
-                relation_type="SPONSOR",
-            )
-            for index, item in enumerate(agility_plan.sponsors)
-        ]
-        db.add_all(add_relation_items)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.coreteams is not None and len(agility_plan.coreteams) > 0:
-        add_relation_items = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=agility_plan_id,
-                related_id=item,
-                relation_type="CORETEAM",
-            )
-            for index, item in enumerate(agility_plan.coreteams)
-        ]
-        db.add_all(add_relation_items)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.coaches is not None and len(agility_plan.coaches) > 0:
-        add_relation_items = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=agility_plan_id,
-                related_id=item,
-                relation_type="COACH",
-            )
-            for index, item in enumerate(agility_plan.coaches)
-        ]
-        db.add_all(add_relation_items)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.users is not None and len(agility_plan.users) > 0:
-        add_relation_items = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=agility_plan_id,
-                related_id=item,
-                relation_type="USER",
-            )
-            for index, item in enumerate(agility_plan.users)
-        ]
-        db.add_all(add_relation_items)
-        db.commit()
-
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
-    if agility_plan.roles is not None and len(agility_plan.roles) > 0:
-        add_relation_items = [
-            models.AgilityPlanRelation(
-                id=relation_count + index,
-                agility_plan_id=agility_plan_id,
-                related_id=item,
-                relation_type="ROLE",
-            )
-            for index, item in enumerate(agility_plan.roles)
-        ]
-        db.add_all(add_relation_items)
-        db.commit()
+    for related_item in enumerate(agility_plan_related_items):
+        relation_count = db.query(models.AgilityPlanRelation).count() + 1
+        if (
+            related_item["content"] is not None
+            and len(related_item["content"]) > 0
+        ):
+            add_relation_items = [
+                models.AgilityPlanRelation(
+                    id=relation_count + index,
+                    agility_plan_id=agility_plan_id,
+                    related_id=item,
+                    relation_type=related_item["type"],
+                )
+                for index, item in enumerate(related_item)
+            ]
+            db.add_all(add_relation_items)
+            db.commit()
 
     return update_agility_plan
 
@@ -321,6 +155,34 @@ def delete_agility_plan_by_id(db: Session, agility_plan_id: int):
     remove_agility_plan_relation_items = (
         db.query(models.AgilityPlanRelation)
         .filter(models.AgilityPlanRelation.agility_plan_id == agility_plan_id)
+        .delete()
+    )
+    db.commit()
+
+
+def delete_action_to_agility_plan(
+    db: Session, action_id: int, agility_plan_id: int
+):
+    remove_agility_plan_items = (
+        db.query(models.AgilityPlanRelation)
+        .filter(
+            models.AgilityPlanRelation.id == agility_plan_id
+            and models.AgilityPlanRelation.related_id == action_id
+        )
+        .delete()
+    )
+    db.commit()
+
+
+def delete_objective_to_agility_plan(
+    db: Session, objective_id: int, agility_plan_id: int
+):
+    remove_agility_plan_items = (
+        db.query(models.AgilityPlanRelation)
+        .filter(
+            models.AgilityPlanRelation.id == agility_plan_id
+            and models.AgilityPlanRelation.related_id == objective_id
+        )
         .delete()
     )
     db.commit()
