@@ -4,7 +4,6 @@ from app.db.users.schemas import UserName
 
 
 class ActionBase(BaseModel):
-    id: int
     name: str = None
     description: str = None
     action_type: str = None

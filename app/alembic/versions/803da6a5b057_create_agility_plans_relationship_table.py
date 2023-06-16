@@ -23,8 +23,8 @@ def upgrade():
     op.create_table(
         "agility_plan_relations",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("agility_plan_id", sa.Integer),
-        sa.Column("related_id", sa.Integer),
+        sa.Column("agility_plan_id", sa.Integer()),
+        sa.Column("related_id", sa.Integer()),
         sa.PrimaryKeyConstraint("id"),
     )
     agility_plan_relation_enum = postgresql.ENUM(

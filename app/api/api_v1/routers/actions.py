@@ -52,6 +52,28 @@ async def action_details(
     return get_item(db, models.Action, action_id)
 
 
+@r.get(
+    "/actions/plays/{playbook_id}",
+)
+async def action_plays(
+    playbook_id: int,
+    db=Depends(get_db),
+):
+    """
+    Get any action details
+    """
+    try:
+        actions = (
+            db.query(models.Action)
+            .filter(models.Action.playbook_id == playbook_id)
+            .all()
+        )
+
+        return actions
+    except:
+        return "No result found for query"
+
+
 @r.post("/actions", response_model=ActionOut)
 async def action_create(
     action: ActionCreate,

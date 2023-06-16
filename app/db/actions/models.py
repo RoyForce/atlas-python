@@ -16,3 +16,4 @@ class Action(Base):
     updated_by = Column(Integer)
     is_active = Column(Boolean)
     action_type = Column(String)
+    playbook_id = Column(Integer)

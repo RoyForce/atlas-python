@@ -7,7 +7,6 @@ from app.db.users.schemas import UserName
 
 
 class ObjectiveBase(BaseModel):
-    id: int
     name: str = None
     description: str = None
     metrics_type: MetricsType = None
@@ -25,7 +24,6 @@ class ObjectiveEdit(ObjectiveBase):
 
 
 class ObjectiveOut(ObjectiveBase):
-    id: int
     created_at: datetime = None
     updated_at: datetime = None
     results: List[ResultOut] = []

@@ -16,15 +16,16 @@ def create_agility_plan(db: Session, agility_plan: schemas.AgilityPlanCreate):
     db.add(db_agility_plan)
     db.commit()
     agility_plan_related_items = [
-        {"content": agility_plan.actions, "type": "ACTION"},
-        {"content": agility_plan.objectives, "type": "OBJECTIVE"},
-        {"content": agility_plan.leads, "type": "LEAD"},
-        {"content": agility_plan.sponsors, "type": "SPONSOR"},
-        {"content": agility_plan.coreteams, "type": "CORETEAM"},
-        {"content": agility_plan.coaches, "type": "COACH"},
-        {"content": agility_plan.users, "type": "USER"},
-        {"content": agility_plan.roles, "type": "ROLE"},
+        {"content": agility_plan.action_ids, "type": "ACTION"},
+        {"content": agility_plan.objective_ids, "type": "OBJECTIVE"},
+        {"content": agility_plan.lead_ids, "type": "LEAD"},
+        {"content": agility_plan.sponsor_ids, "type": "SPONSOR"},
+        {"content": agility_plan.coreteam_ids, "type": "CORETEAM"},
+        {"content": agility_plan.coache_ids, "type": "COACH"},
+        {"content": agility_plan.user_ids, "type": "USER"},
+        {"content": agility_plan.role_ids, "type": "ROLE"},
     ]
+    print(agility_plan.actions)
 
     for related_item in agility_plan_related_items:
         relation_count = db.query(models.AgilityPlanRelation).count() + 1
@@ -84,14 +85,14 @@ def update_agility_plan_by_id(
     )
     db.commit()
     agility_plan_related_items = [
-        {"content": agility_plan.actions, "type": "ACTION"},
-        {"content": agility_plan.objectives, "type": "OBJECTIVE"},
-        {"content": agility_plan.leads, "type": "LEAD"},
-        {"content": agility_plan.sponsors, "type": "SPONSOR"},
-        {"content": agility_plan.coreteams, "type": "CORETEAM"},
-        {"content": agility_plan.coaches, "type": "COACH"},
-        {"content": agility_plan.users, "type": "USER"},
-        {"content": agility_plan.roles, "type": "ROLE"},
+        {"content": agility_plan.action_ids, "type": "ACTION"},
+        {"content": agility_plan.objective_ids, "type": "OBJECTIVE"},
+        {"content": agility_plan.lead_ids, "type": "LEAD"},
+        {"content": agility_plan.sponsor_ids, "type": "SPONSOR"},
+        {"content": agility_plan.coreteam_ids, "type": "CORETEAM"},
+        {"content": agility_plan.coache_ids, "type": "COACH"},
+        {"content": agility_plan.user_ids, "type": "USER"},
+        {"content": agility_plan.role_ids, "type": "ROLE"},
     ]
 
     for related_item in agility_plan_related_items:
