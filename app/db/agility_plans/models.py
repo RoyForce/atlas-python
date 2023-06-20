@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean
+from sqlalchemy import Column, Integer, Date, String, Boolean
 
 from app.db.session import Base
 from app.db.core import CoreBase, TrackTimeMixin
@@ -13,11 +13,18 @@ from app.db.roles.models import Role
 class AgilityPlanRelation(Base):
     __tablename__ = "agility_plan_relations"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    agility_plan_id = Column(
-        Integer, ForeignKey("agility_plans.id"), primary_key=True
-    )
+    agility_plan_id = Column(Integer, ForeignKey("agility_plans.id"))
     related_id = Column(Integer)
     relation_type = Column(String)
+
+
+class AgilityPlanActionRelation(Base):
+    __tablename__ = "agility_plan_action_relationship"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    agility_plan_id = Column(Integer, ForeignKey("agility_plans.id"))
+    action_id = Column(Integer)
+    start_time = Column(Date)
+    end_time = Column(Date)
 
 
 class AgilityPlan(Base):

@@ -16,16 +16,15 @@ def create_agility_plan(db: Session, agility_plan: schemas.AgilityPlanCreate):
     db.add(db_agility_plan)
     db.commit()
     agility_plan_related_items = [
-        {"content": agility_plan.action_ids, "type": "ACTION"},
-        {"content": agility_plan.objective_ids, "type": "OBJECTIVE"},
+        {"content": agility_plan.actions, "type": "ACTION"},
+        {"content": agility_plan.objectives, "type": "OBJECTIVE"},
         {"content": agility_plan.lead_ids, "type": "LEAD"},
         {"content": agility_plan.sponsor_ids, "type": "SPONSOR"},
         {"content": agility_plan.coreteam_ids, "type": "CORETEAM"},
-        {"content": agility_plan.coache_ids, "type": "COACH"},
+        {"content": agility_plan.coach_ids, "type": "COACH"},
         {"content": agility_plan.user_ids, "type": "USER"},
         {"content": agility_plan.role_ids, "type": "ROLE"},
     ]
-    print(agility_plan.actions)
 
     for related_item in agility_plan_related_items:
         relation_count = db.query(models.AgilityPlanRelation).count() + 1
@@ -85,12 +84,12 @@ def update_agility_plan_by_id(
     )
     db.commit()
     agility_plan_related_items = [
-        {"content": agility_plan.action_ids, "type": "ACTION"},
-        {"content": agility_plan.objective_ids, "type": "OBJECTIVE"},
+        {"content": agility_plan.actions, "type": "ACTION"},
+        {"content": agility_plan.objectives, "type": "OBJECTIVE"},
         {"content": agility_plan.lead_ids, "type": "LEAD"},
         {"content": agility_plan.sponsor_ids, "type": "SPONSOR"},
         {"content": agility_plan.coreteam_ids, "type": "CORETEAM"},
-        {"content": agility_plan.coache_ids, "type": "COACH"},
+        {"content": agility_plan.coach_ids, "type": "COACH"},
         {"content": agility_plan.user_ids, "type": "USER"},
         {"content": agility_plan.role_ids, "type": "ROLE"},
     ]
@@ -167,8 +166,8 @@ def delete_action_to_agility_plan(
     remove_agility_plan_items = (
         db.query(models.AgilityPlanRelation)
         .filter(
-            models.AgilityPlanRelation.id == agility_plan_id
-            and models.AgilityPlanRelation.related_id == action_id
+            models.AgilityPlanRelation.id == agility_plan_id,
+            models.AgilityPlanRelation.related_id == action_id,
         )
         .delete()
     )
@@ -181,8 +180,8 @@ def delete_objective_to_agility_plan(
     remove_agility_plan_items = (
         db.query(models.AgilityPlanRelation)
         .filter(
-            models.AgilityPlanRelation.id == agility_plan_id
-            and models.AgilityPlanRelation.related_id == objective_id
+            models.AgilityPlanRelation.id == agility_plan_id,
+            models.AgilityPlanRelation.related_id == objective_id,
         )
         .delete()
     )

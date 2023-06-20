@@ -61,9 +61,9 @@ async def agility_plans_list(
             relations = (
                 db.query(models.AgilityPlanRelation)
                 .filter(
-                    models.AgilityPlanRelation.relation_type == type
-                    and models.AgilityPlanRelation.agility_plan_id
-                    == agility_plan.id
+                    models.AgilityPlanRelation.relation_type == type,
+                    models.AgilityPlanRelation.agility_plan_id
+                    == agility_plan.id,
                 )
                 .all()
             )
@@ -121,9 +121,8 @@ async def agility_plan_details(
         relations = (
             db.query(models.AgilityPlanRelation)
             .filter(
-                models.AgilityPlanRelation.relation_type == type
-                and models.AgilityPlanRelation.agility_plan_id
-                == agility_plan.id
+                models.AgilityPlanRelation.relation_type == type,
+                models.AgilityPlanRelation.agility_plan_id == agility_plan.id,
             )
             .all()
         )
@@ -133,27 +132,31 @@ async def agility_plan_details(
     agility_plan.actions = list(
         filter(lambda x: x.id in related_ids["ACTION"], agility_plan.actions)
     )
+    for action in agility_plan.actions:
+        print(action.id, agility_plan_id)
+        relation = (
+            db.query(models.AgilityPlanActionRelation)
+            .filter(
+                models.AgilityPlanActionRelation.action_id == action.id,
+                models.AgilityPlanActionRelation.agility_plan_id
+                == agility_plan_id,
+            )
+            .one()
+        )
+        print(relation)
+        action.start_time = relation.start_time
+        action.end_time = relation.end_time
     agility_plan.objectives = list(
         filter(
-            lambda x: x.id in related_ids["OBJECTIVE"],
-            agility_plan.objectives,
+            lambda x: x.id in related_ids["OBJECTIVE"], agility_plan.objectives
         )
     )
-    agility_plan.leads = list(
-        filter(lambda x: x.id in related_ids["LEAD"], agility_plan.leads)
-    )
-    agility_plan.sponsors = list(
-        filter(lambda x: x.id in related_ids["SPONSOR"], agility_plan.sponsors)
-    )
-    agility_plan.coreteams = list(
-        filter(
-            lambda x: x.id in related_ids["CORETEAM"],
-            agility_plan.coreteams,
-        )
-    )
-    agility_plan.coaches = list(
-        filter(lambda x: x.id in related_ids["COACH"], agility_plan.coaches)
-    )
+    agility_plan.lead_ids = related_ids["LEAD"]
+    agility_plan.sponsor_ids = related_ids["SPONSOR"]
+    agility_plan.coreteam_ids = related_ids["CORETEAM"]
+    agility_plan.coach_ids = related_ids["COACH"]
+    agility_plan.role_ids = related_ids["ROLE"]
+    agility_plan.user_ids = related_ids["USER"]
 
     return agility_plan
 

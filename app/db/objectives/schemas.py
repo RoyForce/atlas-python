@@ -7,6 +7,7 @@ from app.db.users.schemas import UserName
 
 
 class ObjectiveBase(BaseModel):
+    id: int
     name: str = None
     description: str = None
     metrics_type: MetricsType = None
