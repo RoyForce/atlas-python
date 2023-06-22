@@ -25,6 +25,7 @@ class ObjectiveEdit(ObjectiveBase):
 
 
 class ObjectiveOut(ObjectiveBase):
+    id: int
     created_at: datetime = None
     updated_at: datetime = None
     results: List[ResultOut] = []
