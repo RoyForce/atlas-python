@@ -25,6 +25,7 @@ class AgilityPlanActionRelation(Base):
     action_id = Column(Integer)
     start_time = Column(Date)
     end_time = Column(Date)
+    dependency = Column(Integer)
 
 
 class AgilityPlan(Base):

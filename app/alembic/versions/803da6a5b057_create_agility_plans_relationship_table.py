@@ -7,7 +7,6 @@ Create Date: 2023-06-15 13:20:33.907156-07:00
 """
 from alembic import op
 import sqlalchemy as sa
-from app.alembic.utils import create_table_with_default_columns
 from app.db.enums import AgilityPlanRelationType
 from sqlalchemy.dialects import postgresql
 

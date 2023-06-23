@@ -17,12 +17,14 @@ from app.db.enums import MetricsType
 class Objective(Base, CoreBase, TrackTimeMixin):
     __tablename__ = "objectives"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String)
     description = Column(String, nullable=True)
     metrics_type = Column(String, nullable=False)
     start_value = Column(Numeric)
     target_value = Column(Numeric)
+    agility_plan_id = Column(ForeignKey("agility_plans.id"))
+    stwert = Column(ForeignKey("users.id"))
     results = relationship(
         "Result",
         primaryjoin="Objective.id == Result.objective_id",

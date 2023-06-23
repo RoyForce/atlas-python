@@ -28,6 +28,7 @@ from app.api.api_v1.routers.questions import question_router
 from app.api.api_v1.routers.objectives import objective_router
 from app.api.api_v1.routers.results import result_router
 from app.api.api_v1.routers.objectives import objective_router
+from app.api.api_v1.routers.measurements import measurement_router
 from app.api.api_v1.routers.actions import action_router
 from app.api.api_v1.routers.agility_plans import agility_plan_router
 from app.core import config
@@ -231,6 +232,14 @@ app.include_router(
     objective_router,
     prefix="/api/v1",
     tags=["objectives"],
+    dependencies=[Depends(get_current_active_user)],
+)
+
+
+app.include_router(
+    measurement_router,
+    prefix="/api/v1",
+    tags=["measurements"],
     dependencies=[Depends(get_current_active_user)],
 )
 

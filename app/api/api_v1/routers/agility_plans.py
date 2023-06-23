@@ -3,20 +3,15 @@ import typing as t
 
 from app.db.session import get_db
 from app.db.agility_plans import models
+from app.db.objectives.models import Objective
 from app.db.core import (
     get_lists,
-    get_item,
-    create_item,
-    delete_item,
-    edit_item,
 )
 from app.db.agility_plans.schemas import (
     AgilityPlanCreate,
     AgilityPlanEdit,
     AgilityPlanOut,
-    AgilityPlanListOut,
-    AgilityPlanBase,
-    AgilityPlan,
+    AgilityPlanActionCreate,
 )
 from app.db.agility_plans.crud import (
     create_agility_plan,
@@ -135,7 +130,6 @@ async def agility_plan_details(
         filter(lambda x: x.id in related_ids["ACTION"], agility_plan.actions)
     )
     for action in agility_plan.actions:
-        print(action.id, agility_plan_id)
         relation = (
             db.query(models.AgilityPlanActionRelation)
             .filter(
@@ -145,13 +139,13 @@ async def agility_plan_details(
             )
             .one()
         )
-        print(relation)
         action.start_time = relation.start_time
         action.end_time = relation.end_time
-    agility_plan.objectives = list(
-        filter(
-            lambda x: x.id in related_ids["OBJECTIVE"], agility_plan.objectives
-        )
+        action.dependency = relation.dependency
+    agility_plan.objectives = (
+        db.query(Objective)
+        .filter(Objective.agility_plan_id == agility_plan_id)
+        .all()
     )
     agility_plan.lead_ids = related_ids["LEAD"]
     agility_plan.sponsor_ids = related_ids["SPONSOR"]
@@ -205,17 +199,16 @@ async def agility_plan_objective_create(
 
 
 @r.post(
-    "/agility-plans/{agility_plan_id}/add-action/{action_id}",
+    "/agility-plan-action",
 )
 async def agility_plan_action_create(
-    agility_plan_id: int,
-    action_id: int,
+    agility_plan: AgilityPlanActionCreate,
     db=Depends(get_db),
 ):
     """
     Add a new action to agility-plan
     """
-    return add_action_to_agility_plan(db, action_id, agility_plan_id)
+    return add_action_to_agility_plan(db, agility_plan)
 
 
 @r.post(

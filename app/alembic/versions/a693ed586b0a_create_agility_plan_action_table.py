@@ -25,6 +25,7 @@ def upgrade():
         sa.Column("action_id", sa.Integer()),
         sa.Column("start_time", sa.Date()),
         sa.Column("end_time", sa.Date()),
+        sa.Column("dependency", sa.Integer()),
         sa.PrimaryKeyConstraint("id"),
     )
 

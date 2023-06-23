@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Response, Request
 import typing as t
+from fastapi import HTTPException
 
 from app.db.session import get_db
 from app.db.objectives.models import Objective
@@ -10,7 +11,6 @@ from app.db.core import (
     delete_item,
     edit_item,
 )
-
 from app.db.objectives.schemas import (
     ObjectiveEdit,
     ObjectiveOut,
@@ -22,34 +22,24 @@ objective_router = r = APIRouter()
 
 
 @r.get(
-    "/objectives",
+    "/objectives/{agility_plan_id}",
     response_model=t.List[ObjectiveOut],
 )
 async def objective_list(
-    request: Request,
-    response: Response,
+    agility_plan_id: int,
     db=Depends(get_db),
 ):
     """
     Get all objective
     """
-    objectives = get_lists(db, Objective, request.query_params)
-    response.headers["Content-Range"] = f"0-9/{len(objectives)}"
-    return objectives
-
-
-@r.get(
-    "/objectives/{objective_id}",
-    response_model=ObjectiveOut,
-)
-async def objective_details(
-    objective_id: int,
-    db=Depends(get_db),
-):
-    """
-    Get any objective details
-    """
-    return get_item(db, Objective, objective_id)
+    items = (
+        db.query(Objective)
+        .filter(Objective.agility_plan_id == agility_plan_id)
+        .all()
+    )
+    if not items:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return items
 
 
 @r.post(

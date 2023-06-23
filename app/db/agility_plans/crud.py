@@ -49,19 +49,45 @@ def create_agility_plan(db: Session, agility_plan: schemas.AgilityPlanCreate):
 
 
 def add_action_to_agility_plan(
-    db: Session, action_id: int, agility_plan_id: int
+    db: Session, action: schemas.AgilityPlanActionCreate
 ):
-    relation_count = db.query(models.AgilityPlanRelation).count() + 1
+    action_id = db.query(models.Action).count() + 1
+    if type(action.name) is str:
+        db_action_item = models.Action(
+            id=action_id, name=action.name, action_type=action.type
+        )
+        db.add(db_action_item)
+        db.commit()
+        db.refresh(db_action_item)
+        action.name = action_id
+
+    agility_plan_relation_id = db.query(models.AgilityPlanRelation).count() + 1
     db_agility_plan_relation_item = models.AgilityPlanRelation(
-        id=relation_count,
-        agility_plan_id=agility_plan_id,
-        related_id=action_id,
+        id=agility_plan_relation_id,
+        agility_plan_id=action.agility_plan_id,
+        related_id=action.name,
         relation_type="ACTION",
     )
     db.add(db_agility_plan_relation_item)
     db.commit()
     db.refresh(db_agility_plan_relation_item)
-    return db_agility_plan_relation_item
+
+    agility_plan_action_relation_id = (
+        db.query(models.AgilityPlanActionRelation).count() + 1
+    )
+    db_agility_plan_action_relation_item = models.AgilityPlanActionRelation(
+        id=agility_plan_action_relation_id,
+        agility_plan_id=action.agility_plan_id,
+        action_id=action.name,
+        start_time=action.start_date,
+        end_time=action.end_date,
+        dependency=action.dependency,
+    )
+    db.add(db_agility_plan_action_relation_item)
+    db.commit()
+    db.refresh(db_agility_plan_action_relation_item)
+
+    return action_id
 
 
 def update_agility_plan_by_id(

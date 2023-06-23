@@ -10,6 +10,7 @@ class ActionType(str, Enum):
     ASSESSMENT = "ASSESSMENT"
     MENTORING = "MENTORING"
     PLAY = "PLAY"
+    NONE = ""
 
 
 class ResourceType(str, Enum):

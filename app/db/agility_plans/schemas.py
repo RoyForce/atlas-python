@@ -63,6 +63,18 @@ class AgilityPlanEdit(AgilityPlanBase):
         orm_mode = True
 
 
+class AgilityPlanActionCreate(BaseModel):
+    agility_plan_id: int
+    name: Any
+    type: str
+    start_date: str
+    end_date: str
+    dependency: int
+
+    class Config:
+        orm_mode = True
+
+
 class AgilityPlanOut(AgilityPlanBase):
     id: int
     lead_ids: List[RelatedItemBase]
