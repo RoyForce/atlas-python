@@ -20,7 +20,9 @@ def upgrade():
     op.create_table(
         "measurements",
         sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("objective_id", sa.Integer(), sa.ForeignKey("objectives.id")),
+        sa.Column(
+            "objective_id", sa.Integer(), sa.ForeignKey("objectives.id")
+        ),
         sa.Column("value", sa.Numeric()),
         sa.Column(
             "created_at",
