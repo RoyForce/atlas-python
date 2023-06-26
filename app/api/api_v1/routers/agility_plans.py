@@ -91,7 +91,9 @@ async def agility_plans_list(
             )
         )
         agility_plan.coaches = list(
-            filter(lambda x: x.id in related_ids["COACH"], agility_plan.coaches)
+            filter(
+                lambda x: x.id in related_ids["COACH"], agility_plan.coaches
+            )
         )
 
     response.headers["Content-Range"] = f"0-9/{len(filtered_agility_plans)}"
