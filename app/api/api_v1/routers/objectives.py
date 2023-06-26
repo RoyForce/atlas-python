@@ -44,7 +44,6 @@ async def objective_list(
 
 @r.post(
     "/objectives",
-    response_model=ObjectiveOut,
 )
 async def objective_create(
     request: Request,
@@ -56,7 +55,9 @@ async def objective_create(
     Create a new objective
     """
     objective.created_by = current_user.id
-    return create_item(db, Objective, objective)
+    result = create_item(db, Objective, objective)
+    result.stwert = current_user.first_name
+    return result
 
 
 @r.put(

@@ -91,9 +91,7 @@ async def agility_plans_list(
             )
         )
         agility_plan.coaches = list(
-            filter(
-                lambda x: x.id in related_ids["COACH"], agility_plan.coaches
-            )
+            filter(lambda x: x.id in related_ids["COACH"], agility_plan.coaches)
         )
 
     response.headers["Content-Range"] = f"0-9/{len(filtered_agility_plans)}"
@@ -147,6 +145,13 @@ async def agility_plan_details(
         .filter(Objective.agility_plan_id == agility_plan_id)
         .all()
     )
+    for objective in agility_plan.objectives:
+        user = (
+            db.query(models.User)
+            .filter(models.User.id == objective.stwert)
+            .one()
+        )
+        objective.stwert = user.first_name
     agility_plan.lead_ids = related_ids["LEAD"]
     agility_plan.sponsor_ids = related_ids["SPONSOR"]
     agility_plan.coreteam_ids = related_ids["CORETEAM"]

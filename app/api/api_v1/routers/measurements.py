@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Response, Request, HTTPException
 import typing as t
+from app.db.users import models
 
 from app.db.session import get_db
 from app.db.measurements.models import Measurement
@@ -24,7 +25,6 @@ measurement_router = r = APIRouter()
 
 @r.get(
     "/measurements/{objective_id}",
-    response_model=t.List[MeasurementOut],
 )
 async def measurement_list(
     objective_id: int,
@@ -38,6 +38,13 @@ async def measurement_list(
         .filter(Measurement.objective_id == objective_id)
         .all()
     )
+    for measurement in items:
+        user = (
+            db.query(models.User)
+            .filter(models.User.id == measurement.created_by)
+            .one()
+        )
+        measurement.created_by = user.first_name
     if not items:
         raise HTTPException(status_code=404, detail="Item not found")
     return items
@@ -45,7 +52,6 @@ async def measurement_list(
 
 @r.post(
     "/measurements",
-    response_model=MeasurementOut,
 )
 async def measurement_create(
     request: Request,
@@ -68,7 +74,9 @@ async def measurement_create(
     else:
         if not 0 <= measurement.value:
             raise HTTPException(status_code=406, detail="Invalid Value")
-    return create_item(db, Measurement, measurement)
+    result = create_item(db, Measurement, measurement)
+    result.stwert = current_user.first_name
+    return result
 
 
 @r.put(
