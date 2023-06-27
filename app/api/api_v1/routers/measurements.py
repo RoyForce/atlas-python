@@ -36,6 +36,7 @@ async def measurement_list(
     items = (
         db.query(Measurement)
         .filter(Measurement.objective_id == objective_id)
+        .order_by(Measurement.created_at)
         .all()
     )
     for measurement in items:
@@ -45,8 +46,6 @@ async def measurement_list(
             .one()
         )
         measurement.created_by = user.first_name
-    if not items:
-        raise HTTPException(status_code=404, detail="Item not found")
     return items
 
 

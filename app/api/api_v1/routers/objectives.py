@@ -4,6 +4,7 @@ from fastapi import HTTPException
 
 from app.db.session import get_db
 from app.db.objectives.models import Objective
+from app.db.measurements.models import Measurement
 from app.db.core import (
     get_lists,
     get_item,
@@ -88,4 +89,10 @@ async def objective_delete(
     """
     Delete existing objective
     """
+    measurements = (
+        db.query(Measurement)
+        .filter(Measurement.objective_id == objective_id)
+        .delete()
+    )
+    db.commit()
     return delete_item(db, Objective, objective_id)
