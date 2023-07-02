@@ -15,8 +15,7 @@ def test_delete_program(
         f"/api/v1/programs/{test_program.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert response.json()["id"] == test_program.id
-    assert response.json()["is_deleted"] == True
+    assert test_db.query(Program).all() == []
 
 
 def test_get_program(

@@ -173,6 +173,11 @@ def edit_item(db: Session, model, id: int, item: dict):
     if not db_item:
         raise HTTPException(status_code=404, detail="Item not found")
 
+    if "source_id" in db_item.dict() and db_item.source_id is not None:
+        raise HTTPException(
+            status_code=403, detail="Edit not allowed for external resource"
+        )
+
     item = sanitize_json_values(model, item)
     update_data = item.dict(exclude_unset=True)
 
@@ -199,4 +204,11 @@ def soft_delete_item(db: Session, model, id: int):
     db.add(item)
     db.commit()
     db.refresh(item)
+    return item
+
+
+def get_items_by_key(db: Session, model, values):
+    item = db.query(model).filter(values)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
     return item

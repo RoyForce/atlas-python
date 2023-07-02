@@ -24,7 +24,8 @@ def test_delete_role(client, test_role, test_db, superuser_token_headers):
         f"/api/v1/roles/{test_role.id}", headers=superuser_token_headers
     )
     assert response.status_code == 200
-    assert test_db.query(Role).all() == []
+    assert response.json()["id"] == test_role.id
+    assert response.json()["is_deleted"] == True
 
 
 def test_edit_role(client, test_role, superuser_token_headers):

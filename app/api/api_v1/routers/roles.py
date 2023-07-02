@@ -9,6 +9,7 @@ from app.db.core import (
     create_item,
     delete_item,
     edit_item,
+    soft_delete_item,
 )
 from app.db.roles.crud import delete_all_role_mappings, update_role_mappings
 from app.db.roles.schemas import RoleCreate, RoleEdit, Role
@@ -86,5 +87,5 @@ async def role_delete(
     """
     Delete existing role
     """
-    delete_all_role_mappings(db, role_id)
-    return delete_item(db, models.Role, role_id)
+    # delete_all_role_mappings(db, role_id)
+    return soft_delete_item(db, models.Role, role_id)

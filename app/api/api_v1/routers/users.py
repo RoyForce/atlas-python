@@ -3,7 +3,7 @@ import typing as t
 
 from app.db.session import get_db
 from app.db.users import models
-from app.db.core import get_lists, get_item, delete_item
+from app.db.core import get_lists, get_item, delete_item, soft_delete_item
 from app.db.users.crud import (
     create_user,
     edit_user,
@@ -97,4 +97,4 @@ async def user_delete(
     """
     Delete existing user
     """
-    return delete_item(db, models.User, user_id)
+    return soft_delete_item(db, models.User, user_id)
