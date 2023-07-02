@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Depends, Response
+from fastapi import APIRouter, Request, Depends, Response, HTTPException
 import typing as t
 
 from app.db.session import get_db
@@ -11,7 +11,7 @@ from app.db.core import (
     create_item,
     delete_item,
     edit_item,
-    soft_delete_item,
+    get_items_by_key,
 )
 from app.db.programs.schemas import (
     ProgramEdit,
@@ -127,8 +127,33 @@ async def program_edit(
 async def program_delete(
     program_id: int,
     db=Depends(get_db),
+    current_user=Depends(get_current_active_user),
 ):
     """
     Soft delete existing program
     """
-    return soft_delete_item(db, models.Program, program_id)
+    item = get_item(db, models.Program, program_id)
+    if (
+        "source_id" in item.dict()
+        and item.source_id is not None
+        and item.is_deleted == False
+    ):
+        raise HTTPException(
+            status_code=403, detail="Can not delete external item"
+        )
+    else:
+        team_id = item.team_id
+        item.team_id = None
+        db.add(item)
+        delete_item(db, TeamModel.Team, team_id)
+        filters = TeamModel.Team.program_id == item.id
+        teams = get_items_by_key(db, TeamModel.Team, filters)
+        for team in teams:
+            team.program_id = None
+            team.updated_by = current_user.id
+            db.add(team)
+            db.commit()
+            db.refresh(team)
+    db.delete(item)
+    db.commit()
+    return item

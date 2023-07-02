@@ -18,8 +18,7 @@ def test_delete_portfolio(
         headers=superuser_token_headers,
     )
     assert response.status_code == 200
-    assert response.json()["id"] == test_portfolio.id
-    assert response.json()["is_deleted"] == True
+    assert test_db.query(Portfolio).all() == []
 
 
 def test_get_portfolio(

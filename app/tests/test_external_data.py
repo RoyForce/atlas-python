@@ -218,15 +218,20 @@ def test_portfolios_external_data(
 
 
 def test_programs_external_data(
-    client, test_db, superuser_token_headers, test_user
+    client,
+    test_db,
+    test_team,
+    test_portfolio,
+    superuser_token_headers,
+    test_user,
 ):
     program_data = [
         {
             "id": 1,
             "title": "Program",
             "teamDescription": "Program desc",
-            "portfolioId": 1,
-            "teamId": 1,
+            "portfolioId": test_portfolio.id,
+            "teamId": test_team.id,
             "lastUpdatedDate": "2022-05-19T18:49:48Z",
         }
     ]
@@ -247,8 +252,8 @@ def test_programs_external_data(
             "id": 1,
             "title": "Updated Program",
             "teamDescription": "Program desc",
-            "portfolioId": 2,
-            "teamId": 2,
+            "portfolioId": test_portfolio.id,
+            "teamId": test_team.id,
             "lastUpdatedDate": "2022-06-19T18:49:48Z",
         }
     ]
