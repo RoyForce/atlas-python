@@ -5,6 +5,8 @@ from app.db.roles import models as roleModels
 from app.db.teams import models as teamModel
 from app.db.portfolios import models as PortfolioModel
 from app.db.programs import models as ProgramModel
+from app.db.releases import models as ReleaseModel
+from app.db.sprints import models as SprintModel
 
 
 def test_fetch_external_data(
@@ -267,3 +269,115 @@ def test_programs_external_data(
         .first()
     )
     assert program_data[0]["title"] == program.name
+
+
+def test_release_external_data(
+    client, test_db, superuser_token_headers, test_user
+):
+    release_data = [
+        {
+            "id": 1,
+            "title": "Release1",
+            "shortName": "Q-R1",
+            "description": "Release1 desc",
+            "portfolioId": 1,
+            "programIds": [1],
+            "lastUpdatedDate": "2022-05-19T18:49:48Z",
+            "startDate": "2022-05-19T18:49:48Z",
+            "endDate": "2022-05-19T18:49:48Z",
+            "lastUpdatedBy": None,
+        }
+    ]
+    response1 = engine.create_update_external_data(
+        test_db, release_data, ResourceType.RELEASE.value
+    )
+
+    release = (
+        test_db.query(ReleaseModel.Release)
+        .filter(ReleaseModel.Release.source_id == release_data[0]["id"])
+        .first()
+    )
+    assert release_data[0]["id"] == release.source_id
+    assert release_data[0]["title"] == release.name
+
+    release_data = [
+        {
+            "id": 1,
+            "title": "Updated Release",
+            "shortName": "Shortname",
+            "description": "Release desc",
+            "portfolioId": 1,
+            "programIds": [1],
+            "lastUpdatedDate": "2022-07-19T18:49:48Z",
+            "startDate": "2022-05-19T18:49:48Z",
+            "endDate": "2022-05-19T18:49:48Z",
+            "lastUpdatedBy": None,
+        }
+    ]
+    response1 = engine.create_update_external_data(
+        test_db, release_data, ResourceType.RELEASE.value
+    )
+
+    release = (
+        test_db.query(ReleaseModel.Release)
+        .filter(ReleaseModel.Release.source_id == release_data[0]["id"])
+        .first()
+    )
+    assert release_data[0]["title"] == release.name
+
+
+def test_sprint_external_data(
+    client, test_db, superuser_token_headers, test_user
+):
+    sprint_data = [
+        {
+            "id": 1,
+            "title": "Release1",
+            "shortName": "Q-R1",
+            "description": "Release1 desc",
+            "releaseId": None,
+            "programId": 1,
+            "teamId": 1,
+            "lastUpdatedDate": "2022-05-19T18:49:48Z",
+            "beginDate": "2022-05-19T18:49:48Z",
+            "endDate": "2022-05-19T18:49:48Z",
+            "actualEndDate": "2022-05-19T18:49:48Z",
+        }
+    ]
+    response1 = engine.create_update_external_data(
+        test_db, sprint_data, ResourceType.SPRINT.value
+    )
+
+    sprint = (
+        test_db.query(SprintModel.Sprint)
+        .filter(SprintModel.Sprint.source_id == sprint_data[0]["id"])
+        .first()
+    )
+    assert sprint_data[0]["id"] == sprint.source_id
+    assert sprint_data[0]["title"] == sprint.name
+
+    sprint_data = [
+        {
+            "id": 1,
+            "title": "Updated Release",
+            "shortName": "Shortname",
+            "description": "Release desc",
+            "releaseId": 1,
+            "programId": 1,
+            "teamId": 1,
+            "lastUpdatedDate": "2022-07-19T18:49:48Z",
+            "beginDate": "2022-05-19T18:49:48Z",
+            "endDate": "2022-05-19T18:49:48Z",
+            "actualEndDate": "2022-05-19T18:49:48Z",
+        }
+    ]
+    response1 = engine.create_update_external_data(
+        test_db, sprint_data, ResourceType.SPRINT.value
+    )
+
+    sprint = (
+        test_db.query(SprintModel.Sprint)
+        .filter(SprintModel.Sprint.source_id == sprint_data[0]["id"])
+        .first()
+    )
+    assert sprint_data[0]["title"] == sprint.name

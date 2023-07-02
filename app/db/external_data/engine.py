@@ -12,6 +12,8 @@ from app.db.roles import models as RoleModel
 from app.db.teams import models as TeamModel
 from app.db.portfolios import models as PortfolioModel
 from app.db.programs import models as ProgramModel
+from app.db.releases import models as ReleaseModel
+from app.db.sprints import models as SprintModel
 from app.db.core import (
     get_item_by_source_id,
 )
@@ -33,6 +35,12 @@ def create_update_external_data(db: Session, raw_data, type):
         if type == ResourceType.PROGRAM.value:
             program_ids = process_programs_data(db, raw_data)
             soft_delete(db, ProgramModel.Program, program_ids)
+        if type == ResourceType.RELEASE.value:
+            release_ids = process_releases_data(db, raw_data)
+            soft_delete(db, ReleaseModel.Release, release_ids)
+        if type == ResourceType.SPRINT.value:
+            sprint_ids = process_sprints_data(db, raw_data)
+            soft_delete(db, SprintModel.Sprint, sprint_ids)
         if type == ResourceType.TEAMPRO.value:
             process_teams_data_update_program(db, raw_data)
     return True
@@ -334,3 +342,133 @@ def formate_date(date, type):
         )
     else:
         return datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
+
+
+def process_releases_data(db: Session, data):
+    release_ids = []
+    for release in data:
+        db_portfolio = get_item_by_source_id(
+            db, PortfolioModel.Portfolio, release["portfolioId"]
+        )
+        portfolio_id = None
+        if db_portfolio is not None:
+            portfolio_id = db_portfolio.id
+
+        user_id = None
+        if release["lastUpdatedBy"] is not None:
+            db_user = get_item_by_source_id(
+                db, UserModel.User, release["lastUpdatedBy"]
+            )
+            if db_user is not None:
+                user_id = db_user.id
+
+        db_release = get_item_by_source_id(
+            db, ReleaseModel.Release, release["id"]
+        )
+        if db_release is None:
+            db_release = ReleaseModel.Release(
+                name=release["title"],
+                short_name=release["shortName"],
+                description=release["description"],
+                portfolio_id=portfolio_id,
+                source_id=release["id"],
+                program_ids=release["programIds"],
+                source_update_at=release["lastUpdatedDate"],
+                start_date=release["startDate"],
+                end_date=release["endDate"],
+                updated_by=user_id,
+            )
+            db.add(db_release)
+            db.commit()
+            db.refresh(db_release)
+        else:
+            if release["lastUpdatedDate"] != None:
+                db_last_update = formate_date(
+                    db_release.source_update_at, "DB"
+                )
+                source_last_update = formate_date(
+                    release["lastUpdatedDate"], "JA"
+                )
+                if db_last_update < source_last_update:
+                    db_release.name = release["title"]
+                    db_release.description = release["description"]
+                    db_release.portfolio_id = portfolio_id
+                    db_release.program_ids = release["programIds"]
+                    db_release.start_date = release["startDate"]
+                    db_release.end_date = release["endDate"]
+                    db_release.source_update_at = release["lastUpdatedDate"]
+                    db_release.short_name = release["shortName"]
+                    db_release.updated_by = release["lastUpdatedBy"]
+
+                    db.add(db_release)
+                    db.commit()
+                    db.refresh(db_release)
+        release_ids.append(db_release.id)
+    return release_ids
+
+
+def process_sprints_data(db: Session, data):
+    sprint_ids = []
+    for sprint in data:
+        db_program = get_item_by_source_id(
+            db, ProgramModel.Program, sprint["programId"]
+        )
+        program_id = None
+        if db_program is not None:
+            program_id = db_program.id
+
+        team_id = None
+        if sprint["teamId"] is not None:
+            db_team = get_item_by_source_id(
+                db, TeamModel.Team, sprint["teamId"]
+            )
+            if db_team is not None:
+                team_id = db_team.id
+
+        release_id = None
+        if sprint["releaseId"] is not None:
+            db_release = get_item_by_source_id(
+                db, ReleaseModel.Release, sprint["releaseId"]
+            )
+            if db_release is not None:
+                release_id = db_release.id
+        db_sprint = get_item_by_source_id(db, SprintModel.Sprint, sprint["id"])
+        if db_sprint is None:
+            db_sprint = SprintModel.Sprint(
+                name=sprint["title"],
+                short_name=sprint["shortName"],
+                description=sprint["description"],
+                program_id=program_id,
+                team_id=team_id,
+                release_id=release_id,
+                source_id=sprint["id"],
+                source_update_at=sprint["lastUpdatedDate"],
+                begin_date=sprint["beginDate"],
+                end_date=sprint["endDate"],
+                actual_end_date=sprint["actualEndDate"],
+            )
+            db.add(db_sprint)
+            db.commit()
+            db.refresh(db_sprint)
+        else:
+            if sprint["lastUpdatedDate"] != None:
+                db_last_update = formate_date(db_sprint.source_update_at, "DB")
+                source_last_update = formate_date(
+                    sprint["lastUpdatedDate"], "JA"
+                )
+                if db_last_update < source_last_update:
+                    db_sprint.name = sprint["title"]
+                    db_sprint.description = sprint["description"]
+                    db_sprint.program_id = program_id
+                    db_sprint.team_id = team_id
+                    db_sprint.release_id = release_id
+                    db_sprint.begin_date = sprint["beginDate"]
+                    db_sprint.end_date = sprint["endDate"]
+                    db_sprint.source_update_at = sprint["lastUpdatedDate"]
+                    db_sprint.short_name = sprint["shortName"]
+
+                    db.add(db_sprint)
+                    db.commit()
+                    db.refresh(db_sprint)
+        sprint_ids.append(db_sprint.id)
+    return sprint_ids

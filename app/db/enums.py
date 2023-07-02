@@ -20,6 +20,7 @@ class ResourceType(str, Enum):
     PORTFOLIO = "PORTFOLIO"
     PROGRAM = "PROGRAM"
     SPRINT = "SPRINT"
+    RELEASE = "RELEASE"
     TEAMPRO = "TEAMPRO"
 
 
@@ -30,6 +31,7 @@ class ResourceUrl(str, Enum):
     PROGRAM = "Programs"
     TEAM = "Teams"
     SPRINT = "Iterations"
+    RELEASE = "Releases"
     TEAMPRO = "Teams"
 
 
